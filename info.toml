@@ -863,3 +863,57 @@ A variadic parameter is a slice inside the function:
 
 for _, n := range nums { total += n }
 """
+
+[[exercises]]
+name = "files1"
+path = "exercises/files/files1/main_test.go"
+mode = "test"
+hint = """
+Whole-file I/O:
+
+os.WriteFile(path, []byte(content), 0o644)
+data, err := os.ReadFile(path); return string(data), err
+"""
+
+[[exercises]]
+name = "files2"
+path = "exercises/files/files2/main_test.go"
+mode = "test"
+hint = """
+Scan advances one line per call:
+
+for scanner.Scan() { n++ }
+"""
+
+[[exercises]]
+name = "http1"
+path = "exercises/http_client/http1/main_test.go"
+mode = "test"
+hint = """
+GET, close the body, read it:
+
+resp, err := http.Get(url); if err != nil { return "", err }
+defer resp.Body.Close()
+body, err := io.ReadAll(resp.Body); return string(body), err
+"""
+
+[[exercises]]
+name = "stdlib5"
+path = "exercises/stdlib_essentials/stdlib5/main_test.go"
+mode = "test"
+hint = """
+strconv.Atoi parses a base-10 int:
+
+n, err := strconv.Atoi(s); if err != nil { return 0, err }; return n*2, nil
+"""
+
+[[exercises]]
+name = "stdlib6"
+path = "exercises/stdlib_essentials/stdlib6/main_test.go"
+mode = "test"
+hint = """
+Compile once, then match:
+
+re := regexp.MustCompile(`^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$`)
+return re.MatchString(s)
+"""
