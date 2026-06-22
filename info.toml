@@ -637,3 +637,24 @@ Increment the field through the pointer receiver:
 
 c.N++
 """
+
+[[exercises]]
+name = "methods1"
+path = "exercises/methods/methods1/main_test.go"
+mode = "test"
+hint = """
+Value receiver reads; pointer receiver mutates:
+
+func (r Rectangle) Area() float64 { return r.Width * r.Height }
+func (r *Rectangle) Scale(f float64) { r.Width *= f; r.Height *= f }
+"""
+
+[[exercises]]
+name = "methods2"
+path = "exercises/methods/methods2/main_test.go"
+mode = "test"
+hint = """
+Convert the named type to its underlying type for arithmetic:
+
+return float64(c)*9/5 + 32
+"""
