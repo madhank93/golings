@@ -455,3 +455,35 @@ case v := <-ch: return v, true
 default: return 0, false
 }
 """
+
+[[exercises]]
+name = "sync1"
+path = "exercises/sync/sync1/main_test.go"
+mode = "test"
+hint = """
+Guard the critical section:
+
+c.mu.Lock()
+defer c.mu.Unlock()
+c.n++
+"""
+
+[[exercises]]
+name = "sync2"
+path = "exercises/sync/sync2/main_test.go"
+mode = "test"
+hint = """
+sync.Once.Do runs its function only the first time it is called:
+
+c.once.Do(func() { c.loads++ })
+"""
+
+[[exercises]]
+name = "sync3"
+path = "exercises/sync/sync3/main_test.go"
+mode = "test"
+hint = """
+Increment without a lock using an atomic operation:
+
+atomic.AddInt64(&hits, 1)
+"""
