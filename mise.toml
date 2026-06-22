@@ -2,7 +2,7 @@
 # Run `mise install` once to provision everything, then `mise run <task>`.
 
 [tools]
-go = "1.25.1"
+go = "1.26.4"
 "go:golang.org/x/tools/gopls" = "latest"
 "go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
 
