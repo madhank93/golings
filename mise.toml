@@ -1,0 +1,33 @@
+# mise: toolchain + tools + task runner for the golings learning repo.
+# Run `mise install` once to provision everything, then `mise run <task>`.
+
+[tools]
+go = "1.25.1"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
+
+[env]
+# put our locally-built binary on PATH
+_.path = ["{{config_root}}/bin"]
+
+[tasks.build]
+description = "Build our forked golings binary into ./bin"
+run = "go build -o bin/golings ./golings"
+
+[tasks.watch]
+description = "Interactive watch loop (build first)"
+depends = ["build"]
+run = "./bin/golings watch"
+
+[tasks.list]
+description = "List all exercises + progress"
+depends = ["build"]
+run = "./bin/golings list"
+
+[tasks.lint]
+description = "Lint all Go code"
+run = "golangci-lint run ./..."
+
+[tasks.test]
+description = "Run tests with the race detector"
+run = "go test -race ./..."

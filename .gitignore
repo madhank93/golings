@@ -1,3 +1,13 @@
 dist/
 coverage.out
 .DS_Store
+
+# build output
+/bin/
+
+# local progress state (Phase 3)
+.golings-state.json
+
+# editor
+.vscode/
+.idea/
