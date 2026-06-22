@@ -526,3 +526,45 @@ for n := range in {
 }
 close(out)
 """
+
+[[exercises]]
+name = "stdlib1"
+path = "exercises/stdlib_essentials/stdlib1/main_test.go"
+mode = "test"
+hint = """
+Struct tags map JSON keys to fields:
+
+Name string `json:"full_name"`
+Age  int    `json:"user_age"`
+"""
+
+[[exercises]]
+name = "stdlib2"
+path = "exercises/stdlib_essentials/stdlib2/main_test.go"
+mode = "test"
+hint = """
+io.Copy streams a Reader into a Writer:
+
+if _, err := io.Copy(&buf, r); err != nil { return "", err }
+"""
+
+[[exercises]]
+name = "stdlib3"
+path = "exercises/stdlib_essentials/stdlib3/main_test.go"
+mode = "test"
+hint = """
+Sort ascending then reverse:
+
+slices.Sort(out)
+slices.Reverse(out)
+"""
+
+[[exercises]]
+name = "stdlib4"
+path = "exercises/stdlib_essentials/stdlib4/main_test.go"
+mode = "test"
+hint = """
+The layout string IS the reference date Mon Jan 2 2006:
+
+return time.Parse("2006-01-02", s)
+"""
