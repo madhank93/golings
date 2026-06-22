@@ -704,3 +704,65 @@ Implement both methods on *Buffer to satisfy the embedded interface:
 func (b *Buffer) Read() string   { return b.data }
 func (b *Buffer) Write(s string) { b.data += s }
 """
+
+[[exercises]]
+name = "defer1"
+path = "exercises/defer/defer1/main_test.go"
+mode = "test"
+hint = """
+Defers run LIFO. With a named return seq, deferred appends mutate it:
+
+defer func() { seq = append(seq, 1) }()
+defer func() { seq = append(seq, 2) }()
+defer func() { seq = append(seq, 3) }()  // runs first -> [3,2,1]
+"""
+
+[[exercises]]
+name = "defer2"
+path = "exercises/defer/defer2/main_test.go"
+mode = "test"
+hint = """
+Defer the cleanup at the top so it runs on every return:
+
+defer r.Close()
+"""
+
+[[exercises]]
+name = "enums1"
+path = "exercises/enums/enums1/main_test.go"
+mode = "test"
+hint = """
+After the first iota line, list the rest and iota increments automatically:
+
+const ( Sunday Weekday = iota; Monday; Tuesday; Wednesday; Thursday; Friday; Saturday )
+"""
+
+[[exercises]]
+name = "enums2"
+path = "exercises/enums/enums2/main_test.go"
+mode = "test"
+hint = """
+Switch on the receiver:
+
+switch c { case Red: return "Red"; case Green: return "Green"; case Blue: return "Blue"; default: return "Unknown" }
+"""
+
+[[exercises]]
+name = "strings1"
+path = "exercises/strings/strings1/main_test.go"
+mode = "test"
+hint = """
+Chain two strings helpers:
+
+return strings.ReplaceAll(strings.ToLower(s), " ", "-")
+"""
+
+[[exercises]]
+name = "strings2"
+path = "exercises/strings/strings2/main_test.go"
+mode = "test"
+hint = """
+len counts bytes; count runes instead:
+
+return utf8.RuneCountInString(s)
+"""
