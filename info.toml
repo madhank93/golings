@@ -487,3 +487,42 @@ Increment without a lock using an atomic operation:
 
 atomic.AddInt64(&hits, 1)
 """
+
+[[exercises]]
+name = "concpat1"
+path = "exercises/concurrency_patterns/concpat1/main_test.go"
+mode = "test"
+hint = """
+A worker drains its jobs channel until it is closed:
+
+for n := range jobs {
+    results <- n * n
+}
+"""
+
+[[exercises]]
+name = "concpat2"
+path = "exercises/concurrency_patterns/concpat2/main_test.go"
+mode = "test"
+hint = """
+One goroutine per input copies into out; a closer waits for them all:
+
+for _, c := range chans {
+    wg.Add(1)
+    go func(c <-chan int) { defer wg.Done(); for v := range c { out <- v } }(c)
+}
+go func() { wg.Wait(); close(out) }()
+"""
+
+[[exercises]]
+name = "concpat3"
+path = "exercises/concurrency_patterns/concpat3/main_test.go"
+mode = "test"
+hint = """
+Transform each value, then close out after the input is drained:
+
+for n := range in {
+    out <- n * 2
+}
+close(out)
+"""
