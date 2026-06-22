@@ -25,9 +25,9 @@ depends = ["build"]
 run = "./bin/golings list"
 
 [tasks.lint]
-description = "Lint all Go code"
-run = "golangci-lint run ./..."
+description = "Lint the tool source (exercises are broken on purpose)"
+run = "golangci-lint run ./golings ./golings/cmd ./golings/exercises ./golings/tui ./golings/ui"
 
 [tasks.test]
-description = "Run tests with the race detector"
-run = "go test -race ./..."
+description = "Test the tool source with the race detector"
+run = "go test -race $(go list ./golings/... | grep -v fixtures)"

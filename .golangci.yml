@@ -1,6 +1,11 @@
 # golangci-lint config (v1.x schema). Run via `mise run lint`.
 # Keeps idiomatic-Go pressure on while learning — clippy-style parity.
 
+issues:
+  # golings ships intentionally-broken fixtures used by its own runner tests.
+  exclude-dirs:
+    - golings/fixtures
+
 linters:
   enable:
     - errcheck      # unchecked errors
