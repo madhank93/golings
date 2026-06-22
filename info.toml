@@ -917,3 +917,23 @@ Compile once, then match:
 re := regexp.MustCompile(`^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$`)
 return re.MatchString(s)
 """
+
+[[exercises]]
+name = "errors5"
+path = "exercises/errors/errors5/main_test.go"
+mode = "test"
+hint = """
+errors.Join bundles many errors; errors.Is matches any of them:
+
+return errors.Join(errs...)
+"""
+
+[[exercises]]
+name = "testadv4"
+path = "exercises/testing_advanced/testadv4/main_test.go"
+mode = "test"
+hint = """
+Implement the sum; the benchmark uses b.Loop():
+
+total := 0; for _, n := range nums { total += n }; return total
+"""
