@@ -810,3 +810,35 @@ s.mu.Lock()
 defer s.mu.Unlock()
 s.m[key] = v
 """
+
+[[exercises]]
+name = "modern1"
+path = "exercises/modern/modern1/main_test.go"
+mode = "test"
+hint = """
+Use the Go 1.21 builtins (no import):
+
+lo = min(a, b, c)
+hi = max(a, b, c)
+clear(m)
+"""
+
+[[exercises]]
+name = "modern2"
+path = "exercises/modern/modern2/main_test.go"
+mode = "test"
+hint = """
+Go 1.22 lets you range over an int:
+
+for i := range n { total += i }
+"""
+
+[[exercises]]
+name = "modern3"
+path = "exercises/modern/modern3/main_test.go"
+mode = "test"
+hint = """
+Call yield for each value; stop early if it returns false:
+
+for i := 1; i <= n; i++ { if !yield(i) { return } }
+"""
