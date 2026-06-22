@@ -382,3 +382,37 @@ recover() only works inside a deferred function.
 defer func() { if r := recover(); r != nil { err = fmt.Errorf("recovered: %v", r) } }()
 A named return value (err) can be set from inside the deferred func.
 """
+
+[[exercises]]
+name = "context1"
+path = "exercises/context/context1/main_test.go"
+mode = "test"
+hint = """
+A select can wait on multiple channels at once.
+
+Add `case <-ctx.Done(): return count` so the loop exits when cancelled.
+"""
+
+[[exercises]]
+name = "context2"
+path = "exercises/context/context2/main_test.go"
+mode = "test"
+hint = """
+Race the work against the context using select:
+
+select {
+case <-time.After(d): return nil
+case <-ctx.Done(): return ctx.Err()
+}
+"""
+
+[[exercises]]
+name = "context3"
+path = "exercises/context/context3/main_test.go"
+mode = "test"
+hint = """
+ctx.Value returns interface{}. Use the comma-ok type assertion:
+
+if u, ok := ctx.Value(userKey).(string); ok { return u }
+return "anonymous"
+"""
