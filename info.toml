@@ -416,3 +416,42 @@ ctx.Value returns interface{}. Use the comma-ok type assertion:
 if u, ok := ctx.Value(userKey).(string); ok { return u }
 return "anonymous"
 """
+
+[[exercises]]
+name = "select1"
+path = "exercises/select/select1/main_test.go"
+mode = "test"
+hint = """
+select chooses whichever case can proceed:
+
+select {
+case v := <-a: return v
+case v := <-b: return v
+}
+"""
+
+[[exercises]]
+name = "select2"
+path = "exercises/select/select2/main_test.go"
+mode = "test"
+hint = """
+time.After(d) returns a channel that fires after d. Race it:
+
+select {
+case v := <-ch: return v, true
+case <-time.After(d): return 0, false
+}
+"""
+
+[[exercises]]
+name = "select3"
+path = "exercises/select/select3/main_test.go"
+mode = "test"
+hint = """
+A default case runs when no other case is ready, so select never blocks:
+
+select {
+case v := <-ch: return v, true
+default: return 0, false
+}
+"""
