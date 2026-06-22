@@ -766,3 +766,46 @@ len counts bytes; count runes instead:
 
 return utf8.RuneCountInString(s)
 """
+
+[[exercises]]
+name = "channels1"
+path = "exercises/channels/channels1/main_test.go"
+mode = "test"
+hint = """
+Give the channel a buffer so sends do not block:
+
+ch := make(chan int, len(vals))
+"""
+
+[[exercises]]
+name = "channels2"
+path = "exercises/channels/channels2/main_test.go"
+mode = "test"
+hint = """
+Drain the receive-only channel with range:
+
+for v := range in { got = append(got, v) }
+"""
+
+[[exercises]]
+name = "applied1"
+path = "exercises/applied/applied1/main_test.go"
+mode = "test"
+hint = """
+Implement the remaining sort.Interface methods:
+
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+"""
+
+[[exercises]]
+name = "applied2"
+path = "exercises/applied/applied2/main_test.go"
+mode = "test"
+hint = """
+Guard the write like the read does:
+
+s.mu.Lock()
+defer s.mu.Unlock()
+s.m[key] = v
+"""
