@@ -340,3 +340,45 @@ To prevent panics, avoid sending messages to channels that have been closed.
 
 Note: Channels can be iterated using `for-range` loops.
 """
+[[exercises]]
+name = "errors1"
+path = "exercises/errors/errors1/main_test.go"
+mode = "test"
+hint = """
+Errors are values. Return them, do not throw them.
+
+Import "errors" and return errors.New("...") when b == 0.
+Check the result at the call site with `if err != nil`.
+"""
+
+[[exercises]]
+name = "errors2"
+path = "exercises/errors/errors2/main_test.go"
+mode = "test"
+hint = """
+The %w verb wraps an error so errors.Is can unwrap and match it.
+
+fmt.Errorf("lookup %q: %w", id, ErrNotFound)
+"""
+
+[[exercises]]
+name = "errors3"
+path = "exercises/errors/errors3/main_test.go"
+mode = "test"
+hint = """
+Any type with an Error() string method satisfies the error interface.
+
+Build the message from e.Field, e.g. fmt.Sprintf("%s is required", e.Field).
+errors.As walks the wrap chain to find a *ValidationError.
+"""
+
+[[exercises]]
+name = "errors4"
+path = "exercises/errors/errors4/main_test.go"
+mode = "test"
+hint = """
+recover() only works inside a deferred function.
+
+defer func() { if r := recover(); r != nil { err = fmt.Errorf("recovered: %v", r) } }()
+A named return value (err) can be set from inside the deferred func.
+"""
