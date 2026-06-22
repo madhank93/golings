@@ -70,6 +70,27 @@ hint = """
 Functions that return values must have return types declared in the function signature."""
 
 [[exercises]]
+name = "morefn1"
+path = "exercises/more_functions/morefn1/main_test.go"
+mode = "test"
+hint = """
+Recurse with a base case:
+
+if n <= 1 { return 1 }
+return n * factorial(n-1)
+"""
+
+[[exercises]]
+name = "morefn2"
+path = "exercises/more_functions/morefn2/main_test.go"
+mode = "test"
+hint = """
+A variadic parameter is a slice inside the function:
+
+for _, n := range nums { total += n }
+"""
+
+[[exercises]]
 name = "if1"
 path = "exercises/if/if1/main_test.go"
 mode = "test"
@@ -484,6 +505,16 @@ A named return value (err) can be set from inside the deferred func.
 """
 
 [[exercises]]
+name = "errors5"
+path = "exercises/errors/errors5/main_test.go"
+mode = "test"
+hint = """
+errors.Join bundles many errors; errors.Is matches any of them:
+
+return errors.Join(errs...)
+"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
@@ -507,6 +538,38 @@ Type mismatches in arithmetic operations are not allowed, but generics enable fu
 In Go, type constraints can be declared. For this exercise, the `Number` interface is an example.
 
 Ensure you include the appropriate type signature.
+"""
+
+[[exercises]]
+name = "modern1"
+path = "exercises/modern/modern1/main_test.go"
+mode = "test"
+hint = """
+Use the Go 1.21 builtins (no import):
+
+lo = min(a, b, c)
+hi = max(a, b, c)
+clear(m)
+"""
+
+[[exercises]]
+name = "modern2"
+path = "exercises/modern/modern2/main_test.go"
+mode = "test"
+hint = """
+Go 1.22 lets you range over an int:
+
+for i := range n { total += i }
+"""
+
+[[exercises]]
+name = "modern3"
+path = "exercises/modern/modern3/main_test.go"
+mode = "test"
+hint = """
+Call yield for each value; stop early if it returns false:
+
+for i := 1; i <= n; i++ { if !yield(i) { return } }
 """
 
 [[exercises]]
@@ -750,6 +813,60 @@ return time.Parse("2006-01-02", s)
 """
 
 [[exercises]]
+name = "stdlib5"
+path = "exercises/stdlib_essentials/stdlib5/main_test.go"
+mode = "test"
+hint = """
+strconv.Atoi parses a base-10 int:
+
+n, err := strconv.Atoi(s); if err != nil { return 0, err }; return n*2, nil
+"""
+
+[[exercises]]
+name = "stdlib6"
+path = "exercises/stdlib_essentials/stdlib6/main_test.go"
+mode = "test"
+hint = """
+Compile once, then match:
+
+re := regexp.MustCompile(`^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$`)
+return re.MatchString(s)
+"""
+
+[[exercises]]
+name = "files1"
+path = "exercises/files/files1/main_test.go"
+mode = "test"
+hint = """
+Whole-file I/O:
+
+os.WriteFile(path, []byte(content), 0o644)
+data, err := os.ReadFile(path); return string(data), err
+"""
+
+[[exercises]]
+name = "files2"
+path = "exercises/files/files2/main_test.go"
+mode = "test"
+hint = """
+Scan advances one line per call:
+
+for scanner.Scan() { n++ }
+"""
+
+[[exercises]]
+name = "http1"
+path = "exercises/http_client/http1/main_test.go"
+mode = "test"
+hint = """
+GET, close the body, read it:
+
+resp, err := http.Get(url); if err != nil { return "", err }
+defer resp.Body.Close()
+body, err := io.ReadAll(resp.Body); return string(body), err
+"""
+
+[[exercises]]
 name = "testadv1"
 path = "exercises/testing_advanced/testadv1/main_test.go"
 mode = "test"
@@ -789,6 +906,16 @@ if _, err := w.Write([]byte("pong")); err != nil {
 """
 
 [[exercises]]
+name = "testadv4"
+path = "exercises/testing_advanced/testadv4/main_test.go"
+mode = "test"
+hint = """
+Implement the sum; the benchmark uses b.Loop():
+
+total := 0; for _, n := range nums { total += n }; return total
+"""
+
+[[exercises]]
 name = "applied1"
 path = "exercises/applied/applied1/main_test.go"
 mode = "test"
@@ -809,131 +936,4 @@ Guard the write like the read does:
 s.mu.Lock()
 defer s.mu.Unlock()
 s.m[key] = v
-"""
-
-[[exercises]]
-name = "modern1"
-path = "exercises/modern/modern1/main_test.go"
-mode = "test"
-hint = """
-Use the Go 1.21 builtins (no import):
-
-lo = min(a, b, c)
-hi = max(a, b, c)
-clear(m)
-"""
-
-[[exercises]]
-name = "modern2"
-path = "exercises/modern/modern2/main_test.go"
-mode = "test"
-hint = """
-Go 1.22 lets you range over an int:
-
-for i := range n { total += i }
-"""
-
-[[exercises]]
-name = "modern3"
-path = "exercises/modern/modern3/main_test.go"
-mode = "test"
-hint = """
-Call yield for each value; stop early if it returns false:
-
-for i := 1; i <= n; i++ { if !yield(i) { return } }
-"""
-
-[[exercises]]
-name = "morefn1"
-path = "exercises/more_functions/morefn1/main_test.go"
-mode = "test"
-hint = """
-Recurse with a base case:
-
-if n <= 1 { return 1 }
-return n * factorial(n-1)
-"""
-
-[[exercises]]
-name = "morefn2"
-path = "exercises/more_functions/morefn2/main_test.go"
-mode = "test"
-hint = """
-A variadic parameter is a slice inside the function:
-
-for _, n := range nums { total += n }
-"""
-
-[[exercises]]
-name = "files1"
-path = "exercises/files/files1/main_test.go"
-mode = "test"
-hint = """
-Whole-file I/O:
-
-os.WriteFile(path, []byte(content), 0o644)
-data, err := os.ReadFile(path); return string(data), err
-"""
-
-[[exercises]]
-name = "files2"
-path = "exercises/files/files2/main_test.go"
-mode = "test"
-hint = """
-Scan advances one line per call:
-
-for scanner.Scan() { n++ }
-"""
-
-[[exercises]]
-name = "http1"
-path = "exercises/http_client/http1/main_test.go"
-mode = "test"
-hint = """
-GET, close the body, read it:
-
-resp, err := http.Get(url); if err != nil { return "", err }
-defer resp.Body.Close()
-body, err := io.ReadAll(resp.Body); return string(body), err
-"""
-
-[[exercises]]
-name = "stdlib5"
-path = "exercises/stdlib_essentials/stdlib5/main_test.go"
-mode = "test"
-hint = """
-strconv.Atoi parses a base-10 int:
-
-n, err := strconv.Atoi(s); if err != nil { return 0, err }; return n*2, nil
-"""
-
-[[exercises]]
-name = "stdlib6"
-path = "exercises/stdlib_essentials/stdlib6/main_test.go"
-mode = "test"
-hint = """
-Compile once, then match:
-
-re := regexp.MustCompile(`^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$`)
-return re.MatchString(s)
-"""
-
-[[exercises]]
-name = "errors5"
-path = "exercises/errors/errors5/main_test.go"
-mode = "test"
-hint = """
-errors.Join bundles many errors; errors.Is matches any of them:
-
-return errors.Join(errs...)
-"""
-
-[[exercises]]
-name = "testadv4"
-path = "exercises/testing_advanced/testadv4/main_test.go"
-mode = "test"
-hint = """
-Implement the sum; the benchmark uses b.Loop():
-
-total := 0; for _, n := range nums { total += n }; return total
 """
