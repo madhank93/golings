@@ -607,3 +607,33 @@ if _, err := w.Write([]byte("pong")); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 """
+
+[[exercises]]
+name = "pointers1"
+path = "exercises/pointers/pointers1/main_test.go"
+mode = "test"
+hint = """
+Dereference with * to write through the pointer:
+
+*p = *p * 2
+"""
+
+[[exercises]]
+name = "pointers2"
+path = "exercises/pointers/pointers2/main_test.go"
+mode = "test"
+hint = """
+Go auto-dereferences a struct pointer for field access:
+
+a.Balance += amount
+"""
+
+[[exercises]]
+name = "pointers3"
+path = "exercises/pointers/pointers3/main_test.go"
+mode = "test"
+hint = """
+Increment the field through the pointer receiver:
+
+c.N++
+"""
