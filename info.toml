@@ -658,3 +658,49 @@ Convert the named type to its underlying type for arithmetic:
 
 return float64(c)*9/5 + 32
 """
+
+[[exercises]]
+name = "interfaces1"
+path = "exercises/interfaces/interfaces1/main_test.go"
+mode = "test"
+hint = """
+Add an Area method to each type — no implements keyword needed:
+
+func (r Rectangle) Area() float64 { return r.W * r.H }
+func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
+"""
+
+[[exercises]]
+name = "interfaces2"
+path = "exercises/interfaces/interfaces2/main_test.go"
+mode = "test"
+hint = """
+Implement String() string to satisfy fmt.Stringer:
+
+func (p Point) String() string { return fmt.Sprintf("(%d, %d)", p.X, p.Y) }
+"""
+
+[[exercises]]
+name = "interfaces3"
+path = "exercises/interfaces/interfaces3/main_test.go"
+mode = "test"
+hint = """
+Type switch extracts the concrete type (import "fmt"):
+
+switch x := v.(type) {
+case int:    return fmt.Sprintf("int: %d", x)
+case string: return fmt.Sprintf("string: %s", x)
+default:     return "unknown"
+}
+"""
+
+[[exercises]]
+name = "interfaces4"
+path = "exercises/interfaces/interfaces4/main_test.go"
+mode = "test"
+hint = """
+Implement both methods on *Buffer to satisfy the embedded interface:
+
+func (b *Buffer) Read() string   { return b.data }
+func (b *Buffer) Write(s string) { b.data += s }
+"""
