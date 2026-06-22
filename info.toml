@@ -842,3 +842,24 @@ Call yield for each value; stop early if it returns false:
 
 for i := 1; i <= n; i++ { if !yield(i) { return } }
 """
+
+[[exercises]]
+name = "morefn1"
+path = "exercises/more_functions/morefn1/main_test.go"
+mode = "test"
+hint = """
+Recurse with a base case:
+
+if n <= 1 { return 1 }
+return n * factorial(n-1)
+"""
+
+[[exercises]]
+name = "morefn2"
+path = "exercises/more_functions/morefn2/main_test.go"
+mode = "test"
+hint = """
+A variadic parameter is a slice inside the function:
+
+for _, n := range nums { total += n }
+"""
