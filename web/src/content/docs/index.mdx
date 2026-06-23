@@ -1,0 +1,49 @@
+---
+title: golings
+description: Learn Go the rustlings way — 97 exercises, basics to advanced.
+template: splash
+hero:
+  tagline: Learn Go the rustlings way — 97 small exercises, fixed one at a time, from basics to advanced.
+  actions:
+    - text: Get started
+      link: /golings/getting-started/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/madhank93/golings
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is golings?
+
+golings is a set of small, broken-on-purpose Go exercises you fix one at a time —
+[rustlings](https://rustlings.rust-lang.org/) for Go. An interactive terminal UI
+runs each exercise as you save and walks you from variables to concurrency.
+
+<CardGrid>
+  <Card title="97 exercises" icon="puzzle">
+    32 topics across a beginner → advanced track, current through Go 1.26.
+  </Card>
+  <Card title="Instant feedback" icon="rocket">
+    A Bubble Tea TUI re-runs the exercise on save; tests **and** golangci-lint
+    must pass before it advances.
+  </Card>
+  <Card title="Covers the essentials" icon="open-book">
+    Mirrors A Tour of Go and Go by Example — plus errors, generics, the full
+    concurrency stack, stdlib, and testing.
+  </Card>
+  <Card title="Learn by doing" icon="seti:go">
+    No videos, no slides. Read the failing test, fix the code, repeat.
+  </Card>
+</CardGrid>
+
+## Start in two commands
+
+```sh
+git clone https://github.com/madhank93/golings && cd golings
+mise run watch
+```
+
+See [Getting started](/golings/getting-started/) for the full setup.

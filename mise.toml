@@ -3,6 +3,7 @@
 
 [tools]
 go = "1.26.4"
+node = "22"
 "go:golang.org/x/tools/gopls" = "latest"
 "go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
 
@@ -31,3 +32,19 @@ run = "golangci-lint run ./golings ./golings/cmd ./golings/exercises ./golings/t
 [tasks.test]
 description = "Test the tool source with the race detector"
 run = "go test -race $(go list ./golings/... | grep -v fixtures)"
+
+[tasks.gen-site]
+description = "Generate docs site content from info.toml + READMEs"
+run = "go run ./web/gen"
+
+[tasks.site]
+description = "Generate content and run the docs dev server"
+depends = ["gen-site"]
+dir = "{{config_root}}/web"
+run = "npm install && npm run dev"
+
+[tasks.site-build]
+description = "Generate content and build the docs site"
+depends = ["gen-site"]
+dir = "{{config_root}}/web"
+run = "npm ci && npm run build"
