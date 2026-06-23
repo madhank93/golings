@@ -30,6 +30,13 @@ var (
 	titleStyle    = lipgloss.NewStyle().Bold(true)
 	noticeStyle   = lipgloss.NewStyle().Foreground(cAmber)
 	paneStyle     = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
+
+	// section header styles (labelled, colored)
+	secDescStyle = lipgloss.NewStyle().Bold(true).Foreground(cBlue)
+	secErrStyle  = lipgloss.NewStyle().Bold(true).Foreground(cRed)
+	secOkStyle   = lipgloss.NewStyle().Bold(true).Foreground(cGreen)
+	secWarnStyle = lipgloss.NewStyle().Bold(true).Foreground(cAmber)
+	secHintStyle = lipgloss.NewStyle().Bold(true).Foreground(cTeal)
 )
 
 // topicOf extracts the topic directory from an exercise path.
@@ -170,15 +177,11 @@ func (m Model) glyph(ex exercises.Exercise) string {
 func (m Model) rightPane() string {
 	ex := m.current()
 	title := titleStyle.Render(ex.Name) + dimStyle.Render(" ["+ex.Mode+"] ") + m.badge()
-	desc := ""
-	if d := ex.Description(); d != "" {
-		desc = "\n" + dimStyle.Italic(true).Render(d)
-	}
 	notice := ""
 	if m.notice != "" {
 		notice = "\n" + noticeStyle.Render(m.notice)
 	}
-	return title + desc + notice + "\n" + m.output.View()
+	return title + notice + "\n" + m.output.View()
 }
 
 func (m Model) badge() string {
@@ -202,28 +205,44 @@ func (m Model) badge() string {
 	}
 }
 
-// detail is the scrollable content of the right pane.
+// section renders a colored "Label:" header followed by its body.
+func section(header, body string) string {
+	body = strings.TrimRight(body, "\n")
+	if body == "" {
+		return header
+	}
+	return header + "\n" + body
+}
+
+// detail is the scrollable content of the right pane: a Description block plus
+// a labelled Hint / Error / Output block, all soft-wrapped (never truncated).
 func (m Model) detail() string {
+	var parts []string
+
+	if d := m.current().Description(); d != "" {
+		parts = append(parts, section(secDescStyle.Render("Description:"), d))
+	}
+
 	if m.showHint {
-		return "HINT\n\n" + m.current().Hint
+		parts = append(parts, section(secHintStyle.Render("Hint:"), m.current().Hint))
+		return strings.Join(parts, "\n\n")
 	}
-	if !m.hasResult {
-		return dimStyle.Render("Press ⏎ to run this exercise (or just edit the file and save).")
+
+	switch {
+	case !m.hasResult:
+		parts = append(parts, dimStyle.Render("Press ⏎ to run this exercise (or just edit the file and save)."))
+	case m.status == exercises.StatusFailing:
+		parts = append(parts, section(secErrStyle.Render("Error:"), m.result.Err+"\n"+m.result.Out))
+	case m.status == exercises.StatusPending:
+		body := "Compiles and tests pass — remove the '// I AM NOT DONE' marker to complete it.\n" + m.result.Out
+		parts = append(parts, section(secOkStyle.Render("Passed:"), body))
+	case m.status == exercises.StatusLintFail:
+		parts = append(parts, section(secWarnStyle.Render("Lint issues:"), m.result.Out))
+	case m.status == exercises.StatusDone:
+		parts = append(parts, section(secOkStyle.Render("Done:"), "Passed and lint-clean!\n"+m.result.Out))
 	}
-	switch m.status {
-	case exercises.StatusFailing:
-		return m.result.Err + "\n" + m.result.Out
-	case exercises.StatusPending:
-		return passStyle.Render("✓ Compiles and tests pass!") +
-			"\n\nRemove the '// I AM NOT DONE' marker to complete this exercise.\n\n" +
-			m.result.Out
-	case exercises.StatusLintFail:
-		return "Tests pass, but golangci-lint found issues:\n\n" + m.result.Out
-	case exercises.StatusDone:
-		return doneStyle.Render("✓ Passed and lint-clean!") + "\n\n" + m.result.Out
-	default:
-		return dimStyle.Render("Edit the exercise, then save to verify.")
-	}
+
+	return strings.Join(parts, "\n\n")
 }
 
 func (m Model) footer() string {
