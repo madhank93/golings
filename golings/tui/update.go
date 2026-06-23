@@ -35,7 +35,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 		m.layout()
-		m.output.SetContent(m.detail())
+		m.refreshOutput()
 		return m, nil
 
 	case tea.KeyMsg:
@@ -44,7 +44,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 			m.phase = phaseMain
-			m.output.SetContent(m.detail())
+			m.refreshOutput()
 			return m, nil
 		}
 		return m.handleKey(msg)
@@ -83,13 +83,13 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.Up):
 		m.moveCursor(-1)
 		m.onSelectionChange()
-		m.output.SetContent(m.detail())
+		m.refreshOutput()
 		return m, nil
 
 	case key.Matches(msg, m.keys.Down):
 		m.moveCursor(1)
 		m.onSelectionChange()
-		m.output.SetContent(m.detail())
+		m.refreshOutput()
 		return m, nil
 
 	case key.Matches(msg, m.keys.Run):
@@ -105,7 +105,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.Hint):
 		m.showHint = !m.showHint
-		m.output.SetContent(m.detail())
+		m.refreshOutput()
 		return m, nil
 
 	case key.Matches(msg, m.keys.Reset):
@@ -152,13 +152,13 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 		m.refreshHeaderCounts()
 		m.advance()
 		m.onSelectionChange()
-		m.output.SetContent(m.detail())
+		m.refreshOutput()
 		// verify the newly-selected exercise too
 		m.verifying = true
 		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
 	}
 
-	m.output.SetContent(m.detail())
+	m.refreshOutput()
 	return m, nil
 }
 

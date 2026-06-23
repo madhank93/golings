@@ -230,6 +230,16 @@ func (m Model) footer() string {
 	return m.help.View(m.keys)
 }
 
+// refreshOutput sets the right-pane viewport content, soft-wrapped to its width
+// so long compiler/test output isn't clipped.
+func (m *Model) refreshOutput() {
+	w := m.output.Width
+	if w < 1 {
+		w = 80
+	}
+	m.output.SetContent(lipgloss.NewStyle().Width(w).Render(m.detail()))
+}
+
 // cursorLine maps the cursor (index into items) to its rendered line number.
 func (m Model) cursorLine() int { return m.cursor }
 
