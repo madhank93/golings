@@ -227,7 +227,7 @@ func (m Model) detail() string {
 }
 
 func (m Model) footer() string {
-	return dimStyle.Render(m.help.View(m.keys))
+	return m.help.View(m.keys)
 }
 
 // cursorLine maps the cursor (index into items) to its rendered line number.

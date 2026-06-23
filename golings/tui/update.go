@@ -166,6 +166,7 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 func (m *Model) onSelectionChange() {
 	m.showHint = false
 	m.hasResult = false
+	m.notice = ""
 	m.result = exercises.Result{}
 	m.output.GotoTop()
 }
