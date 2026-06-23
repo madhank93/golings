@@ -6,6 +6,7 @@ type keyMap struct {
 	Up    key.Binding
 	Down  key.Binding
 	Run   key.Binding
+	Edit  key.Binding
 	Hint  key.Binding
 	Reset key.Binding
 	Next  key.Binding
@@ -25,6 +26,10 @@ func defaultKeys() keyMap {
 		Run: key.NewBinding(
 			key.WithKeys("enter"),
 			key.WithHelp("⏎", "run"),
+		),
+		Edit: key.NewBinding(
+			key.WithKeys("e"),
+			key.WithHelp("e", "edit"),
 		),
 		Hint: key.NewBinding(
 			key.WithKeys("h"),
@@ -47,10 +52,10 @@ func defaultKeys() keyMap {
 
 // ShortHelp implements help.KeyMap.
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Up, k.Down, k.Run, k.Hint, k.Reset, k.Next, k.Quit}
+	return []key.Binding{k.Up, k.Down, k.Run, k.Edit, k.Hint, k.Reset, k.Next, k.Quit}
 }
 
 // FullHelp implements help.KeyMap.
 func (k keyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{{k.Up, k.Down}, {k.Run, k.Hint, k.Reset}, {k.Next, k.Quit}}
+	return [][]key.Binding{{k.Up, k.Down}, {k.Run, k.Edit, k.Hint, k.Reset}, {k.Next, k.Quit}}
 }

@@ -1,11 +1,33 @@
 package tui
 
 import (
+	"os"
+	"os/exec"
+	"strings"
+
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mauricioabreu/golings/golings/exercises"
 )
+
+// editorClosedMsg is sent when the external editor process exits.
+type editorClosedMsg struct{}
+
+// editorCommand builds the command to open path in the user's editor,
+// honoring $VISUAL then $EDITOR, falling back to vi.
+func editorCommand(path string) *exec.Cmd {
+	editor := os.Getenv("VISUAL")
+	if editor == "" {
+		editor = os.Getenv("EDITOR")
+	}
+	if editor == "" {
+		editor = "vi"
+	}
+	fields := strings.Fields(editor) // editor may include flags, e.g. "code -w"
+	args := append(fields[1:], path)
+	return exec.Command(fields[0], args...)
+}
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -41,6 +63,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.notice = ""
 		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.current()), m.spinner.Tick)
 
+	case editorClosedMsg:
+		// returned from $EDITOR — re-verify the exercise just edited
+		m.verifying = true
+		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+
 	case verifiedMsg:
 		return m.handleVerified(msg)
 	}
@@ -69,6 +96,12 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.verifying = true
 		m.notice = ""
 		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+
+	case key.Matches(msg, m.keys.Edit):
+		cur := m.current()
+		return m, tea.ExecProcess(editorCommand(cur.Path), func(error) tea.Msg {
+			return editorClosedMsg{}
+		})
 
 	case key.Matches(msg, m.keys.Hint):
 		m.showHint = !m.showHint

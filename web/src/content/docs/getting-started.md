@@ -35,6 +35,7 @@ mise run watch           # launches the interactive TUI
 | --- | --- |
 | `↑` / `↓` (or `k` / `j`) | move between exercises |
 | `⏎` | run the selected exercise |
+| `e` | open the exercise in `$EDITOR` (vi/vim/emacs/code…) |
 | `h` | toggle the hint |
 | `r` | reset the exercise to its original state |
 | `n` | jump to the next unfinished exercise |

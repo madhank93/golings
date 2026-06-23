@@ -82,7 +82,7 @@ func New(infoFile string) (Model, error) {
 		watchCh:  ch,
 		keys:     defaultKeys(),
 		help:     help.New(),
-		progress: progress.New(progress.WithDefaultGradient()),
+		progress: progress.New(progress.WithDefaultGradient(), progress.WithoutPercentage()),
 		spinner:  sp,
 		output:   viewport.New(0, 0),
 		total:    len(exs),

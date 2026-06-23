@@ -32,12 +32,6 @@ var (
 	paneStyle     = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
 )
 
-// hyperlink wraps text in an OSC 8 terminal hyperlink (supported by most modern
-// terminals; degrades to plain text elsewhere).
-func hyperlink(url, text string) string {
-	return "\x1b]8;;" + url + "\x1b\\" + text + "\x1b]8;;\x1b\\"
-}
-
 // topicOf extracts the topic directory from an exercise path.
 func topicOf(path string) string {
 	parts := strings.Split(path, "/")
@@ -63,7 +57,8 @@ func (m *Model) layout() {
 	}
 	m.output.Width = rightW
 	m.output.Height = bodyH - 3 // leave a title line inside the right pane
-	m.progress.Width = m.width - 30
+	// leave room on the header line for the title + "n/N (p%)  🔥 streak N"
+	m.progress.Width = max(10, m.width-46)
 }
 
 func (m Model) View() string {
@@ -93,11 +88,9 @@ func (m Model) welcome() string {
 	title := titleStyle.Foreground(cTeal).Render("🐹  golings")
 	tagline := dimStyle.Render("Learn Go the rustlings way — 97 exercises, basics → advanced")
 
-	repoURL := "https://github.com/madhank93/golings"
-	siteURL := "https://golings.madhan.app"
 	meta := lipgloss.JoinVertical(lipgloss.Left,
-		labelStyle.Render("Repo")+linkStyle.Render(hyperlink(repoURL, "github.com/madhank93/golings")),
-		labelStyle.Render("Site")+linkStyle.Render(hyperlink(siteURL, "golings.madhan.app")),
+		labelStyle.Render("Repo")+linkStyle.Render("https://github.com/madhank93/golings"),
+		labelStyle.Render("Site")+linkStyle.Render("https://golings.madhan.app"),
 		labelStyle.Render("Maintainer")+"Madhan Kumaravelu  "+dimStyle.Render("(@madhank93)"),
 	)
 
@@ -109,7 +102,7 @@ func (m Model) welcome() string {
 		"  • It then auto-advances to the next exercise",
 	)
 
-	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · h hint · r reset · n next · q quit")
+	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · e edit · h hint · r reset · n next · q quit")
 	cta := markStyle.Render("press any key to start →")
 
 	content := lipgloss.JoinVertical(lipgloss.Left,
@@ -177,11 +170,15 @@ func (m Model) glyph(ex exercises.Exercise) string {
 func (m Model) rightPane() string {
 	ex := m.current()
 	title := titleStyle.Render(ex.Name) + dimStyle.Render(" ["+ex.Mode+"] ") + m.badge()
+	desc := ""
+	if d := ex.Description(); d != "" {
+		desc = "\n" + dimStyle.Italic(true).Render(d)
+	}
 	notice := ""
 	if m.notice != "" {
 		notice = "\n" + noticeStyle.Render(m.notice)
 	}
-	return title + notice + "\n" + m.output.View()
+	return title + desc + notice + "\n" + m.output.View()
 }
 
 func (m Model) badge() string {
