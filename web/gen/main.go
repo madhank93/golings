@@ -75,7 +75,7 @@ func run() error {
 
 func writeOverview(byTopic map[string][]exercises.Exercise) error {
 	var b strings.Builder
-	b.WriteString("---\ntitle: Curriculum\ndescription: The full golings track, beginner to advanced.\nsidebar:\n  order: 0\n---\n\n")
+	b.WriteString("---\ntitle: Overview\ndescription: The full golings track, beginner to advanced.\nsidebar:\n  order: 0\n---\n\n")
 	b.WriteString("97 exercises across 32 topics, grouped into a progressive track. Work through them in order with `mise run watch`.\n\n")
 	total := 0
 	for _, ti := range tiers {
