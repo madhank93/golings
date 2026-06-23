@@ -125,7 +125,7 @@ func (m Model) header() string {
 		ratio = float64(done) / float64(m.total)
 	}
 	bar := m.progress.ViewAs(ratio)
-	stats := fmt.Sprintf(" %d/%d (%.0f%%)   🔥 streak %d", done, m.total, ratio*100, m.tracker.Streak.Count)
+	stats := fmt.Sprintf(" %d/%d (%.0f%%)   🔥 streak %d", done, m.total, ratio*100, m.tracker.Streak())
 	return titleStyle.Render("golings") + "  " + bar + stats
 }
 

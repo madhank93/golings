@@ -13,19 +13,13 @@ const StateFile = ".golings-state.json"
 
 const dayLayout = "2006-01-02"
 
-// Streak tracks consecutive days on which at least one exercise was completed.
-type Streak struct {
-	Count   int    `json:"count"`
-	LastDay string `json:"lastDay"` // YYYY-MM-DD, "" if none yet
-}
-
 // Tracker is persisted metadata about progress. The file markers ("I AM NOT
 // DONE") remain the source of truth for done-ness; this only records when each
-// exercise was first completed, the streak, and the last position.
+// exercise was first completed and the last position. The streak is derived
+// from the completion timestamps, never stored, so it can't drift.
 type Tracker struct {
 	// Completed maps exercise name -> RFC3339 timestamp of first completion.
 	Completed map[string]string `json:"completed"`
-	Streak    Streak            `json:"streak"`
 	Current   string            `json:"current"`
 
 	path string
@@ -74,28 +68,42 @@ func (s *Tracker) DoneCount() int { return len(s.Completed) }
 // historical record of active days, is intentionally left unchanged.
 func (s *Tracker) Unmark(name string) { delete(s.Completed, name) }
 
-// MarkDone records a first-time completion at now and updates the streak.
+// MarkDone records a first-time completion at now.
 // Re-marking an already-completed exercise is a no-op.
 func (s *Tracker) MarkDone(name string, now time.Time) {
 	if _, ok := s.Completed[name]; ok {
 		return
 	}
 	s.Completed[name] = now.Format(time.RFC3339)
-	s.bumpStreak(now)
 }
 
-// bumpStreak advances the streak on the first completion of a given day.
-func (s *Tracker) bumpStreak(now time.Time) {
-	today := now.Format(dayLayout)
-	switch s.Streak.LastDay {
-	case today:
-		// already counted a completion today
-	case now.AddDate(0, 0, -1).Format(dayLayout):
-		s.Streak.Count++
-	default:
-		s.Streak.Count = 1
+// Streak is the number of consecutive days, ending at the most recent
+// completion, on which at least one exercise was completed. Derived from the
+// completion timestamps, so resetting an exercise lowers it automatically.
+func (s *Tracker) Streak() int {
+	days := map[string]bool{}
+	latest := ""
+	for _, ts := range s.Completed {
+		tm, err := time.Parse(time.RFC3339, ts)
+		if err != nil {
+			continue
+		}
+		d := tm.Format(dayLayout)
+		days[d] = true
+		if d > latest { // YYYY-MM-DD sorts chronologically
+			latest = d
+		}
 	}
-	s.Streak.LastDay = today
+	if latest == "" {
+		return 0
+	}
+	cur, _ := time.Parse(dayLayout, latest)
+	count := 0
+	for days[cur.Format(dayLayout)] {
+		count++
+		cur = cur.AddDate(0, 0, -1)
+	}
+	return count
 }
 
 // Reconcile backfills completions for exercises that are already Done on disk

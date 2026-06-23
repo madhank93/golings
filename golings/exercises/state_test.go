@@ -28,30 +28,38 @@ func TestLoadStateMissingFile(t *testing.T) {
 func TestMarkDoneAndStreak(t *testing.T) {
 	s, _ := LoadState(filepath.Join(t.TempDir(), "s.json"))
 
+	if s.Streak() != 0 {
+		t.Fatalf("empty streak should be 0, got %d", s.Streak())
+	}
+
 	day1 := mustTime(t, "2026-06-20T09:00:00Z")
 	s.MarkDone("variables1", day1)
-	if !s.IsDone("variables1") || s.Streak.Count != 1 {
-		t.Fatalf("after first: done=%v streak=%d", s.IsDone("variables1"), s.Streak.Count)
+	if !s.IsDone("variables1") || s.Streak() != 1 {
+		t.Fatalf("after first: done=%v streak=%d", s.IsDone("variables1"), s.Streak())
 	}
 
 	// same day, another completion -> streak unchanged
 	s.MarkDone("variables2", day1.Add(time.Hour))
-	if s.Streak.Count != 1 {
-		t.Errorf("same-day streak should stay 1, got %d", s.Streak.Count)
+	if s.Streak() != 1 {
+		t.Errorf("same-day streak should stay 1, got %d", s.Streak())
 	}
 
 	// next day -> streak increments
-	day2 := mustTime(t, "2026-06-21T08:00:00Z")
-	s.MarkDone("functions1", day2)
-	if s.Streak.Count != 2 {
-		t.Errorf("consecutive day streak should be 2, got %d", s.Streak.Count)
+	s.MarkDone("functions1", mustTime(t, "2026-06-21T08:00:00Z"))
+	if s.Streak() != 2 {
+		t.Errorf("consecutive day streak should be 2, got %d", s.Streak())
 	}
 
-	// gap of 2 days -> streak resets to 1
-	day4 := mustTime(t, "2026-06-23T08:00:00Z")
-	s.MarkDone("functions2", day4)
-	if s.Streak.Count != 1 {
-		t.Errorf("after a gap streak should reset to 1, got %d", s.Streak.Count)
+	// gap of a day then complete -> run ending at latest is just 1
+	s.MarkDone("functions2", mustTime(t, "2026-06-23T08:00:00Z"))
+	if s.Streak() != 1 {
+		t.Errorf("after a gap streak should be 1, got %d", s.Streak())
+	}
+
+	// removing the latest completion drops the streak back to the earlier run
+	s.Unmark("functions2")
+	if s.Streak() != 2 {
+		t.Errorf("after unmark streak should be 2 (20th+21st), got %d", s.Streak())
 	}
 }
 
@@ -66,8 +74,8 @@ func TestMarkDoneIdempotent(t *testing.T) {
 	if s.Completed["x"] != ts {
 		t.Errorf("timestamp changed on re-mark: %q -> %q", ts, s.Completed["x"])
 	}
-	if s.Streak.Count != 1 {
-		t.Errorf("streak changed on re-mark: %d", s.Streak.Count)
+	if s.Streak() != 1 {
+		t.Errorf("streak changed on re-mark: %d", s.Streak())
 	}
 }
 
@@ -96,7 +104,7 @@ func TestSaveLoadRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("load: %v", err)
 	}
-	if !loaded.IsDone("variables1") || loaded.Current != "variables2" || loaded.Streak.Count != 1 {
+	if !loaded.IsDone("variables1") || loaded.Current != "variables2" || loaded.Streak() != 1 {
 		t.Errorf("round trip lost data: %+v", loaded)
 	}
 }
