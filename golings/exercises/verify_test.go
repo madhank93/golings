@@ -16,13 +16,12 @@ func TestStatusString(t *testing.T) {
 	}
 }
 
-// A pending exercise (marker present) must short-circuit to StatusPending
-// without attempting to run, even when its path does not exist.
-func TestVerifyPendingShortCircuits(t *testing.T) {
-	// missing file => State() returns Pending (ReadFile error path)
+// A non-existent / non-compiling exercise must report StatusFailing (Verify
+// always runs the exercise rather than short-circuiting on the marker).
+func TestVerifyMissingFails(t *testing.T) {
 	e := Exercise{Name: "ghost", Path: "does/not/exist/main.go", Mode: "compile"}
 	status, _ := e.Verify()
-	if status != StatusPending {
-		t.Errorf("want StatusPending for missing/marked file, got %v", status)
+	if status != StatusFailing {
+		t.Errorf("want StatusFailing for missing file, got %v", status)
 	}
 }

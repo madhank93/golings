@@ -12,8 +12,8 @@ import (
 type Status int
 
 const (
-	StatusPending  Status = iota // "I AM NOT DONE" marker still present
-	StatusFailing                // marker removed, but Run() fails
+	StatusPending  Status = iota // compiles/tests pass, but marker still present
+	StatusFailing                // Run() fails (compile error or failing test)
 	StatusLintFail               // marker removed, Run() passes, lint not clean
 	StatusDone                   // marker removed, Run() passes, lint clean
 )
@@ -33,17 +33,19 @@ func (s Status) String() string {
 	}
 }
 
-// Verify computes the gated status of e. It short-circuits on the marker (no
-// run), then runs the exercise, then lints it only if the run passed.
-// The returned Result carries the output to show the learner.
+// Verify computes the gated status of e. It always runs the exercise (so the
+// learner sees compile/test output while working), then — only once the run
+// passes and the "I AM NOT DONE" marker is removed — lints it. The returned
+// Result carries the output to show the learner.
 func (e Exercise) Verify() (Status, Result) {
-	if e.State() == Pending {
-		return StatusPending, Result{Exercise: e}
-	}
-
 	result, err := e.Run()
 	if err != nil {
 		return StatusFailing, result
+	}
+
+	// Compiles / tests pass. The marker must still be removed to complete.
+	if e.State() == Pending {
+		return StatusPending, result
 	}
 
 	if ok, out := Lint(e); !ok {

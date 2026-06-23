@@ -14,6 +14,7 @@ var (
 	doneStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("10"))
 	failStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("9"))
 	lintStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
+	passStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("14"))
 	dimStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
 	titleStyle    = lipgloss.NewStyle().Bold(true)
 	noticeStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
@@ -139,6 +140,8 @@ func (m Model) badge() string {
 		return lintStyle.Render("⚠ lint")
 	case exercises.StatusFailing:
 		return failStyle.Render("● failing")
+	case exercises.StatusPending:
+		return passStyle.Render("◐ remove marker")
 	default:
 		return dimStyle.Render("○ pending")
 	}
@@ -155,14 +158,14 @@ func (m Model) detail() string {
 	switch m.status {
 	case exercises.StatusFailing:
 		return m.result.Err + "\n" + m.result.Out
+	case exercises.StatusPending:
+		return passStyle.Render("✓ Compiles and tests pass!") +
+			"\n\nRemove the '// I AM NOT DONE' marker to complete this exercise.\n\n" +
+			m.result.Out
 	case exercises.StatusLintFail:
 		return "Tests pass, but golangci-lint found issues:\n\n" + m.result.Out
 	case exercises.StatusDone:
-		out := "✓ Passed and lint-clean!\n\n" + m.result.Out
-		if m.current().State() == exercises.Pending {
-			out += "\nRemove the '// I AM NOT DONE' marker to complete it."
-		}
-		return out
+		return doneStyle.Render("✓ Passed and lint-clean!") + "\n\n" + m.result.Out
 	default:
 		return dimStyle.Render("Edit the exercise, then save to verify.")
 	}
