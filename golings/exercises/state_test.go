@@ -71,6 +71,18 @@ func TestMarkDoneIdempotent(t *testing.T) {
 	}
 }
 
+func TestUnmark(t *testing.T) {
+	s, _ := LoadState(filepath.Join(t.TempDir(), "s.json"))
+	s.MarkDone("x", mustTime(t, "2026-06-20T09:00:00Z"))
+	if !s.IsDone("x") {
+		t.Fatal("precondition: x should be done")
+	}
+	s.Unmark("x")
+	if s.IsDone("x") || s.DoneCount() != 0 {
+		t.Errorf("after Unmark, x should not be done; count=%d", s.DoneCount())
+	}
+}
+
 func TestSaveLoadRoundTrip(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "s.json")
 	s, _ := LoadState(path)

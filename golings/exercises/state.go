@@ -70,6 +70,10 @@ func (s *Tracker) IsDone(name string) bool {
 // DoneCount returns how many exercises have been completed.
 func (s *Tracker) DoneCount() int { return len(s.Completed) }
 
+// Unmark clears an exercise's completion (used by reset). The streak, being a
+// historical record of active days, is intentionally left unchanged.
+func (s *Tracker) Unmark(name string) { delete(s.Completed, name) }
+
 // MarkDone records a first-time completion at now and updates the streak.
 // Re-marking an already-completed exercise is a no-op.
 func (s *Tracker) MarkDone(name string, now time.Time) {

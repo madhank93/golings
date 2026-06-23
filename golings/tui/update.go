@@ -68,14 +68,19 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case key.Matches(msg, m.keys.Reset):
-		if err := exercises.Reset(m.current()); err != nil {
+		cur := m.current()
+		if err := exercises.Reset(cur); err != nil {
 			m.notice = "reset failed: " + err.Error()
 		} else {
-			m.notice = "reset " + m.current().Name + " to original"
+			m.tracker.Unmark(cur.Name)
+			_ = m.tracker.Save()
+			m.refreshHeaderCounts()
+			m.notice = "reset " + cur.Name + " to original"
 		}
 		m.hasResult = false
+		m.status = exercises.StatusPending
 		m.verifying = true
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(cur), m.spinner.Tick)
 
 	case key.Matches(msg, m.keys.Next):
 		m.advance()
