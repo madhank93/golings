@@ -239,7 +239,8 @@ func (m Model) detail() string {
 	case m.status == exercises.StatusLintFail:
 		parts = append(parts, section(secWarnStyle.Render("Lint issues:"), m.result.Out))
 	case m.status == exercises.StatusDone:
-		parts = append(parts, section(secOkStyle.Render("Done:"), "Passed and lint-clean!\n"+m.result.Out))
+		body := "Passed and lint-clean! Press n for the next exercise.\n" + m.result.Out
+		parts = append(parts, section(secOkStyle.Render("Done:"), body))
 	}
 
 	return strings.Join(parts, "\n\n")

@@ -146,16 +146,12 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 	m.result = msg.result
 	m.hasResult = true
 
+	// On success, record it and update the glyph/progress, but stay on this
+	// exercise so the learner sees the result. They press `n` for the next one.
 	if msg.status == exercises.StatusDone && !m.tracker.IsDone(msg.name) {
 		m.tracker.MarkDone(msg.name, now())
 		_ = m.tracker.Save()
 		m.refreshHeaderCounts()
-		m.advance()
-		m.onSelectionChange()
-		m.refreshOutput()
-		// verify the newly-selected exercise too
-		m.verifying = true
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
 	}
 
 	m.refreshOutput()

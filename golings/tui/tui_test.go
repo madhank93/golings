@@ -70,7 +70,7 @@ func testModel(t *testing.T) Model {
 	return m
 }
 
-func TestVerifiedDoneMarksAndAdvances(t *testing.T) {
+func TestVerifiedDoneMarksAndStays(t *testing.T) {
 	m := testModel(t)
 	nm, _ := m.Update(tea.WindowSizeMsg{Width: 100, Height: 30})
 	m = nm.(Model)
@@ -82,8 +82,12 @@ func TestVerifiedDoneMarksAndAdvances(t *testing.T) {
 	if !m.tracker.IsDone(start) {
 		t.Errorf("expected %s marked done in tracker", start)
 	}
-	if m.current().Name == start {
-		t.Errorf("expected cursor to advance past %s", start)
+	// stays on the solved exercise so the result is visible; user presses n
+	if m.current().Name != start {
+		t.Errorf("expected cursor to stay on %s, got %s", start, m.current().Name)
+	}
+	if m.status != exercises.StatusDone {
+		t.Errorf("expected status Done to remain shown")
 	}
 }
 
