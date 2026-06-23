@@ -102,6 +102,9 @@ func writeTopic(order int, topic, tierName string, exs []exercises.Exercise) err
 	b.WriteString("## Exercises\n\n")
 	for _, e := range exs {
 		fmt.Fprintf(&b, "### %s `%s`\n\n", e.Name, e.Mode)
+		if d := e.Description(); d != "" {
+			fmt.Fprintf(&b, "%s\n\n", d)
+		}
 		if h := strings.TrimSpace(e.Hint); h != "" {
 			b.WriteString("<details>\n<summary>Show hint</summary>\n\n```\n" + h + "\n```\n\n</details>\n\n")
 		}
