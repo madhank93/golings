@@ -16,7 +16,8 @@ export default defineConfig({
 			],
 			sidebar: [
 				{ label: 'Getting started', slug: 'getting-started' },
-				{ label: 'Curriculum', items: [{ autogenerate: { directory: 'curriculum' } }] },
+				{ label: 'Curriculum', slug: 'curriculum' },
+				{ label: 'Topics', items: [{ autogenerate: { directory: 'curriculum/topics' } }] },
 			],
 		}),
 	],

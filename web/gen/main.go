@@ -13,8 +13,9 @@ import (
 
 const (
 	infoFile  = "info.toml"
-	outDir    = "web/src/content/docs/curriculum"
-	baseURL   = "/golings"          // GitHub Pages project base; "/" with a custom domain
+	outDir    = "web/src/content/docs/curriculum"          // overview (index.md)
+	topicsDir = "web/src/content/docs/curriculum/topics"   // one page per topic
+	baseURL   = "/golings"                                 // GitHub Pages project base; "/" with a custom domain
 	repoBlob  = "https://github.com/madhank93/golings/blob/main"
 	exerciseR = "exercises"
 )
@@ -57,7 +58,7 @@ func run() error {
 	if err := os.RemoveAll(outDir); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(outDir, 0o755); err != nil {
+	if err := os.MkdirAll(topicsDir, 0o755); err != nil {
 		return err
 	}
 
@@ -75,7 +76,7 @@ func run() error {
 
 func writeOverview(byTopic map[string][]exercises.Exercise) error {
 	var b strings.Builder
-	b.WriteString("---\ntitle: Overview\ndescription: The full golings track, beginner to advanced.\nsidebar:\n  order: 0\n---\n\n")
+	b.WriteString("---\ntitle: Curriculum\ndescription: The full golings track, beginner to advanced.\n---\n\n")
 	b.WriteString("97 exercises across 32 topics, grouped into a progressive track. Work through them in order with `mise run watch`.\n\n")
 	total := 0
 	for _, ti := range tiers {
@@ -112,7 +113,7 @@ func writeTopic(order int, topic, tierName string, exs []exercises.Exercise) err
 	}
 
 	name := fmt.Sprintf("%02d-%s.md", order, topic)
-	return os.WriteFile(filepath.Join(outDir, name), []byte(b.String()), 0o644)
+	return os.WriteFile(filepath.Join(topicsDir, name), []byte(b.String()), 0o644)
 }
 
 // readme returns the topic README with its leading H1 stripped (the page has a
