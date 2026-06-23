@@ -8,18 +8,35 @@ import (
 	"github.com/mauricioabreu/golings/golings/exercises"
 )
 
+// Adaptive colors so the UI reads well on both light and dark terminals.
 var (
-	topicStyle    = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("12"))
-	selectedStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("0")).Background(lipgloss.Color("6"))
-	doneStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("10"))
-	failStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("9"))
-	lintStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
-	passStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("14"))
-	dimStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
+	cBlue  = lipgloss.AdaptiveColor{Light: "#0550ae", Dark: "#79c0ff"}
+	cLink  = lipgloss.AdaptiveColor{Light: "#0969da", Dark: "#58a6ff"}
+	cGreen = lipgloss.AdaptiveColor{Light: "#1a7f37", Dark: "#3fb950"}
+	cRed   = lipgloss.AdaptiveColor{Light: "#cf222e", Dark: "#f85149"}
+	cAmber = lipgloss.AdaptiveColor{Light: "#9a6700", Dark: "#d29922"}
+	cTeal  = lipgloss.AdaptiveColor{Light: "#0e7490", Dark: "#39c5cf"}
+	cDim   = lipgloss.AdaptiveColor{Light: "#6e7781", Dark: "#8b949e"}
+)
+
+var (
+	topicStyle    = lipgloss.NewStyle().Bold(true).Foreground(cBlue)
+	selectedStyle = lipgloss.NewStyle().Bold(true).Reverse(true) // inverts fg/bg — readable on any theme
+	doneStyle     = lipgloss.NewStyle().Foreground(cGreen)
+	failStyle     = lipgloss.NewStyle().Foreground(cRed)
+	lintStyle     = lipgloss.NewStyle().Foreground(cAmber)
+	passStyle     = lipgloss.NewStyle().Foreground(cTeal)
+	dimStyle      = lipgloss.NewStyle().Foreground(cDim)
 	titleStyle    = lipgloss.NewStyle().Bold(true)
-	noticeStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
+	noticeStyle   = lipgloss.NewStyle().Foreground(cAmber)
 	paneStyle     = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
 )
+
+// hyperlink wraps text in an OSC 8 terminal hyperlink (supported by most modern
+// terminals; degrades to plain text elsewhere).
+func hyperlink(url, text string) string {
+	return "\x1b]8;;" + url + "\x1b\\" + text + "\x1b]8;;\x1b\\"
+}
 
 // topicOf extracts the topic directory from an exercise path.
 func topicOf(path string) string {
@@ -64,21 +81,23 @@ func (m Model) View() string {
 }
 
 var (
-	linkStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("12")).Underline(true)
-	labelStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Width(12)
-	markStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
+	linkStyle  = lipgloss.NewStyle().Foreground(cLink).Underline(true)
+	labelStyle = lipgloss.NewStyle().Foreground(cDim).Width(12)
+	markStyle  = lipgloss.NewStyle().Foreground(cAmber)
 	boxStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("6")).Padding(1, 3)
+			BorderForeground(cTeal).Padding(1, 3)
 )
 
 // welcome renders the splash screen shown before the main view.
 func (m Model) welcome() string {
-	title := titleStyle.Foreground(lipgloss.Color("14")).Render("🐹  golings")
+	title := titleStyle.Foreground(cTeal).Render("🐹  golings")
 	tagline := dimStyle.Render("Learn Go the rustlings way — 97 exercises, basics → advanced")
 
+	repoURL := "https://github.com/madhank93/golings"
+	siteURL := "https://golings.madhan.app"
 	meta := lipgloss.JoinVertical(lipgloss.Left,
-		labelStyle.Render("Repo")+linkStyle.Render("github.com/madhank93/golings"),
-		labelStyle.Render("Site")+linkStyle.Render("golings.madhan.app")+dimStyle.Render("  (coming soon)"),
+		labelStyle.Render("Repo")+linkStyle.Render(hyperlink(repoURL, "github.com/madhank93/golings")),
+		labelStyle.Render("Site")+linkStyle.Render(hyperlink(siteURL, "golings.madhan.app")),
 		labelStyle.Render("Maintainer")+"Madhan Kumaravelu  "+dimStyle.Render("(@madhank93)"),
 	)
 
