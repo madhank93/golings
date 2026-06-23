@@ -8,8 +8,12 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/mauricioabreu/golings/golings/exercises"
 )
+
+// cFooter is a readable foreground for the keybind bar on light/dark.
+var cFooter = lipgloss.AdaptiveColor{Light: "#24292f", Dark: "#c9d1d9"}
 
 // phase is which screen the TUI is showing.
 type phase int
@@ -76,12 +80,17 @@ func New(infoFile string) (Model, error) {
 	sp := spinner.New()
 	sp.Spinner = spinner.Dot
 
+	h := help.New()
+	h.Styles.ShortKey = lipgloss.NewStyle().Foreground(cTeal).Bold(true)
+	h.Styles.ShortDesc = lipgloss.NewStyle().Foreground(cFooter)
+	h.Styles.ShortSeparator = lipgloss.NewStyle().Foreground(cDim)
+
 	m := Model{
 		infoFile: infoFile,
 		tracker:  tracker,
 		watchCh:  ch,
 		keys:     defaultKeys(),
-		help:     help.New(),
+		help:     h,
 		progress: progress.New(progress.WithDefaultGradient(), progress.WithoutPercentage()),
 		spinner:  sp,
 		output:   viewport.New(0, 0),

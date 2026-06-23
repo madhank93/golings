@@ -12,6 +12,7 @@ type Exercise struct {
 	Path string
 	Mode string
 	Hint string
+	Desc string
 }
 
 func (e Exercise) State() State {

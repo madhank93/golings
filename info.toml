@@ -2,6 +2,7 @@
 name = "variables1"
 path = "exercises/variables/variables1/main.go"
 mode = "compile"
+desc = "Give the variable a name so it can be declared."
 hint = """
 Variables must have names."""
 
@@ -9,6 +10,7 @@ Variables must have names."""
 name = "variables2"
 path = "exercises/variables/variables2/main.go"
 mode = "compile"
+desc = "Declare a variable before assigning to it."
 hint = """
 It is missing a symbol used to declare and initialize variables."""
 
@@ -16,6 +18,7 @@ It is missing a symbol used to declare and initialize variables."""
 name = "variables3"
 path = "exercises/variables/variables3/main.go"
 mode = "compile"
+desc = "A variable declaration needs a type or an initial value."
 hint = """
 Could it be missing the variable type?"""
 
@@ -23,6 +26,7 @@ Could it be missing the variable type?"""
 name = "variables4"
 path = "exercises/variables/variables4/main.go"
 mode = "compile"
+desc = "See what happens when a block reuses a name with a new type."
 hint = """
 Variables can be redeclared in new blocks, but it is missing something. What is it?"""
 
@@ -30,6 +34,7 @@ Variables can be redeclared in new blocks, but it is missing something. What is 
 name = "variables5"
 path = "exercises/variables/variables5/main.go"
 mode = "compile"
+desc = "Constants must be given a value when declared."
 hint = """
 Constants need initialization."""
 
@@ -37,6 +42,7 @@ Constants need initialization."""
 name = "variables6"
 path = "exercises/variables/variables6/main.go"
 mode = "compile"
+desc = "Constants cannot be reassigned after declaration."
 hint = """
 Constants can't be changed."""
 
@@ -44,6 +50,7 @@ Constants can't be changed."""
 name = "functions1"
 path = "exercises/functions/functions1/main.go"
 mode = "compile"
+desc = "Define the function that main calls."
 hint = """
 The main function is calling another function that it expects to exist.
 It expects a function named `call_me` to exist and receive no arguments."""
@@ -52,6 +59,7 @@ It expects a function named `call_me` to exist and receive no arguments."""
 name = "functions2"
 path = "exercises/functions/functions2/main.go"
 mode = "compile"
+desc = "Function parameters must declare their types."
 hint = """
 Function parameters need to have their types explicitly declared."""
 
@@ -59,6 +67,7 @@ Function parameters need to have their types explicitly declared."""
 name = "functions3"
 path = "exercises/functions/functions3/main.go"
 mode = "compile"
+desc = "Call a function with the argument it expects."
 hint = """
 When a function expects arguments, you must pass values to them."""
 
@@ -66,6 +75,7 @@ When a function expects arguments, you must pass values to them."""
 name = "functions4"
 path = "exercises/functions/functions4/main.go"
 mode = "compile"
+desc = "A function returning a value must declare its return type."
 hint = """
 Functions that return values must have return types declared in the function signature."""
 
@@ -94,18 +104,21 @@ for _, n := range nums { total += n }
 name = "if1"
 path = "exercises/if/if1/main_test.go"
 mode = "test"
+desc = "Return the larger of two numbers using if."
 hint = "Use an if statement to compare a and b, and return the larger number."
 
 [[exercises]]
 name = "if2"
 path = "exercises/if/if2/main_test.go"
 mode = "test"
+desc = "Map each input string to an output with if/else."
 hint = "Implement fooIfFizz function by using if and else statements."
 
 [[exercises]]
 name = "switch1"
 path = "exercises/switch/switch1/main.go"
 mode = "compile"
+desc = "Switch on a variable instead of bare values."
 hint = """
 Switch flow is missing a variable to evaluate the statement."""
 
@@ -113,6 +126,7 @@ Switch flow is missing a variable to evaluate the statement."""
 name = "switch2"
 path = "exercises/switch/switch2/main.go"
 mode = "compile"
+desc = "A conditionless switch needs a boolean case or default."
 hint = """
 Switch without a condition is possible, but that case statement needs a boolean evaluation."""
 
@@ -120,30 +134,35 @@ Switch without a condition is possible, but that case statement needs a boolean 
 name = "switch3"
 path = "exercises/switch/switch3/main_test.go"
 mode = "test"
+desc = "Return a weekday name for a number using a switch."
 hint = "Ensure that each case statement in a switch block has a condition."
 
 [[exercises]]
 name = "primitive_types1"
 path = "exercises/primitive_types/primitive_types1/main.go"
 mode = "compile"
+desc = "Toggle a boolean before the second check."
 hint = "Update the code to reflect the store closing before the second check."
 
 [[exercises]]
 name = "primitive_types2"
 path = "exercises/primitive_types/primitive_types2/main.go"
 mode = "compile"
+desc = "Declare the string before formatting it."
 hint = "Make sure 'who' is declared and assigned a value before using it."
 
 [[exercises]]
 name = "primitive_types3"
 path = "exercises/primitive_types/primitive_types3/main.go"
 mode = "compile"
+desc = "Declare the variables passed to Printf."
 hint = "fmt.Printf() can take multiple variables as parameters. Try declaring those variables."
 
 [[exercises]]
 name = "primitive_types4"
 path = "exercises/primitive_types/primitive_types4/main.go"
 mode = "compile"
+desc = "Store a character in a byte value."
 hint = """
 byte can hold values from 0 to 255. Could it store a character?"""
 
@@ -151,6 +170,7 @@ byte can hold values from 0 to 255. Could it store a character?"""
 name = "primitive_types5"
 path = "exercises/primitive_types/primitive_types5/main.go"
 mode = "compile"
+desc = "Use Go's real numeric type names."
 hint = """
 These names seem misleading, no? But they are close to being correct.
 Check this documentation to understand the variety of
@@ -180,6 +200,7 @@ return utf8.RuneCountInString(s)
 name = "arrays1"
 path = "exercises/arrays/arrays1/main.go"
 mode = "compile"
+desc = "Arrays are zero-indexed — fix the out-of-range access."
 hint = """
 Arrays use zero-based indexing."""
 
@@ -187,6 +208,7 @@ Arrays use zero-based indexing."""
 name = "arrays2"
 path = "exercises/arrays/arrays2/main.go"
 mode = "compile"
+desc = "An array can't mix types; every element shares one type."
 hint = """
 Unlike languages like Python or Ruby, Go does not allow arrays with mixed data types."""
 
@@ -194,6 +216,7 @@ Unlike languages like Python or Ruby, Go does not allow arrays with mixed data t
 name = "slices1"
 path = "exercises/slices/slices1/main.go"
 mode = "compile"
+desc = "Create a slice with make, giving its element type."
 hint = """
 Slices can be created with the `make` function and must have a specified type."""
 
@@ -201,6 +224,7 @@ Slices can be created with the `make` function and must have a specified type.""
 name = "slices2"
 path = "exercises/slices/slices2/main.go"
 mode = "compile"
+desc = "Take a sub-slice using [low:high] bounds."
 hint = """
 Slices can be created from arrays using the [low:high] syntax."""
 
@@ -208,6 +232,7 @@ Slices can be created from arrays using the [low:high] syntax."""
 name = "slices3"
 path = "exercises/slices/slices3/main.go"
 mode = "compile"
+desc = "Add elements to a slice with append."
 hint = """
 Use the `append` function to add elements to an existing slice.
 Check the output after adding some elements.
@@ -218,6 +243,7 @@ For more on the `append` function, refer to: https://go.dev/ref/spec#Appending_a
 name = "slices4"
 path = "exercises/slices/slices4/main_test.go"
 mode = "test"
+desc = "Index a slice within its bounds."
 hint = """
 Check the slice indices to ensure they fall within the bounds of the names slice.
 
@@ -227,6 +253,7 @@ For more information: https://go.dev/ref/spec#Appending_and_copying_slices"""
 name = "maps1"
 path = "exercises/maps/maps1/main.go"
 mode = "compile"
+desc = "Declare a map's key and value types."
 hint = """
 Maps have types for both keys and values.
 
@@ -240,6 +267,7 @@ Check the spec for more info: https://go.dev/ref/spec#Map_types"""
 name = "maps2"
 path = "exercises/maps/maps2/main.go"
 mode = "compile"
+desc = "Initialize a map with a literal."
 hint = """
 Similar to `maps1`, but you can initialize a new map in the same line using a different syntax."""
 
@@ -247,6 +275,7 @@ Similar to `maps1`, but you can initialize a new map in the same line using a di
 name = "maps3"
 path = "exercises/maps/maps3/main_test.go"
 mode = "test"
+desc = "Look up the correct key in a map."
 hint = """
 Verify that the keys used to access map values match the keys defined in the phoneBook map."""
 
@@ -254,6 +283,7 @@ Verify that the keys used to access map values match the keys defined in the pho
 name = "range1"
 path = "exercises/range/range1/main.go"
 mode = "compile"
+desc = "Iterate a slice with range."
 hint = """
 Use the `range` keyword to iterate over collections like arrays, slices, and maps."""
 
@@ -261,6 +291,7 @@ Use the `range` keyword to iterate over collections like arrays, slices, and map
 name = "range2"
 path = "exercises/range/range2/main.go"
 mode = "compile"
+desc = "Iterate a map's keys and values with range."
 hint = """
 Use the `range` keyword to iterate over map values. Unlike arrays and slices, maps are iterated over by keys and values."""
 
@@ -268,6 +299,7 @@ Use the `range` keyword to iterate over map values. Unlike arrays and slices, ma
 name = "range3"
 path = "exercises/range/range3/main_test.go"
 mode = "test"
+desc = "Use range to collect the even numbers."
 hint = """
 Use a `for` loop with `range` to check if each number is even and append it to the `evenNumbers` slice."""
 
@@ -305,6 +337,7 @@ c.N++
 name = "structs1"
 path = "exercises/structs/structs1/main.go"
 mode = "compile"
+desc = "Define the struct's fields."
 hint = """
 Structs are created using the `type structName struct {}` syntax.
 Fields inside the brackets must have their types declared along with their names."""
@@ -313,6 +346,7 @@ Fields inside the brackets must have their types declared along with their names
 name = "structs2"
 path = "exercises/structs/structs2/main.go"
 mode = "compile"
+desc = "Embed a struct instead of adding a plain field."
 hint = """
 Embedding a struct is done using just the struct name.
 
@@ -322,6 +356,7 @@ After embedding, fields can be accessed directly through the base struct without
 name = "structs3"
 path = "exercises/structs/structs3/main.go"
 mode = "compile"
+desc = "Attach a method to a struct."
 hint = """
 Add a function to a struct by defining it as follows:
 
@@ -421,6 +456,7 @@ switch c { case Red: return "Red"; case Green: return "Green"; case Blue: return
 name = "anonymous_functions1"
 path = "exercises/anonymous_functions/anonymous_functions1/main.go"
 mode = "compile"
+desc = "Pass an argument to an anonymous function."
 hint = """
 The function needs a string to print."""
 
@@ -428,6 +464,7 @@ The function needs a string to print."""
 name = "anonymous_functions2"
 path = "exercises/anonymous_functions/anonymous_functions2/main.go"
 mode = "compile"
+desc = "Match a closure's signature and use its argument."
 hint = """
 You should call the function with a parameter."""
 
@@ -435,6 +472,7 @@ You should call the function with a parameter."""
 name = "anonymous_functions3"
 path = "exercises/anonymous_functions/anonymous_functions3/main.go"
 mode = "compile"
+desc = "Return a closure that remembers state across calls."
 hint = """
 1 - The `updateStatus()` function should return an order status index like `orderStatus[index]`.
 2 - You may need to call `anonymous_func` once more."""
@@ -518,6 +556,7 @@ return errors.Join(errs...)
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
+desc = "Write one function that works for any type."
 hint = """
 Generic functions prevent code duplication by allowing the same function to handle different types.
 
@@ -532,6 +571,7 @@ func FuncName[T any](value T) {
 name = "generics2"
 path = "exercises/generics/generics2/main.go"
 mode = "compile"
+desc = "Constrain a generic to add numbers of any numeric type."
 hint = """
 Type mismatches in arithmetic operations are not allowed, but generics enable functions to handle different types while maintaining the same logic.
 
@@ -576,6 +616,7 @@ for i := 1; i <= n; i++ { if !yield(i) { return } }
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"
+desc = "Print from goroutines and wait with a WaitGroup."
 hint = """
 We have multiple printers (though these may also be non-functional).
 
@@ -586,6 +627,7 @@ Our goal is to print something, but what exactly should be printed?
 name = "concurrent2"
 path = "exercises/concurrent/concurrent2/main_test.go"
 mode = "test"
+desc = "Safely increment a counter from many goroutines."
 hint = """
 Updating a variable from multiple goroutines can lead to a data race. A data race occurs when multiple goroutines read and write the same variable simultaneously without proper synchronization.
 
@@ -598,6 +640,7 @@ Learn more about mutexes to handle this issue: https://pkg.go.dev/sync#Mutex.
 name = "concurrent3"
 path = "exercises/concurrent/concurrent3/main_test.go"
 mode = "test"
+desc = "Send values over a channel and receive them."
 hint = """
 Writing messages to closed channels will cause a panic.
 

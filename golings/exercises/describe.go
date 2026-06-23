@@ -17,6 +17,11 @@ var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
 // from the first meaningful comment in the exercise file (the line after the
 // "// <name>" header). Returns "" when there's nothing useful.
 func (e Exercise) Description() string {
+	// An explicit desc in info.toml wins (specific, non-spoiler one-liner).
+	if strings.TrimSpace(e.Desc) != "" {
+		return strings.TrimSpace(e.Desc)
+	}
+
 	data, err := os.ReadFile(e.Path)
 	if err != nil {
 		return ""
