@@ -53,11 +53,50 @@ func (m Model) View() string {
 	if m.width == 0 {
 		return "loading…"
 	}
+	if m.phase == phaseWelcome {
+		return m.welcome()
+	}
 	return strings.Join([]string{
 		m.header(),
 		m.body(),
 		m.footer(),
 	}, "\n")
+}
+
+var (
+	linkStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("12")).Underline(true)
+	labelStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Width(12)
+	markStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))
+	boxStyle   = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("6")).Padding(1, 3)
+)
+
+// welcome renders the splash screen shown before the main view.
+func (m Model) welcome() string {
+	title := titleStyle.Foreground(lipgloss.Color("14")).Render("🐹  golings")
+	tagline := dimStyle.Render("Learn Go the rustlings way — 97 exercises, basics → advanced")
+
+	meta := lipgloss.JoinVertical(lipgloss.Left,
+		labelStyle.Render("Repo")+linkStyle.Render("github.com/madhank93/golings"),
+		labelStyle.Render("Site")+linkStyle.Render("golings.madhan.app")+dimStyle.Render("  (coming soon)"),
+		labelStyle.Render("Maintainer")+"Madhan Kumaravelu  "+dimStyle.Render("(@madhank93)"),
+	)
+
+	how := lipgloss.JoinVertical(lipgloss.Left,
+		titleStyle.Render("How it works"),
+		"  • Open the highlighted exercise's file and make it compile/pass",
+		"  • Remove the  "+markStyle.Render("// I AM NOT DONE")+"  marker when you think it's done",
+		"  • Save — golings auto-runs it; "+titleStyle.Render("tests AND golangci-lint")+" must pass",
+		"  • It then auto-advances to the next exercise",
+	)
+
+	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · h hint · r reset · n next · q quit")
+	cta := markStyle.Render("press any key to start →")
+
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		title, tagline, "", meta, "", how, "", keys, "", cta,
+	)
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, boxStyle.Render(content))
 }
 
 func (m Model) header() string {

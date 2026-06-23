@@ -11,6 +11,14 @@ import (
 	"github.com/mauricioabreu/golings/golings/exercises"
 )
 
+// phase is which screen the TUI is showing.
+type phase int
+
+const (
+	phaseWelcome phase = iota
+	phaseMain
+)
+
 // item is one row in the left pane: either a topic header or an exercise.
 type item struct {
 	isHeader    bool
@@ -24,6 +32,8 @@ type Model struct {
 	infoFile string
 	tracker  *exercises.Tracker
 	watchCh  chan string
+
+	phase phase
 
 	items  []item
 	cursor int // index into items; always points at an exercise row

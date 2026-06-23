@@ -57,6 +57,7 @@ func testModel(t *testing.T) Model {
 	}
 	m := Model{
 		tracker:  tr,
+		phase:    phaseMain,
 		keys:     defaultKeys(),
 		help:     help.New(),
 		progress: progress.New(),
@@ -83,6 +84,23 @@ func TestVerifiedDoneMarksAndAdvances(t *testing.T) {
 	}
 	if m.current().Name == start {
 		t.Errorf("expected cursor to advance past %s", start)
+	}
+}
+
+func TestWelcomeDismiss(t *testing.T) {
+	m := testModel(t)
+	m.phase = phaseWelcome
+	nm, _ := m.Update(tea.WindowSizeMsg{Width: 100, Height: 40})
+	m = nm.(Model)
+
+	if !strings.Contains(m.View(), "golings") || !strings.Contains(m.View(), "press any key") {
+		t.Error("welcome screen missing expected content")
+	}
+	// any non-quit key dismisses to the main screen
+	nm, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'x'}})
+	m = nm.(Model)
+	if m.phase != phaseMain {
+		t.Error("expected welcome to dismiss to main screen")
 	}
 }
 

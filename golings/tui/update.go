@@ -17,6 +17,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
+		if m.phase == phaseWelcome {
+			if key.Matches(msg, m.keys.Quit) {
+				return m, tea.Quit
+			}
+			m.phase = phaseMain
+			m.output.SetContent(m.detail())
+			return m, nil
+		}
 		return m.handleKey(msg)
 
 	case spinner.TickMsg:
