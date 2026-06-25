@@ -21,6 +21,21 @@ mise install             # provisions Go 1.26, gopls, golangci-lint
 mise run watch           # launches the interactive TUI
 ```
 
+## Use in GitHub Codespaces
+
+Prefer a zero-setup cloud environment? Open the repo in a
+[devcontainer](https://containers.dev/) (GitHub Codespaces, or VS Code's
+**Dev Containers** extension). It installs **mise** and provisions the exact same
+pinned toolchain as local — Go 1.26, gopls, golangci-lint — then builds the
+binary. Once the container is ready, just run:
+
+```sh
+mise run watch
+```
+
+`go`, `gopls`, and `golangci-lint` are on your `PATH` in the integrated terminal,
+so editor completion and linting work too.
+
 ## How it works
 
 1. The TUI highlights the next unfinished exercise and shows its file path.

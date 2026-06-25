@@ -1,11 +1,13 @@
 {
 	"name": "golings",
 	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
-	"postCreateCommand": "go install github.com/mauricioabreu/golings/golings@latest",
-	"features": {
-		"ghcr.io/devcontainers/features/go:1": {
-			"version": "latest"
-		},
-		"ghcr.io/stuartleeks/dev-container-features/shell-history:0": {}
+	"postCreateCommand": "curl -fsSL https://mise.run | sh && echo 'eval \"$(~/.local/bin/mise activate bash)\"' >> ~/.bashrc && ~/.local/bin/mise trust && ~/.local/bin/mise install && ~/.local/bin/mise run build",
+	"remoteEnv": {
+		"PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": ["golang.go"]
+		}
 	}
 }
