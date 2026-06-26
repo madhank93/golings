@@ -18,6 +18,7 @@ export default defineConfig({
 		starlight({
 			title: 'golings',
 			description: DESCRIPTION,
+			customCss: ['./src/styles/hero.css'],
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/madhank93/golings' },
 			],
