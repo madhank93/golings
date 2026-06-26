@@ -37,6 +37,7 @@ var (
 	secOkStyle   = lipgloss.NewStyle().Bold(true).Foreground(cGreen)
 	secWarnStyle = lipgloss.NewStyle().Bold(true).Foreground(cAmber)
 	secHintStyle = lipgloss.NewStyle().Bold(true).Foreground(cTeal)
+	secOutStyle  = lipgloss.NewStyle().Bold(true).Foreground(cDim)
 )
 
 // topicOf extracts the topic directory from an exercise path.
@@ -232,15 +233,23 @@ func (m Model) detail() string {
 	case !m.hasResult:
 		parts = append(parts, dimStyle.Render("Press ⏎ to run this exercise (or just edit the file and save)."))
 	case m.status == exercises.StatusFailing:
-		parts = append(parts, section(secErrStyle.Render("Error:"), m.result.Err+"\n"+m.result.Out))
+		parts = append(parts, section(secErrStyle.Render("Status:"), "Doesn't compile or a test failed."))
+		if e := strings.TrimSpace(m.result.Err); e != "" {
+			parts = append(parts, section(secErrStyle.Render("Error:"), e))
+		}
 	case m.status == exercises.StatusPending:
-		body := "Compiles and tests pass — remove the '// I AM NOT DONE' marker to complete it.\n" + m.result.Out
-		parts = append(parts, section(secOkStyle.Render("Passed:"), body))
+		parts = append(parts, section(secOkStyle.Render("Status:"), "Compiles and tests pass — remove the '// I AM NOT DONE' marker to complete it."))
 	case m.status == exercises.StatusLintFail:
-		parts = append(parts, section(secWarnStyle.Render("Lint issues:"), m.result.Out))
+		parts = append(parts, section(secWarnStyle.Render("Status:"), "Lint issues — fix them to complete the exercise."))
 	case m.status == exercises.StatusDone:
-		body := "Passed and lint-clean! Press n for the next exercise.\n" + m.result.Out
-		parts = append(parts, section(secOkStyle.Render("Done:"), body))
+		parts = append(parts, section(secOkStyle.Render("Status:"), "Passed and lint-clean! Press n for the next exercise."))
+	}
+
+	// Program / tool output as its own labelled section, never glued to the status.
+	if m.hasResult {
+		if out := strings.TrimSpace(m.result.Out); out != "" {
+			parts = append(parts, section(secOutStyle.Render("Output:"), out))
+		}
 	}
 
 	return strings.Join(parts, "\n\n")
