@@ -15,7 +15,7 @@ const (
 	infoFile  = "info.toml"
 	outDir    = "web/src/content/docs/curriculum"          // overview (index.md)
 	topicsDir = "web/src/content/docs/curriculum/topics"   // one page per topic
-	baseURL   = "/golings"                                 // GitHub Pages project base; "/" with a custom domain
+	baseURL   = ""                                         // empty = served at root (custom domain); use "/golings" for project pages
 	repoBlob  = "https://github.com/madhank93/golings/blob/main"
 	exerciseR = "exercises"
 )
