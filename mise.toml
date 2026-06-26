@@ -4,6 +4,7 @@
 [tools]
 go = "1.26.4"
 node = "22"
+goreleaser = "latest"
 "go:golang.org/x/tools/gopls" = "latest"
 "go:github.com/golangci/golangci-lint/cmd/golangci-lint" = "latest"
 
@@ -24,6 +25,10 @@ run = "./bin/golings watch"
 description = "List all exercises + progress"
 depends = ["build"]
 run = "./bin/golings list"
+
+[tasks.release-check]
+description = "Validate the goreleaser config and build a local snapshot"
+run = "goreleaser check && goreleaser build --snapshot --clean --single-target"
 
 [tasks.update]
 description = "Pull the latest changes without losing your exercise progress"
