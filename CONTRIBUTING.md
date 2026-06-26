@@ -25,11 +25,8 @@ The exercise mode is very important. It tells `golings` how to run the exercise.
 ## Running the test suite
 
 ```sh
-cd golings
-go test -coverprofile=coverage.out -v $$(go list ./... | grep -v fixtures/error1)
+mise run test
 ```
-
-If you have `make` installed it is easy as running `make test`
 
 ## Issues and pull requests
 
