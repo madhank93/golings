@@ -10,6 +10,12 @@ import (
 )
 
 func TestExercises(t *testing.T) {
+	// Fixture info.toml files live outside the exercises/ tree, so disable path
+	// confinement for the suite. Production keeps the default root.
+	old := exercises.PathRoot
+	exercises.PathRoot = ""
+	defer func() { exercises.PathRoot = old }()
+
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Exercises Suite")
 }

@@ -52,7 +52,7 @@ func (s *Tracker) Save() error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(s.path, data, 0o644)
+	return os.WriteFile(s.path, data, 0o600)
 }
 
 // IsDone reports whether the exercise has a recorded completion.

@@ -2,6 +2,7 @@ package exercises
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/pelletier/go-toml/v2"
@@ -24,6 +25,14 @@ func List(infoFile string) ([]Exercise, error) {
 
 	if err := toml.Unmarshal(data, &info); err != nil {
 		return info.Exercises, err
+	}
+
+	// Reject any exercise whose path could escape the exercises tree before it
+	// is ever handed to `go run`, golangci-lint, reset, or the editor.
+	for _, ex := range info.Exercises {
+		if err := validatePath(ex.Path); err != nil {
+			return nil, fmt.Errorf("invalid exercise %q: %w", ex.Name, err)
+		}
 	}
 
 	return info.Exercises, nil
