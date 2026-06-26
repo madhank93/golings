@@ -22,6 +22,34 @@ hint = "hints are cool"
 
 The exercise mode is very important. It tells `golings` how to run the exercise. If you are adding an exercise that expects the user to only make it compilable, use `compile` mode. If it has a test suite and you need the user to actually have the tests passing, use `test`.
 
+### Describe the task in the file, not in `info.toml`
+
+Each exercise file carries its own short instruction as a comment. This is the
+**single source of truth** for the task: golings parses the first meaningful
+comment line and shows it as the exercise's description in both the TUI and the
+docs site, so there's nothing to keep in sync.
+
+```go
+// variables4
+// Make me compile!
+//
+// See what happens when a block reuses a name with a new type.
+
+// I AM NOT DONE
+package main
+```
+
+Guidelines:
+
+- Keep the first comment line a concise, **non-spoiler** one-liner (it becomes
+  the catalog description). Add one or two extra comment lines below it only if
+  the learner needs more direction — say *what* to fix, never the answer.
+- The `// <name>` and `// Make me compile!` header lines are ignored, as is the
+  `// I AM NOT DONE` marker.
+- Only add a `desc = "..."` field in `info.toml` if you need to **override** the
+  file comment (rarely needed). Prefer the file comment so intent lives in one
+  place.
+
 ## Running the test suite
 
 ```sh

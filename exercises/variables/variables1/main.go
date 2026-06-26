@@ -1,5 +1,7 @@
 // variables1
 // Make me compile!
+//
+// Give the variable a name so it can be declared.
 
 // I AM NOT DONE
 package main

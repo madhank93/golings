@@ -1,5 +1,7 @@
 // variables6
 // Make me compile!
+//
+// Constants cannot be reassigned after declaration.
 
 // I AM NOT DONE
 package main

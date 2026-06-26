@@ -1,5 +1,7 @@
 // variables4
 // Make me compile!
+//
+// See what happens when a block reuses a name with a new type.
 
 // I AM NOT DONE
 package main
