@@ -1,144 +1,102 @@
 # golings
 
-[![build and test](https://github.com/mauricioabreu/golings/actions/workflows/test.yml/badge.svg)](https://github.com/mauricioabreu/golings/actions/workflows/test.yml)
+[![CI](https://github.com/madhank93/golings/actions/workflows/ci.yml/badge.svg)](https://github.com/madhank93/golings/actions/workflows/ci.yml)
+[![Docs](https://github.com/madhank93/golings/actions/workflows/pages.yml/badge.svg)](https://golings.madhan.app)
 
 ![gopher](misc/gopher-dance.gif)
 
-> rustlings but for golang this time
+> rustlings, but for Go.
 
-You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you don't, please go ahead and check out.
-`rustlings` is awesome. It is a CLI app designed to teach the awesome Rust programming language through exercises.
+Learn Go the [rustlings](https://github.com/rust-lang/rustlings) way: **97 small,
+broken-on-purpose exercises** you fix one at a time, from variables to
+concurrency, current through Go 1.26. An interactive terminal UI re-runs each
+exercise the moment you save and only lets you advance when the tests pass **and**
+`golangci-lint` is clean.
 
-`golings` has the very same idea, but for the [Go programming language](https://go.dev/)
+📖 **Docs & full curriculum: <https://golings.madhan.app>**
 
-After setting up all the tools required to run `golings` you have the task to fix tiny go programs.
+> This is a maintained fork of the original
+> [golings by mauricioabreu](https://github.com/mauricioabreu/golings), rebuilt
+> around a [mise](https://mise.jdx.dev/) toolchain, a Bubble Tea TUI, an expanded
+> 32-topic curriculum, and a docs site.
 
-## Installing
+## Quick start
 
-First, you need to have `go` installed. You can install it by visiting the [Go downloads page](https://go.dev/dl/)
-
-There are several ways to install `golings`
-
-### Option 1: GO install
-
-```sh
-go install github.com/mauricioabreu/golings/golings@latest
-```
-
-Add `go/bin` to your PATH if you want to run golings anywhere in your terminal. From the official docs:
-
-> The install directory is controlled by the GOPATH and GOBIN environment variables. If GOBIN is set, binaries are installed to that directory. If GOPATH is set, binaries are installed to the bin subdirectory of the first directory in the GOPATH list. Otherwise, binaries are installed to the bin subdirectory of the default GOPATH ($HOME/go or %USERPROFILE%\go).
-
-#### Windows installation
-
-Some tests depend on `CGO` which is not installed by default.
-
-1. Install scoop package manager [Scoop Homepage](https://scoop.sh)
-    ```powershell
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-    ```
-1. Install MINGW using scoop
-    ```powershell
-    scoop install mingw
-    ```
-1. Close the Powershell session
-
-
-### Option 2: Binaries
-
-Go to the [releases page](https://github.com/mauricioabreu/golings/releases) and choose the option that best fits your environment.
-
-### Option 3: Web version (playground)
-
-[@Grubba27](https://github.com/Grubba27/) worked hard to create a web version: https://golings.vercel.app/
-
-It's pretty awesome and uses the playground so you can play with the exercises without installing anything.
-
-### Option 4: DevContainer
-
-1. Install Docker/Podman & VSCode & Configure
-1. Clone the repository and open it in VSCode.
-1. You will be prompted to reopen the code in a devcontainer. The container is pre-configured with go and all of the tools needed to debug go code.
-1. Open a new embeded terminal and run `golings watch` to start the exercises.
-
-## Doing exercises
-
-All the exercises can be found in the directory `golings/exercises/<topic>`. For every topic there is an additional README file with some resources to get you started on the topic. We really recommend that you have a look at them before you start.
-
-Now you have the task to fix all the programs. Some of them don't compile, and you need to fix them. Some of them compile, but have tests and you need to write some code to have them all green (these are the `compile` and `test` modes).
-
-Clone the repository:
+This project uses [mise](https://mise.jdx.dev/) to pin the toolchain (Go 1.26,
+gopls, golangci-lint) — you don't need Go installed globally.
 
 ```sh
-git clone git@github.com:mauricioabreu/golings.git
+brew install mise        # macOS; see mise docs for other platforms
+git clone https://github.com/madhank93/golings
+cd golings
+mise install             # provisions Go, gopls, golangci-lint
+mise run watch           # build + launch the interactive TUI
 ```
 
-To run the exercises in the recommended order while taking advantage of fast feedback loop, use the _watch_ command:
+That's it. The TUI highlights the next unfinished exercise — open the file, make
+it compile / pass its tests, remove the `// I AM NOT DONE` marker, and save.
+
+### GitHub Codespaces
+
+Open the repo in a Codespace (or VS Code **Dev Containers**). The devcontainer
+installs mise and provisions the same pinned toolchain, then `mise run watch`.
+
+## Working through the exercises
+
+Exercises live in `exercises/<topic>/`. Each topic has a README with resources —
+read it before you start.
+
+In the watch TUI:
+
+| Key | Action |
+| --- | --- |
+| `↑` / `↓` (or `k` / `j`) | move between exercises |
+| `⏎` | run the selected exercise |
+| `e` | open the exercise in `$VISUAL` / `$EDITOR` (falls back to `vi`) |
+| `h` | toggle the hint |
+| `r` | reset the exercise to its original state |
+| `n` | jump to the next unfinished exercise |
+| `q` | quit |
+
+## Common commands
 
 ```sh
-golings watch
+mise run watch           # interactive watch loop (the main one)
+mise run list            # list every exercise + your progress
+mise run update          # pull latest changes without losing your progress
+mise run test            # test the tool itself (-race)
+mise run lint            # lint the tool source
+mise run site            # run the docs site locally
 ```
 
-For Windows:
-```powershell
-$env:CGO_ENABLED=1
-golings watch
-```
+`mise run update` shelves your in-progress edits, pulls, then restores them. Your
+completion record (`.golings-state.json`) is untracked, so your done count and
+streak survive every update.
 
-This command will run golings in interactive mode. Every time you save a file it will verify if the code is correct.
+## Editor setup (VS Code)
 
-To run the next pending exercise:
-
-```sh
-golings run next
-```
-
-If you want to run a single exercise:
-
-```sh
-golings run variables1
-```
-
-In case you are stuck and need a hint:
-
-```sh
-golings hint variables1
-```
-
-To list all exercise while checking your progress:
-
-```sh
-golings list
-```
-
-To compile and run all the exercises:
-
-```sh
-golings verify
-```
-
-If you need help with CLI commands:
-
-```sh
-golings --help
-```
-
-A demo running the command `golings run <exercise name>`
-
-![demo](misc/demo.gif)
+The repo ships a `.vscode/` config. On open, VS Code prompts you to install the
+recommended **Go** and **mise** extensions — accept both and reload. The mise
+extension feeds VS Code the pinned `go`/`gopls`, so completion, format-on-save,
+and `golangci-lint` work even when VS Code is launched outside a mise shell.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Learning resources
 
-* [Golang official tutorial](https://go.dev/doc/tutorial/)
-* [Go by example](https://gobyexample.com)
-* [Aprenda Go](https://www.youtube.com/playlist?list=PLCKpcjBB_VlBsxJ9IseNxFllf-UFEXOdg)
+* [A Tour of Go](https://go.dev/tour/)
+* [Go by Example](https://gobyexample.com)
+* [Effective Go](https://go.dev/doc/effective_go)
 
 ## Other 'lings
 
 * [rustlings](https://github.com/rust-lang/rustlings)
 * [ziglings](https://github.com/ratfactor/ziglings)
+
+## Credits
+
+* Original [golings](https://github.com/mauricioabreu/golings) by Maurício Antunes.
+* Gopher artwork by [@egonelbre](https://github.com/egonelbre/gophers) (CC0) and
+  the Go gopher by Renée French.
