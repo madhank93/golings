@@ -15,11 +15,11 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | Topic | Exercises | Concepts |
 |---|---|---|
 | variables | 6 | declaration, `:=`, zero values, constants |
-| functions | 4 | params, multiple returns |
-| more_functions | 2 | recursion, variadic + slice spread |
+| primitive_types | 5 | numeric types, `byte`, conversions |
 | if | 2 | conditionals |
 | switch | 3 | `switch`, conditionless switch |
-| primitive_types | 5 | numeric types, `byte`, conversions |
+| functions | 4 | params, multiple returns |
+| more_functions | 2 | recursion, variadic + slice spread |
 | strings | 2 | `strings` pkg, bytes vs runes (UTF-8) |
 
 ### 2. Collections & Loops
@@ -37,8 +37,8 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 ### 3. Types & Methods
 | Topic | Exercises | Concepts |
 |---|---|---|
-| pointers | 3 | `&`/`*`, mutation, value vs pointer |
 | structs | 3 | fields, embedding, methods |
+| pointers | 3 | `&`/`*`, mutation, value vs pointer |
 | methods | 2 | value vs pointer receivers, named types |
 | interfaces | 4 | implicit satisfaction, Stringer, type switch, embedding |
 | enums | 2 | `iota`, `String()` |

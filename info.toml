@@ -41,6 +41,72 @@ hint = """
 Constants can't be changed."""
 
 [[exercises]]
+name = "primitive_types1"
+path = "exercises/primitive_types/primitive_types1/main.go"
+mode = "compile"
+hint = "Update the code to reflect the store closing before the second check."
+
+[[exercises]]
+name = "primitive_types2"
+path = "exercises/primitive_types/primitive_types2/main.go"
+mode = "compile"
+hint = "Make sure 'who' is declared and assigned a value before using it."
+
+[[exercises]]
+name = "primitive_types3"
+path = "exercises/primitive_types/primitive_types3/main.go"
+mode = "compile"
+hint = "fmt.Printf() can take multiple variables as parameters. Try declaring those variables."
+
+[[exercises]]
+name = "primitive_types4"
+path = "exercises/primitive_types/primitive_types4/main.go"
+mode = "compile"
+hint = """
+byte can hold values from 0 to 255. Could it store a character?"""
+
+[[exercises]]
+name = "primitive_types5"
+path = "exercises/primitive_types/primitive_types5/main.go"
+mode = "compile"
+hint = """
+These names seem misleading, no? But they are close to being correct.
+Check this documentation to understand the variety of
+numeric data types: https://go.dev/ref/spec#Numeric_types"""
+
+[[exercises]]
+name = "if1"
+path = "exercises/if/if1/main_test.go"
+mode = "test"
+hint = "Use an if statement to compare a and b, and return the larger number."
+
+[[exercises]]
+name = "if2"
+path = "exercises/if/if2/main_test.go"
+mode = "test"
+hint = "Implement fooIfFizz function by using if and else statements."
+
+[[exercises]]
+name = "switch1"
+path = "exercises/switch/switch1/main.go"
+mode = "compile"
+hint = """
+Switch flow is missing a variable to evaluate the statement."""
+
+[[exercises]]
+name = "switch2"
+path = "exercises/switch/switch2/main.go"
+mode = "compile"
+hint = """
+Switch without a condition is possible, but that case statement needs a boolean evaluation."""
+
+[[exercises]]
+name = "switch3"
+path = "exercises/switch/switch3/main_test.go"
+mode = "test"
+hint = "Ensure that each case statement in a switch block has a condition."
+
+[[exercises]]
 name = "functions1"
 path = "exercises/functions/functions1/main.go"
 mode = "compile"
@@ -89,72 +155,6 @@ A variadic parameter is a slice inside the function:
 
 for _, n := range nums { total += n }
 """
-
-[[exercises]]
-name = "if1"
-path = "exercises/if/if1/main_test.go"
-mode = "test"
-hint = "Use an if statement to compare a and b, and return the larger number."
-
-[[exercises]]
-name = "if2"
-path = "exercises/if/if2/main_test.go"
-mode = "test"
-hint = "Implement fooIfFizz function by using if and else statements."
-
-[[exercises]]
-name = "switch1"
-path = "exercises/switch/switch1/main.go"
-mode = "compile"
-hint = """
-Switch flow is missing a variable to evaluate the statement."""
-
-[[exercises]]
-name = "switch2"
-path = "exercises/switch/switch2/main.go"
-mode = "compile"
-hint = """
-Switch without a condition is possible, but that case statement needs a boolean evaluation."""
-
-[[exercises]]
-name = "switch3"
-path = "exercises/switch/switch3/main_test.go"
-mode = "test"
-hint = "Ensure that each case statement in a switch block has a condition."
-
-[[exercises]]
-name = "primitive_types1"
-path = "exercises/primitive_types/primitive_types1/main.go"
-mode = "compile"
-hint = "Update the code to reflect the store closing before the second check."
-
-[[exercises]]
-name = "primitive_types2"
-path = "exercises/primitive_types/primitive_types2/main.go"
-mode = "compile"
-hint = "Make sure 'who' is declared and assigned a value before using it."
-
-[[exercises]]
-name = "primitive_types3"
-path = "exercises/primitive_types/primitive_types3/main.go"
-mode = "compile"
-hint = "fmt.Printf() can take multiple variables as parameters. Try declaring those variables."
-
-[[exercises]]
-name = "primitive_types4"
-path = "exercises/primitive_types/primitive_types4/main.go"
-mode = "compile"
-hint = """
-byte can hold values from 0 to 255. Could it store a character?"""
-
-[[exercises]]
-name = "primitive_types5"
-path = "exercises/primitive_types/primitive_types5/main.go"
-mode = "compile"
-hint = """
-These names seem misleading, no? But they are close to being correct.
-Check this documentation to understand the variety of
-numeric data types: https://go.dev/ref/spec#Numeric_types"""
 
 [[exercises]]
 name = "strings1"
@@ -272,6 +272,35 @@ hint = """
 Use a `for` loop with `range` to check if each number is even and append it to the `evenNumbers` slice."""
 
 [[exercises]]
+name = "structs1"
+path = "exercises/structs/structs1/main.go"
+mode = "compile"
+hint = """
+Structs are created using the `type structName struct {}` syntax.
+Fields inside the brackets must have their types declared along with their names."""
+
+[[exercises]]
+name = "structs2"
+path = "exercises/structs/structs2/main.go"
+mode = "compile"
+hint = """
+Embedding a struct is done using just the struct name.
+
+After embedding, fields can be accessed directly through the base struct without specifying the full path, but you can if needed."""
+
+[[exercises]]
+name = "structs3"
+path = "exercises/structs/structs3/main.go"
+mode = "compile"
+hint = """
+Add a function to a struct by defining it as follows:
+
+func (s *StructHere) doSomething() {
+
+}
+"""
+
+[[exercises]]
 name = "pointers1"
 path = "exercises/pointers/pointers1/main_test.go"
 mode = "test"
@@ -299,35 +328,6 @@ hint = """
 Increment the field through the pointer receiver:
 
 c.N++
-"""
-
-[[exercises]]
-name = "structs1"
-path = "exercises/structs/structs1/main.go"
-mode = "compile"
-hint = """
-Structs are created using the `type structName struct {}` syntax.
-Fields inside the brackets must have their types declared along with their names."""
-
-[[exercises]]
-name = "structs2"
-path = "exercises/structs/structs2/main.go"
-mode = "compile"
-hint = """
-Embedding a struct is done using just the struct name.
-
-After embedding, fields can be accessed directly through the base struct without specifying the full path, but you can if needed."""
-
-[[exercises]]
-name = "structs3"
-path = "exercises/structs/structs3/main.go"
-mode = "compile"
-hint = """
-Add a function to a struct by defining it as follows:
-
-func (s *StructHere) doSomething() {
-
-}
 """
 
 [[exercises]]

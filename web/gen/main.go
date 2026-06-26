@@ -27,9 +27,9 @@ type tier struct {
 }
 
 var tiers = []tier{
-	{"Beginner · Fundamentals", []string{"variables", "functions", "more_functions", "if", "switch", "primitive_types", "strings"}},
+	{"Beginner · Fundamentals", []string{"variables", "primitive_types", "if", "switch", "functions", "more_functions", "strings"}},
 	{"Beginner · Collections & Loops", []string{"arrays", "slices", "maps", "range"}},
-	{"Intermediate · Types & Methods", []string{"pointers", "structs", "methods", "interfaces", "enums"}},
+	{"Intermediate · Types & Methods", []string{"structs", "pointers", "methods", "interfaces", "enums"}},
 	{"Intermediate · Functions & Errors", []string{"anonymous_functions", "defer", "errors"}},
 	{"Intermediate · Generics & Modern Go", []string{"generics", "modern"}},
 	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns"}},
