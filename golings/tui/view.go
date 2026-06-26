@@ -38,6 +38,7 @@ var (
 	secWarnStyle = lipgloss.NewStyle().Bold(true).Foreground(cAmber)
 	secHintStyle = lipgloss.NewStyle().Bold(true).Foreground(cTeal)
 	secOutStyle  = lipgloss.NewStyle().Bold(true).Foreground(cDim)
+	searchStyle  = lipgloss.NewStyle().Bold(true).Foreground(cAmber)
 )
 
 // topicOf extracts the topic directory from an exercise path.
@@ -146,9 +147,15 @@ func (m Model) body() string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, left, right)
 }
 
-// list renders the windowed topic/exercise list around the cursor.
+// list renders the windowed topic/exercise list around the cursor. While
+// filtering it collapses to a flat, query-narrowed list with a search prompt.
 func (m Model) list(height int) string {
+	if m.filtering {
+		return m.filteredList(height)
+	}
+
 	var lines []string
+	cursorLine := 0
 	for i, it := range m.items {
 		if it.isHeader {
 			lines = append(lines, topicStyle.Render(fmt.Sprintf("%s (%d/%d)", it.topic, it.done, it.total)))
@@ -156,11 +163,37 @@ func (m Model) list(height int) string {
 		}
 		row := "  " + m.glyph(it.ex) + " " + it.ex.Name
 		if i == m.cursor {
+			cursorLine = len(lines)
 			row = selectedStyle.Render("→ " + m.glyph(it.ex) + " " + it.ex.Name)
 		}
 		lines = append(lines, row)
 	}
-	return windowLines(lines, m.cursorLine(), height)
+	return windowLines(lines, cursorLine, height)
+}
+
+// filteredList renders the search prompt plus only the matching exercises,
+// each prefixed with its topic so flattened rows stay unambiguous.
+func (m Model) filteredList(height int) string {
+	lines := []string{searchStyle.Render("/") + m.filter + "▌", ""}
+	cursorLine := 0
+	matches := 0
+	for i, it := range m.items {
+		if it.isHeader || !m.matchesFilter(it.ex) {
+			continue
+		}
+		matches++
+		if i == m.cursor {
+			cursorLine = len(lines)
+			lines = append(lines, selectedStyle.Render("→ "+m.glyph(it.ex)+" "+it.ex.Name))
+			continue
+		}
+		label := dimStyle.Render(topicOf(it.ex.Path)+"/") + it.ex.Name
+		lines = append(lines, "  "+m.glyph(it.ex)+" "+label)
+	}
+	if matches == 0 {
+		lines = append(lines, dimStyle.Render("  no matches"))
+	}
+	return windowLines(lines, cursorLine, height)
 }
 
 // glyph returns the colored status marker for an exercise row (cheap, no run).
@@ -268,9 +301,6 @@ func (m *Model) refreshOutput() {
 	}
 	m.output.SetContent(lipgloss.NewStyle().Width(w).Render(m.detail()))
 }
-
-// cursorLine maps the cursor (index into items) to its rendered line number.
-func (m Model) cursorLine() int { return m.cursor }
 
 // windowLines returns at most height lines centered on the focus line.
 func windowLines(lines []string, focus, height int) string {

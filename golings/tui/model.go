@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -55,11 +56,43 @@ type Model struct {
 	spinner  spinner.Model
 	output   viewport.Model
 
+	filtering bool   // typing a search query in the list pane
+	filter    string // current search query
+
 	total  int
 	width  int
 	height int
 
 	notice string // transient message (e.g. after reset)
+}
+
+// matchesFilter reports whether an exercise matches the current search query
+// (case-insensitive substring on its name or topic). An empty query matches all.
+func (m Model) matchesFilter(ex exercises.Exercise) bool {
+	if m.filter == "" {
+		return true
+	}
+	q := strings.ToLower(m.filter)
+	return strings.Contains(strings.ToLower(ex.Name), q) ||
+		strings.Contains(strings.ToLower(topicOf(ex.Path)), q)
+}
+
+// snapToFilter keeps the cursor on a row that matches the query; if the current
+// row no longer matches, it jumps to the first matching exercise.
+func (m *Model) snapToFilter() {
+	if m.cursor >= 0 && m.cursor < len(m.items) &&
+		!m.items[m.cursor].isHeader && m.matchesFilter(m.items[m.cursor].ex) {
+		return
+	}
+	for i, it := range m.items {
+		if it.isHeader {
+			continue
+		}
+		if m.matchesFilter(it.ex) {
+			m.cursor = i
+			return
+		}
+	}
 }
 
 // New builds the model, loads exercises and saved progress, and starts the
@@ -162,7 +195,8 @@ func (m *Model) moveToFirstPending() {
 	}
 }
 
-// moveCursor steps to the next/previous exercise row, skipping headers.
+// moveCursor steps to the next/previous exercise row, skipping headers (and,
+// while filtering, any rows that don't match the query).
 func (m *Model) moveCursor(delta int) {
 	i := m.cursor
 	for {
@@ -170,10 +204,14 @@ func (m *Model) moveCursor(delta int) {
 		if i < 0 || i >= len(m.items) {
 			return // out of range; keep current
 		}
-		if !m.items[i].isHeader {
-			m.cursor = i
-			return
+		if m.items[i].isHeader {
+			continue
 		}
+		if m.filtering && !m.matchesFilter(m.items[i].ex) {
+			continue
+		}
+		m.cursor = i
+		return
 	}
 }
 

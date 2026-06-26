@@ -56,6 +56,7 @@ In the watch TUI:
 | `h` | toggle the hint |
 | `r` | reset the exercise to its original state |
 | `n` | jump to the next unfinished exercise |
+| `/` | search exercises by name or topic (`⏎` runs the match, `Esc` cancels) |
 | `q` | quit |
 
 ## Common commands

@@ -76,9 +76,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if m.filtering {
+		return m.handleFilterKey(msg)
+	}
+
 	switch {
 	case key.Matches(msg, m.keys.Quit):
 		return m, tea.Quit
+
+	case key.Matches(msg, m.keys.Search):
+		m.filtering = true
+		m.filter = ""
+		m.refreshOutput()
+		return m, nil
 
 	case key.Matches(msg, m.keys.Up):
 		m.moveCursor(-1)
@@ -134,6 +144,56 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.output, cmd = m.output.Update(msg)
 	return m, cmd
+}
+
+// handleFilterKey drives the incremental search overlay in the list pane:
+// type to narrow, ↑/↓ to move within matches, Enter to run the highlighted
+// exercise, Esc to cancel.
+func (m Model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.Type {
+	case tea.KeyEsc:
+		m.filtering = false
+		m.filter = ""
+		m.onSelectionChange()
+		m.refreshOutput()
+		return m, nil
+
+	case tea.KeyEnter:
+		m.filtering = false
+		m.filter = ""
+		m.onSelectionChange()
+		m.verifying = true
+		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+
+	case tea.KeyUp:
+		m.moveCursor(-1)
+		m.onSelectionChange()
+		m.refreshOutput()
+		return m, nil
+
+	case tea.KeyDown:
+		m.moveCursor(1)
+		m.onSelectionChange()
+		m.refreshOutput()
+		return m, nil
+
+	case tea.KeyBackspace:
+		if r := []rune(m.filter); len(r) > 0 {
+			m.filter = string(r[:len(r)-1])
+		}
+		m.snapToFilter()
+		m.onSelectionChange()
+		m.refreshOutput()
+		return m, nil
+
+	case tea.KeyRunes:
+		m.filter += string(msg.Runes)
+		m.snapToFilter()
+		m.onSelectionChange()
+		m.refreshOutput()
+		return m, nil
+	}
+	return m, nil
 }
 
 func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {

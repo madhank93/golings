@@ -63,6 +63,7 @@ shell. No global Go install required.
 | `h` | toggle the hint |
 | `r` | reset the exercise to its original state |
 | `n` | jump to the next unfinished exercise |
+| `/` | search exercises by name or topic (type to narrow, `⏎` to run, `Esc` to cancel) |
 | `q` | quit |
 
 ### Streaks

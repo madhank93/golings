@@ -3,14 +3,15 @@ package tui
 import "github.com/charmbracelet/bubbles/key"
 
 type keyMap struct {
-	Up    key.Binding
-	Down  key.Binding
-	Run   key.Binding
-	Edit  key.Binding
-	Hint  key.Binding
-	Reset key.Binding
-	Next  key.Binding
-	Quit  key.Binding
+	Up     key.Binding
+	Down   key.Binding
+	Run    key.Binding
+	Edit   key.Binding
+	Hint   key.Binding
+	Reset  key.Binding
+	Next   key.Binding
+	Search key.Binding
+	Quit   key.Binding
 }
 
 func defaultKeys() keyMap {
@@ -43,6 +44,10 @@ func defaultKeys() keyMap {
 			key.WithKeys("n"),
 			key.WithHelp("n", "next"),
 		),
+		Search: key.NewBinding(
+			key.WithKeys("/"),
+			key.WithHelp("/", "search"),
+		),
 		Quit: key.NewBinding(
 			key.WithKeys("q", "ctrl+c"),
 			key.WithHelp("q", "quit"),
@@ -52,10 +57,10 @@ func defaultKeys() keyMap {
 
 // ShortHelp implements help.KeyMap.
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Up, k.Down, k.Run, k.Edit, k.Hint, k.Reset, k.Next, k.Quit}
+	return []key.Binding{k.Up, k.Down, k.Run, k.Edit, k.Hint, k.Reset, k.Next, k.Search, k.Quit}
 }
 
 // FullHelp implements help.KeyMap.
 func (k keyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{{k.Up, k.Down}, {k.Run, k.Edit, k.Hint, k.Reset}, {k.Next, k.Quit}}
+	return [][]key.Binding{{k.Up, k.Down}, {k.Run, k.Edit, k.Hint, k.Reset}, {k.Next, k.Search, k.Quit}}
 }
