@@ -8,7 +8,7 @@ import "fmt"
 
 func main() {
 	x := "TEN" // Don't change this line
-	fmt.Printf("x has the value %s", x)
+	fmt.Printf("x has the value %s\n", x)
 
 	if true {
 		x = 1
