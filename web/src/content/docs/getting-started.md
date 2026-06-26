@@ -36,6 +36,15 @@ mise run watch
 `go`, `gopls`, and `golangci-lint` are on your `PATH` in the integrated terminal,
 so editor completion and linting work too.
 
+## Editor setup (VS Code)
+
+The repo ships a `.vscode/` config. When you open it, VS Code prompts you to
+install the recommended extensions — the **Go** extension and the **mise**
+extension. Accept both and reload. The mise extension feeds VS Code the
+mise-pinned `go` and `gopls`, so completion, hover, go-to-definition, format on
+save, and `golangci-lint` work — even when VS Code is launched outside a mise
+shell. No global Go install required.
+
 ## How it works
 
 1. The TUI highlights the next unfinished exercise and shows its file path.
@@ -66,10 +75,24 @@ time it's shown. Reset an exercise (`r`) and its completion is dropped, so the
 streak adjusts automatically; miss a day and your next completion starts a fresh
 streak of 1.
 
+## Staying up to date
+
+To pull the latest exercises and tool improvements **without losing your
+progress**, run:
+
+```sh
+mise run update
+```
+
+It shelves your in-progress exercise edits, pulls, then restores them. Your
+completion record (`.golings-state.json`) is untracked, so it is never touched —
+your done count and streak survive every update.
+
 ## Other commands
 
 ```sh
 mise run list            # list every exercise + progress
+mise run update          # pull latest, keeping your progress
 ./bin/golings hint <name>   # print a hint
 ./bin/golings reset <name>  # restore an exercise to its original state
 mise run test            # test the tool itself (-race)

@@ -25,6 +25,27 @@ description = "List all exercises + progress"
 depends = ["build"]
 run = "./bin/golings list"
 
+[tasks.update]
+description = "Pull the latest changes without losing your exercise progress"
+run = """
+set -e
+echo '→ shelving your exercise edits…'
+if ! git diff --quiet -- exercises || [ -n "$(git ls-files --others --exclude-standard -- exercises)" ]; then
+  git stash push -u -m golings-autostash -- exercises
+  stashed=1
+else
+  echo '  (nothing to shelve)'
+  stashed=0
+fi
+echo '→ pulling latest…'
+git pull --ff-only
+if [ "$stashed" = 1 ]; then
+  echo '→ restoring your edits…'
+  git stash pop
+fi
+echo '✓ up to date. Your progress in .golings-state.json was never touched.'
+"""
+
 [tasks.lint]
 description = "Lint the tool source (exercises are broken on purpose)"
 run = "golangci-lint run ./golings ./golings/cmd ./golings/exercises ./golings/tui ./golings/ui"
