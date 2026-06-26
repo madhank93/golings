@@ -8,6 +8,8 @@ coverage.out
 # local progress state (Phase 3)
 .golings-state.json
 
-# editor
-.vscode/
+# editor — ignore personal VS Code files but share the recommended config
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/

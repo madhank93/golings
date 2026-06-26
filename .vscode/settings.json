@@ -1,0 +1,22 @@
+{
+	// Let the mise extension provide go / gopls / golangci-lint from mise.toml,
+	// so VS Code finds the pinned toolchain even when launched outside a mise shell.
+	"mise.configureExtensionsAutomatically": true,
+	"mise.enable": true,
+
+	// Go extension: use gopls for completion/hover/navigation and lint on save.
+	"go.useLanguageServer": true,
+	"go.toolsManagement.checkForUpdates": "off",
+	"go.lintTool": "golangci-lint",
+	"go.lintOnSave": "package",
+	"gopls": {
+		"ui.completion.usePlaceholders": true
+	},
+	"[go]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "golang.go",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit"
+		}
+	}
+}
