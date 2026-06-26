@@ -56,6 +56,16 @@ so editor completion and linting work too.
 | `n` | jump to the next unfinished exercise |
 | `q` | quit |
 
+### Streaks
+
+Your streak is the number of **consecutive days, ending on your most recent
+completion, on which you finished at least one exercise.** It is never stored as
+a number — golings only records the timestamp of each first completion in
+`.golings-state.json`, and the streak is *derived* from those timestamps each
+time it's shown. Reset an exercise (`r`) and its completion is dropped, so the
+streak adjusts automatically; miss a day and your next completion starts a fresh
+streak of 1.
+
 ## Other commands
 
 ```sh
