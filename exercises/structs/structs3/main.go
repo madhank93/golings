@@ -1,6 +1,8 @@
 // structs3
 // Make me compile!
 //
+// Attach a method to a struct.
+//
 // I AM NOT DONE
 package main
 

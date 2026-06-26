@@ -1,5 +1,7 @@
 // primitive_types5
 // Make me compile!
+//
+// Use Go's real numeric type names.
 
 // I AM NOT DONE
 package main

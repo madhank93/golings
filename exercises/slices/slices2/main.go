@@ -1,5 +1,7 @@
 // slices2
 // Make me compile!
+//
+// Take a sub-slice using [low:high] bounds.
 
 // I AM NOT DONE
 package main

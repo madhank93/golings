@@ -1,5 +1,7 @@
 // anonymous functions2
 // Make me compile!
+//
+// Match a closure's signature and use its argument.
 
 // I AM NOT DONE
 package main

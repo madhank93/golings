@@ -1,5 +1,7 @@
 // slices1
 // Make me compile!
+//
+// Create a slice with make, giving its element type.
 
 // I AM NOT DONE
 package main

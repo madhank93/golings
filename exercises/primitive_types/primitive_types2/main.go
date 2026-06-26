@@ -1,5 +1,7 @@
 // primitive_types2
 // Make me compile!
+//
+// Declare the string before formatting it.
 
 // I AM NOT DONE
 package main

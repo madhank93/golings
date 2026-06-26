@@ -1,6 +1,8 @@
 // range2
 // Make me compile!
 //
+// Iterate a map's keys and values with range.
+//
 // I AM NOT DONE
 package main
 

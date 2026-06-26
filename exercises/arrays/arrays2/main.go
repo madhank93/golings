@@ -1,5 +1,7 @@
 // arrays2
 // Make me compile!
+//
+// An array can't mix types; every element shares one type.
 
 // I AM NOT DONE
 package main

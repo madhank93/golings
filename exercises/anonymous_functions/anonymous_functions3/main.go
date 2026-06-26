@@ -1,5 +1,7 @@
 // anonymous functions3
 // Make me compile!
+//
+// Return a closure that remembers state across calls.
 
 // I AM NOT DONE
 package main

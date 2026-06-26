@@ -1,5 +1,7 @@
 // functions4
 // Make me compile!
+//
+// A function returning a value must declare its return type.
 
 // I AM NOT DONE
 package main

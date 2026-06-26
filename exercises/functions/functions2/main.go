@@ -1,5 +1,7 @@
 // functions2
 // Make me compile!
+//
+// Function parameters must declare their types.
 
 // I AM NOT DONE
 package main

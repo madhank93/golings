@@ -1,5 +1,7 @@
 // concurrent1
 // Make the tests pass!
+//
+// Print from goroutines and wait with a WaitGroup.
 
 // I AM NOT DONE
 package main_test

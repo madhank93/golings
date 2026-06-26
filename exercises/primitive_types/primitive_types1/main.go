@@ -1,5 +1,7 @@
 // primitive_types1
 // Make me compile!
+//
+// Toggle a boolean before the second check.
 
 // I AM NOT DONE
 package main

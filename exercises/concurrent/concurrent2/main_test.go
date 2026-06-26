@@ -1,5 +1,7 @@
 // concurrent2
 // Make the tests pass!
+//
+// Safely increment a counter from many goroutines.
 
 // I AM NOT DONE
 package main_test

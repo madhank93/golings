@@ -1,5 +1,7 @@
 // functions3
 // Make me compile!
+//
+// Call a function with the argument it expects.
 
 // I AM NOT DONE
 package main

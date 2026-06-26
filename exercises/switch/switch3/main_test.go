@@ -1,5 +1,7 @@
 // switch3
 // Make me compile!
+//
+// Return a weekday name for a number using a switch.
 
 // I AM NOT DONE
 package main_test

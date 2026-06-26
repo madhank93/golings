@@ -1,5 +1,7 @@
 // concurrent3
 // Make the tests pass!
+//
+// Send values over a channel and receive them.
 
 // I AM NOT DONE
 package main_test

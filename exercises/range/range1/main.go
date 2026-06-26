@@ -1,6 +1,8 @@
 // range1
 // Make me compile!
 //
+// Iterate a slice with range.
+//
 // I AM NOT DONE
 package main
 

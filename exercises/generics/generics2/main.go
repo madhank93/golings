@@ -1,5 +1,7 @@
 // generics2
 // Make me compile!
+//
+// Constrain a generic to add numbers of any numeric type.
 
 // I AM NOT DONE
 package main

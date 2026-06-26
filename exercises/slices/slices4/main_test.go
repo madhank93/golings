@@ -1,5 +1,7 @@
 // slices4
 // Make me compile!
+//
+// Index a slice within its bounds.
 
 // I AM NOT DONE
 package main_test

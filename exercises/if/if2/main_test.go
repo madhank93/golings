@@ -1,5 +1,7 @@
 // if2
 // Make me compile!
+//
+// Map each input string to an output with if/else.
 
 // I AM NOT DONE
 package main_test

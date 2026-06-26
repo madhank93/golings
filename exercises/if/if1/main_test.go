@@ -1,5 +1,7 @@
 // if1
 // Make me compile!
+//
+// Return the larger of two numbers using if.
 
 // I AM NOT DONE
 package main_test

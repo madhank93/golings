@@ -1,6 +1,8 @@
 // maps2
 // Make me compile!
 //
+// Initialize a map with a literal.
+//
 // I AM NOT DONE
 package main
 

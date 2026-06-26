@@ -1,6 +1,8 @@
 // maps1
 // Make me compile!
 //
+// Declare a map's key and value types.
+//
 // I AM NOT DONE
 //
 package main

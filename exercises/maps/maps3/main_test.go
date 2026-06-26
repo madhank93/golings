@@ -1,6 +1,8 @@
 // maps3
 // Make me compile!
 //
+// Look up the correct key in a map.
+//
 // I AM NOT DONE
 package main
 

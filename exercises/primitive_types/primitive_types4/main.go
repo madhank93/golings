@@ -1,5 +1,7 @@
 // primitive_types4
 // Make me compile!
+//
+// Store a character in a byte value.
 
 // I AM NOT DONE
 package main

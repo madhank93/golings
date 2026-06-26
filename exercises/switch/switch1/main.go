@@ -1,5 +1,7 @@
 // switch1
 // Make me compile!
+//
+// Switch on a variable instead of bare values.
 
 // I AM NOT DONE
 package main

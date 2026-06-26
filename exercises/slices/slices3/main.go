@@ -1,5 +1,7 @@
 // slices3
 // Make me compile!
+//
+// Add elements to a slice with append.
 
 // I AM NOT DONE
 package main

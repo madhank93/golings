@@ -1,5 +1,7 @@
 // anonymous functions1
 // Make me compile!
+//
+// Pass an argument to an anonymous function.
 
 // I AM NOT DONE
 package main

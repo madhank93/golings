@@ -35,7 +35,7 @@ func (e Exercise) Description() string {
 			break // reached code; stop
 		}
 		c := strings.TrimSpace(strings.TrimPrefix(trimmed, "//"))
-		if c == "" || strings.EqualFold(c, e.Name) || notDoneRegex.MatchString(line) || genericComment.MatchString(c) {
+		if c == "" || sameIdent(c, e.Name) || notDoneRegex.MatchString(line) || genericComment.MatchString(c) {
 			continue
 		}
 		return mdLink.ReplaceAllString(c, "$1")
@@ -43,6 +43,23 @@ func (e Exercise) Description() string {
 	// Stock exercises often have only a "Make me compile!" header; fall back to
 	// the topic README's first sentence so every exercise shows something.
 	return topicSummary(e.Path)
+}
+
+// sameIdent reports whether two strings name the same exercise ignoring case
+// and separators, so a readable title line like "// anonymous functions1" is
+// recognized as the header for exercise "anonymous_functions1" (and skipped),
+// while a descriptive title like "morefn1 — recursion" is not.
+func sameIdent(a, b string) bool {
+	norm := func(s string) string {
+		var sb strings.Builder
+		for _, r := range strings.ToLower(s) {
+			if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+				sb.WriteRune(r)
+			}
+		}
+		return sb.String()
+	}
+	return norm(a) == norm(b)
 }
 
 // topicSummary returns the first sentence of the topic's README, or "".

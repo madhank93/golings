@@ -1,6 +1,8 @@
 // range3
 // Make me compile!
 //
+// Use range to collect the even numbers.
+//
 // I AM NOT DONE
 package main_test
 

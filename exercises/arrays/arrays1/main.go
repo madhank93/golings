@@ -1,5 +1,7 @@
 // arrays1
 // Make me compile!
+//
+// Arrays are zero-indexed — fix the out-of-range access.
 
 // I AM NOT DONE
 package main
