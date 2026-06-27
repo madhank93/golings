@@ -1,0 +1,30 @@
+---
+// Embeds the asciinema recording of a golings session. The .cast lives in
+// public/ and is served at the site root.
+const src = `${import.meta.env.BASE_URL}demo.cast`;
+---
+
+<div id="asciinema-demo" data-src={src} class="not-content"></div>
+
+<script>
+  import "asciinema-player/dist/bundle/asciinema-player.css";
+  import * as AsciinemaPlayer from "asciinema-player";
+
+  const el = document.getElementById("asciinema-demo");
+  if (el && el.dataset.src) {
+    AsciinemaPlayer.create(el.dataset.src, el, {
+      autoPlay: true,
+      loop: true,
+      fit: "width",
+      poster: "npt:0:2",
+      idleTimeLimit: 2,
+    });
+  }
+</script>
+
+<style>
+  #asciinema-demo {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+</style>
