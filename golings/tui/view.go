@@ -95,7 +95,7 @@ var (
 // welcome renders the splash screen shown before the main view.
 func (m Model) welcome() string {
 	title := titleStyle.Foreground(cTeal).Render("🐹  golings")
-	tagline := dimStyle.Render("Learn Go the rustlings way — 106 exercises, basics → advanced")
+	tagline := dimStyle.Render("Learn Go the rustlings way — 112 exercises, basics → advanced")
 
 	meta := lipgloss.JoinVertical(lipgloss.Left,
 		labelStyle.Render("Repo")+linkStyle.Render("https://github.com/madhank93/golings"),
@@ -108,7 +108,7 @@ func (m Model) welcome() string {
 		"  • Open the highlighted exercise's file and make it compile/pass",
 		"  • Remove the  "+markStyle.Render("// I AM NOT DONE")+"  marker when you think it's done",
 		"  • Save — golings auto-runs it; "+titleStyle.Render("tests AND golangci-lint")+" must pass",
-		"  • It then auto-advances to the next exercise",
+		"  • Press n to move to the next exercise",
 	)
 
 	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · e edit · h hint · r reset · n next · q quit")

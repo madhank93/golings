@@ -34,8 +34,8 @@ var tiers = []tier{
 	{"Intermediate · Generics & Modern Go", []string{"generics", "modern"}},
 	{"Intermediate · Testable Design", []string{"dependency_injection", "mocking"}},
 	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns"}},
-	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "files", "http_client"}},
-	{"Advanced · Building Applications", []string{"http_server"}},
+	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "reflection", "files", "http_client"}},
+	{"Advanced · Building Applications", []string{"http_server", "cli"}},
 	{"Advanced · Testing & Applied", []string{"testing_advanced", "applied"}},
 }
 

@@ -541,6 +541,27 @@ Ensure you include the appropriate type signature.
 """
 
 [[exercises]]
+name = "generics3"
+path = "exercises/generics/generics3/main_test.go"
+mode = "test"
+hint = """
+Push appends; Pop guards the empty case:
+
+func (s *Stack[T]) Push(x T) { s.items = append(s.items, x) }
+// Pop: if len(s.items)==0 return zero,false; else take the last, shrink, return it,true"""
+
+[[exercises]]
+name = "generics4"
+path = "exercises/generics/generics4/main_test.go"
+mode = "test"
+hint = """
+Fold left over the slice:
+
+acc := init
+for _, item := range items { acc = f(acc, item) }
+return acc"""
+
+[[exercises]]
 name = "modern1"
 path = "exercises/modern/modern1/main_test.go"
 mode = "test"
@@ -880,6 +901,27 @@ return re.MatchString(s)
 """
 
 [[exercises]]
+name = "reflect1"
+path = "exercises/reflection/reflect1/main_test.go"
+mode = "test"
+hint = """
+TypeOf gives a reflect.Type; Kind() names the underlying kind:
+
+return reflect.TypeOf(x).Kind().String()"""
+
+[[exercises]]
+name = "reflect2"
+path = "exercises/reflection/reflect2/main_test.go"
+mode = "test"
+hint = """
+Iterate the struct's fields and act on the string ones:
+
+v := reflect.ValueOf(x)
+for i := 0; i < v.NumField(); i++ {
+    if v.Field(i).Kind() == reflect.String { fn(v.Field(i).String()) }
+}"""
+
+[[exercises]]
 name = "files1"
 path = "exercises/files/files1/main_test.go"
 mode = "test"
@@ -955,6 +997,28 @@ Set the header, then call the next handler so the chain continues:
 
 w.Header().Set("X-App", value)
 next.ServeHTTP(w, r)"""
+
+[[exercises]]
+name = "cli1"
+path = "exercises/cli/cli1/main_test.go"
+mode = "test"
+hint = """
+fs.String/fs.Int return pointers; parse, then dereference:
+
+name := fs.String("name", "world", "")
+count := fs.Int("count", 1, "")
+fs.Parse(args)
+return *name, *count"""
+
+[[exercises]]
+name = "cli2"
+path = "exercises/cli/cli2/main_test.go"
+mode = "test"
+hint = """
+Parse, then read the first leftover positional:
+
+fs.Parse(args)
+return fs.Arg(0)"""
 
 [[exercises]]
 name = "testadv1"
