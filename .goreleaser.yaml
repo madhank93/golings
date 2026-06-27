@@ -35,14 +35,28 @@ checksum:
   name_template: checksums.txt
 
 changelog:
-  sort: asc
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
-      - "^chore:"
+  # The fork shares history with upstream, so an auto-changelog would list
+  # pre-fork commits. Use the curated header below for the first release.
+  disable: true
 
 release:
   github:
     owner: madhank93
     name: golings
+  header: |
+    A maintained fork of [golings](https://github.com/mauricioabreu/golings),
+    rebuilt into a complete, modern Go learning track.
+
+    **Highlights**
+    - mise-pinned toolchain + task runner (Go 1.26, gopls, golangci-lint)
+    - Interactive Bubble Tea TUI: re-runs on save, gated on tests **and**
+      `golangci-lint`, with labelled output, incremental search, hints, editor
+      launch, and progress streaks
+    - **112 exercises across 37 topics**, beginner → advanced — including
+      dependency injection, mocking, HTTP server, reflection, CLI, and generics
+    - Docs site with the full curriculum and a live demo: <https://golings.madhan.app>
+    - Path-traversal hardening, CI, and this release pipeline
+
+    ### Install
+    Download the archive for your platform below and put `golings` on your `PATH`,
+    or clone the repo and run `mise run watch`.
