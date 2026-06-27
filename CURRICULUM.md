@@ -1,6 +1,6 @@
 # Golings Curriculum — Beginner → Advanced
 
-102 exercises across 34 topics, ordered as a progressive track. Run them in
+106 exercises across 35 topics, ordered as a progressive track. Run them in
 order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
@@ -83,7 +83,12 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | files | 2 | `os.ReadFile`/`WriteFile`, `bufio.Scanner` |
 | http_client | 1 | `http.Get`, reading responses |
 
-### 9. Testing & Applied
+### 9. Building Applications
+| Topic | Exercises | Concepts |
+|---|---|---|
+| http_server | 4 | `HandlerFunc`, `ServeMux` routing (1.22), JSON, middleware |
+
+### 10. Testing & Applied
 | Topic | Exercises | Concepts |
 |---|---|---|
 | testing_advanced | 4 | subtests, fuzzing, httptest, benchmarks (`b.Loop`) |

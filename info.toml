@@ -913,6 +913,50 @@ body, err := io.ReadAll(resp.Body); return string(body), err
 """
 
 [[exercises]]
+name = "httpsrv1"
+path = "exercises/http_server/httpsrv1/main_test.go"
+mode = "test"
+hint = """
+Read the query parameter and default it, then write the greeting:
+
+name := r.URL.Query().Get("name")
+if name == "" { name = "world" }
+fmt.Fprintf(w, "Hello, %s!", name)"""
+
+[[exercises]]
+name = "httpsrv2"
+path = "exercises/http_server/httpsrv2/main_test.go"
+mode = "test"
+hint = """
+Register the method+path pattern, and read the wildcard with PathValue:
+
+mux.HandleFunc("GET /users/{id}", userHandler)
+// inside userHandler:
+fmt.Fprintf(w, "user %s", r.PathValue("id"))"""
+
+[[exercises]]
+name = "httpsrv3"
+path = "exercises/http_server/httpsrv3/main_test.go"
+mode = "test"
+hint = """
+Decode, set the header, encode:
+
+var req echoReq
+json.NewDecoder(r.Body).Decode(&req)
+w.Header().Set("Content-Type", "application/json")
+json.NewEncoder(w).Encode(echoResp{Greeting: "Hello, " + req.Name + "!"})"""
+
+[[exercises]]
+name = "httpsrv4"
+path = "exercises/http_server/httpsrv4/main_test.go"
+mode = "test"
+hint = """
+Set the header, then call the next handler so the chain continues:
+
+w.Header().Set("X-App", value)
+next.ServeHTTP(w, r)"""
+
+[[exercises]]
 name = "testadv1"
 path = "exercises/testing_advanced/testadv1/main_test.go"
 mode = "test"
