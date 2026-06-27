@@ -573,6 +573,52 @@ for i := 1; i <= n; i++ { if !yield(i) { return } }
 """
 
 [[exercises]]
+name = "di1"
+path = "exercises/dependency_injection/di1/main_test.go"
+mode = "test"
+hint = """
+fmt.Fprintf writes formatted output to any io.Writer:
+
+fmt.Fprintf(w, "Hello, %s!", name)"""
+
+[[exercises]]
+name = "di2"
+path = "exercises/dependency_injection/di2/main_test.go"
+mode = "test"
+hint = """
+Read the hour with c.Now().Hour() and branch on whether it is < 12."""
+
+[[exercises]]
+name = "di3"
+path = "exercises/dependency_injection/di3/main_test.go"
+mode = "test"
+hint = """
+Delegate to the injected store, then build the greeting:
+
+g.store.Save(name)
+return "Hi, " + name"""
+
+[[exercises]]
+name = "mock1"
+path = "exercises/mocking/mock1/main_test.go"
+mode = "test"
+hint = """
+Only notify when temp is greater than threshold:
+
+if temp > threshold { n.Notify("too hot") }"""
+
+[[exercises]]
+name = "mock2"
+path = "exercises/mocking/mock2/main_test.go"
+mode = "test"
+hint = """
+Fetch returns (string, error). Check the error first:
+
+name, err := f.Fetch(id)
+if err != nil { return "Welcome, guest!" }
+return "Welcome, " + name + "!\""""
+
+[[exercises]]
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"

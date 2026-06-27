@@ -32,6 +32,7 @@ var tiers = []tier{
 	{"Intermediate · Types & Methods", []string{"structs", "pointers", "methods", "interfaces", "enums"}},
 	{"Intermediate · Functions & Errors", []string{"anonymous_functions", "defer", "errors"}},
 	{"Intermediate · Generics & Modern Go", []string{"generics", "modern"}},
+	{"Intermediate · Testable Design", []string{"dependency_injection", "mocking"}},
 	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns"}},
 	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "files", "http_client"}},
 	{"Advanced · Testing & Applied", []string{"testing_advanced", "applied"}},

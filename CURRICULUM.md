@@ -1,6 +1,6 @@
 # Golings Curriculum — Beginner → Advanced
 
-97 exercises across 32 topics, ordered as a progressive track. Run them in
+102 exercises across 34 topics, ordered as a progressive track. Run them in
 order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
@@ -56,11 +56,17 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | generics | 2 | type params, constraints |
 | modern | 3 | `min`/`max`/`clear` (1.21), range-over-int (1.22), range-over-func iterators (1.23) |
 
+### 6. Testable Design
+| Topic | Exercises | Concepts |
+|---|---|---|
+| dependency_injection | 3 | inject `io.Writer`, interface DI, constructor injection |
+| mocking | 2 | spies, stubs/fakes (test doubles) |
+
 ---
 
 ## 🔴 Advanced
 
-### 6. Concurrency
+### 7. Concurrency
 | Topic | Exercises | Concepts |
 |---|---|---|
 | concurrent | 3 | goroutines, `WaitGroup`, closing channels |
@@ -70,14 +76,14 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | context | 3 | cancellation, deadlines, values |
 | concurrency_patterns | 3 | worker pool, fan-in, pipeline |
 
-### 7. Standard Library & I/O
+### 8. Standard Library & I/O
 | Topic | Exercises | Concepts |
 |---|---|---|
 | stdlib_essentials | 6 | JSON, `io`, `slices`, `time`, `strconv`, `regexp` |
 | files | 2 | `os.ReadFile`/`WriteFile`, `bufio.Scanner` |
 | http_client | 1 | `http.Get`, reading responses |
 
-### 8. Testing & Applied
+### 9. Testing & Applied
 | Topic | Exercises | Concepts |
 |---|---|---|
 | testing_advanced | 4 | subtests, fuzzing, httptest, benchmarks (`b.Loop`) |
