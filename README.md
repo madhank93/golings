@@ -77,9 +77,16 @@ streak survive every update.
 ## Editor setup (VS Code)
 
 The repo ships a `.vscode/` config. On open, VS Code prompts you to install the
-recommended **Go** and **mise** extensions — accept both and reload. The mise
-extension feeds VS Code the pinned `go`/`gopls`, so completion, format-on-save,
-and `golangci-lint` work even when VS Code is launched outside a mise shell.
+recommended **Go** and **mise** extensions — accept both and reload. The config
+points the Go extension straight at mise's `go`/`gopls`, so completion,
+hover, go-to-definition, format-on-save, and `golangci-lint` work even when
+VS Code is launched outside a mise shell. (If nothing works, reload the window
+after the Go extension finishes installing its tools.)
+
+Note: an unsolved exercise is **broken on purpose**, so it doesn't compile —
+gopls can't offer completion or go-to-definition inside a file until you fix it
+enough to compile. That's expected; IntelliSense kicks in as the code becomes
+valid.
 
 ## Contributing
 

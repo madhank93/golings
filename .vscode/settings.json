@@ -4,6 +4,16 @@
 	"mise.configureExtensionsAutomatically": true,
 	"mise.enable": true,
 
+	// Point the Go extension straight at mise's shims so completion, hover, and
+	// go-to-definition work even if the mise extension isn't installed and VS Code
+	// was launched without the mise PATH (GUI launch). The shims resolve the
+	// version pinned in mise.toml. ~ is expanded by the Go extension.
+	"go.alternateTools": {
+		"go": "~/.local/share/mise/shims/go",
+		"gopls": "~/.local/share/mise/shims/gopls",
+		"golangci-lint": "~/.local/share/mise/shims/golangci-lint"
+	},
+
 	// Go extension: use gopls for completion/hover/navigation and lint on save.
 	"go.useLanguageServer": true,
 	"go.toolsManagement.checkForUpdates": "off",
