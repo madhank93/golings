@@ -1,9 +1,6 @@
 // concurrent2
-// Make the tests pass!
-//
 // Safely increment a counter from many goroutines.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -21,12 +18,15 @@ func TestCounter(t *testing.T) {
 func updateCounter() int {
 	var counter int
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 
 	for i := 0; i < 100; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			counter++ // Many goroutines trying to update the counter? We need some protection here!
+			mu.Lock()
+			counter++
+			mu.Unlock()
 		}()
 	}
 	wg.Wait()

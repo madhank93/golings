@@ -1,7 +1,6 @@
 // httpsrv4
 // Wrap a handler with middleware (a func(http.Handler) http.Handler).
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -10,13 +9,11 @@ import (
 	"testing"
 )
 
-// withHeader returns middleware that sets the response header "X-App" before
-// calling the next handler.
 func withHeader(value string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// FIXME: set w.Header().Set("X-App", value), then call
-			// next.ServeHTTP(w, r) so the wrapped handler still runs.
+			w.Header().Set("X-App", value)
+			next.ServeHTTP(w, r)
 		})
 	}
 }

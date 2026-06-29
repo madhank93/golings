@@ -1,21 +1,17 @@
 // select3
-// A `default` case makes a select non-blocking: it runs when no other
-// case is ready instead of waiting.
+// A `default` case makes a select non-blocking.
 
-// I AM NOT DONE
 package main_test
 
-import (
-	"testing"
-)
+import "testing"
 
-// tryReceive returns (value, true) if ch has a value ready right now,
-// otherwise (0, false) without blocking.
 func tryReceive(ch <-chan int) (int, bool) {
-	// FIXME: use a select with `case v := <-ch:` and a `default:` case
-	// so it returns immediately when nothing is ready.
-	v := <-ch
-	return v, true
+	select {
+	case v := <-ch:
+		return v, true
+	default:
+		return 0, false
+	}
 }
 
 func TestTryReceiveReady(t *testing.T) {
@@ -29,6 +25,6 @@ func TestTryReceiveReady(t *testing.T) {
 func TestTryReceiveEmpty(t *testing.T) {
 	ch := make(chan int)
 	if _, ok := tryReceive(ch); ok {
-		t.Errorf("expected (_,false) on an empty channel")
+		t.Errorf("want ok=false on empty channel")
 	}
 }

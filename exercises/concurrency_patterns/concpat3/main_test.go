@@ -2,7 +2,6 @@
 // A pipeline chains stages connected by channels: each stage reads from the
 // previous stage and emits to the next. Implement the `double` stage.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -26,8 +25,9 @@ func generate(nums ...int) <-chan int {
 func double(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
-		// FIXME: range over in, send n*2 to out for each value,
-		// then close(out) (already called below — move/keep it after the loop).
+		for n := range in {
+			out <- n * 2
+		}
 		close(out)
 	}()
 	return out

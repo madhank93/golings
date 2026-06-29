@@ -1,8 +1,6 @@
 // context3
 // Contexts can carry request-scoped values down a call chain.
-// Read a value out of the context, falling back to a default when absent.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -10,16 +8,15 @@ import (
 	"testing"
 )
 
-// ctxKey is an unexported type for context keys to avoid collisions.
 type ctxKey string
 
 const userKey ctxKey = "user"
 
-// userFromContext returns the user stored under userKey, or "anonymous" if none.
 func userFromContext(ctx context.Context) string {
-	// FIXME: ctx.Value(userKey) returns an interface{}. Type-assert it to
-	// string with the comma-ok form; return it when present, else "anonymous".
-	return ""
+	if u, ok := ctx.Value(userKey).(string); ok {
+		return u
+	}
+	return "anonymous"
 }
 
 func TestUserPresent(t *testing.T) {

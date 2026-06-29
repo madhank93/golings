@@ -1,9 +1,7 @@
 // applied2 — a concurrency-safe store
-// Integrate several ideas at once: a map for storage, a sync.Mutex for safety,
-// methods for the API, and a sentinel error for the missing-key case.
-// Implement Set.
+// A map for storage, a sync.Mutex for safety, methods for the API, and a
+// sentinel error for the missing-key case.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -12,10 +10,8 @@ import (
 	"testing"
 )
 
-// ErrNotFound is returned by Get when a key is absent.
 var ErrNotFound = errors.New("key not found")
 
-// Store is a concurrency-safe string->int map.
 type Store struct {
 	mu sync.Mutex
 	m  map[string]int
@@ -25,12 +21,12 @@ func NewStore() *Store {
 	return &Store{m: make(map[string]int)}
 }
 
-// Set stores v under key, safely for concurrent callers.
 func (s *Store) Set(key string, v int) {
-	// FIXME: lock the mutex (defer unlock) and write s.m[key] = v.
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.m[key] = v
 }
 
-// Get returns the value for key, or ErrNotFound if it is absent.
 func (s *Store) Get(key string) (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

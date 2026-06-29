@@ -1,17 +1,16 @@
 // stdlib6 — regexp
 // regexp matches and extracts text using regular expressions.
 
-// I AM NOT DONE
 package main_test
 
-import "testing"
+import (
+	"regexp"
+	"testing"
+)
 
-// isEmail reports whether s looks like a basic email: something@something.tld.
 func isEmail(s string) bool {
-	// FIXME: compile a pattern and match it (import "regexp"):
-	//   re := regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
-	//   return re.MatchString(s)
-	return false
+	re := regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
+	return re.MatchString(s)
 }
 
 func TestIsEmail(t *testing.T) {

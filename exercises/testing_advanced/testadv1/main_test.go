@@ -1,20 +1,24 @@
 // testadv1 — table-driven tests with t.Run
-// Table-driven tests pair a slice of cases with t.Run subtests, so each case
-// reports independently. Implement fizzbuzz to make the table pass.
+// Table-driven tests pair a slice of cases with t.Run subtests.
 
-// I AM NOT DONE
 package main_test
 
 import (
+	"strconv"
 	"testing"
 )
 
-// fizzbuzz returns "Fizz" for multiples of 3, "Buzz" for multiples of 5,
-// "FizzBuzz" for multiples of 15, otherwise the number as a string.
 func fizzbuzz(n int) string {
-	// FIXME: implement the FizzBuzz rules. strconv.Itoa(n) turns an int into
-	// its decimal string (import "strconv").
-	return ""
+	switch {
+	case n%15 == 0:
+		return "FizzBuzz"
+	case n%3 == 0:
+		return "Fizz"
+	case n%5 == 0:
+		return "Buzz"
+	default:
+		return strconv.Itoa(n)
+	}
 }
 
 func TestFizzBuzz(t *testing.T) {

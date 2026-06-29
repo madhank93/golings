@@ -2,7 +2,6 @@
 // Channel direction in a signature documents and enforces intent:
 // chan<- T is send-only, <-chan T is receive-only.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -10,7 +9,6 @@ import (
 	"testing"
 )
 
-// produce sends 0..n-1 on out, then closes it. out is SEND-ONLY.
 func produce(out chan<- int, n int) {
 	for i := 0; i < n; i++ {
 		out <- i
@@ -18,10 +16,11 @@ func produce(out chan<- int, n int) {
 	close(out)
 }
 
-// consume reads everything from in (RECEIVE-ONLY) and returns the values.
 func consume(in <-chan int) []int {
 	var got []int
-	// FIXME: range over in and append each value to got.
+	for v := range in {
+		got = append(got, v)
+	}
 	return got
 }
 

@@ -1,8 +1,6 @@
 // sync1
 // A sync.Mutex guards shared state so concurrent goroutines don't race.
-// Run with `go test -race` to see the unsynchronized version flagged.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -10,16 +8,14 @@ import (
 	"testing"
 )
 
-// Counter is incremented concurrently and must stay correct.
 type Counter struct {
 	mu sync.Mutex
 	n  int
 }
 
 func (c *Counter) Inc() {
-	// FIXME: take the lock before touching n and release it after, e.g.
-	//   c.mu.Lock()
-	//   defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.n++
 }
 

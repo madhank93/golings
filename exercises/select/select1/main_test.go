@@ -1,19 +1,18 @@
 // select1
 // select waits on multiple channel operations and proceeds with whichever
-// one is ready. Return the first value available from either channel.
+// one is ready.
 
-// I AM NOT DONE
 package main_test
 
-import (
-	"testing"
-)
+import "testing"
 
-// firstReady returns the first value available from a or b.
 func firstReady(a, b <-chan int) int {
-	// FIXME: use a select with a `case v := <-a:` and a `case v := <-b:`,
-	// returning v from whichever is ready.
-	return 0
+	select {
+	case v := <-a:
+		return v
+	case v := <-b:
+		return v
+	}
 }
 
 func TestFirstReadyFromA(t *testing.T) {

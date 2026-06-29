@@ -1,9 +1,6 @@
 // concurrent1
-// Make the tests pass!
-//
 // Print from goroutines and wait with a WaitGroup.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -38,7 +35,7 @@ func print(buf *bytes.Buffer) {
 		go func(i int) {
 			defer wg.Done()
 			mu.Lock()
-			//fmt.Fprintf(buf, "Hello from goroutine %d!\n", i)
+			fmt.Fprintf(buf, "Hello from goroutine %d!\n", i)
 			mu.Unlock()
 		}(i)
 	}

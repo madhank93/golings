@@ -1,8 +1,6 @@
 // sync3
-// sync/atomic provides lock-free atomic operations on integers — cheaper than
-// a mutex for a simple counter. Run with `go test -race` to catch the bug.
+// sync/atomic provides lock-free atomic operations on integers.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -11,7 +9,6 @@ import (
 	"testing"
 )
 
-// countHits increments a shared counter from n goroutines and returns the total.
 func countHits(n int) int64 {
 	var hits int64
 	var wg sync.WaitGroup
@@ -19,8 +16,7 @@ func countHits(n int) int64 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			// FIXME: this plain increment races. Use atomic.AddInt64(&hits, 1).
-			hits++
+			atomic.AddInt64(&hits, 1)
 		}()
 	}
 	wg.Wait()

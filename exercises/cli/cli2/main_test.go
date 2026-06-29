@@ -1,7 +1,6 @@
 // cli2
 // Read the positional arguments left after flag parsing with FlagSet.Args.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -9,15 +8,11 @@ import (
 	"testing"
 )
 
-// firstArg parses flags from args and returns the first positional (non-flag)
-// argument, or "" when there is none — e.g. ["-v", "build", "./..."] -> "build".
 func firstArg(args []string) string {
 	fs := flag.NewFlagSet("cmd", flag.ContinueOnError)
-	verbose := fs.Bool("v", false, "verbose output")
-	_ = verbose
-	// FIXME: call fs.Parse(args), then return the first positional with
-	// fs.Arg(0) (it already returns "" when there is none).
-	return ""
+	_ = fs.Bool("v", false, "verbose output")
+	_ = fs.Parse(args)
+	return fs.Arg(0)
 }
 
 func TestFirstArg(t *testing.T) {

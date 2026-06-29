@@ -1,19 +1,13 @@
 // channels1
 // A buffered channel — make(chan T, n) — holds up to n values without a
-// receiver ready. An unbuffered channel blocks the sender until someone
-// receives, which would deadlock the single-goroutine loop below.
+// receiver ready.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
-// collect sends all vals into a channel, closes it, then drains it back out.
 func collect(vals []int) []int {
-	// FIXME: make the channel buffered with capacity len(vals) so the sends
-	// in the loop don't block without a concurrent receiver:
-	//   ch := make(chan int, len(vals))
-	ch := make(chan int) // unbuffered -> deadlocks when sending below
+	ch := make(chan int, len(vals))
 	for _, v := range vals {
 		ch <- v
 	}

@@ -1,8 +1,6 @@
 // applied1 — sort.Interface
 // Implementing sort.Interface (Len, Less, Swap) lets sort.Sort order ANY type.
-// Len is provided; add Less and Swap.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -15,14 +13,11 @@ type Person struct {
 	Age  int
 }
 
-// ByAge sorts a slice of Person by Age ascending.
 type ByAge []Person
 
-func (a ByAge) Len() int { return len(a) }
-
-// FIXME: implement the other two methods of sort.Interface:
-//   func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
-//   func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByAge) Len() int           { return len(a) }
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 func TestSortByAge(t *testing.T) {
 	people := ByAge{

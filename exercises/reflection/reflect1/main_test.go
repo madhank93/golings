@@ -1,16 +1,15 @@
 // reflect1
 // Inspect a value's kind at runtime with the reflect package.
 
-// I AM NOT DONE
 package main_test
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-// describe returns the kind of x as a string — e.g. 42 -> "int",
-// "hi" -> "string", []int{} -> "slice".
 func describe(x any) string {
-	// FIXME: import "reflect" and return reflect.TypeOf(x).Kind().String().
-	return ""
+	return reflect.TypeOf(x).Kind().String()
 }
 
 func TestDescribe(t *testing.T) {

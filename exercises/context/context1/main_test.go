@@ -1,8 +1,6 @@
 // context1
 // A context.Context lets a caller signal cancellation to running work.
-// Make countUntilCancelled return once the context is cancelled.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -11,12 +9,12 @@ import (
 	"time"
 )
 
-// countUntilCancelled increments until ctx is cancelled, then returns the count.
 func countUntilCancelled(ctx context.Context) int {
 	count := 0
 	for {
 		select {
-		// FIXME: add a `case <-ctx.Done():` that returns count.
+		case <-ctx.Done():
+			return count
 		case <-time.After(time.Millisecond):
 			count++
 		}
@@ -35,7 +33,6 @@ func TestCountStopsOnCancel(t *testing.T) {
 
 	select {
 	case <-done:
-		// returned after cancellation — good
 	case <-time.After(2 * time.Second):
 		t.Fatal("countUntilCancelled never returned after cancel")
 	}

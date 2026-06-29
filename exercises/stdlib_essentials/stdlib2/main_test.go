@@ -1,8 +1,6 @@
 // stdlib2 — io.Reader / io.Writer
-// These two interfaces are the backbone of Go I/O. io.Copy streams bytes from
-// any Reader to any Writer. Drain the reader into the buffer.
+// io.Copy streams bytes from any Reader to any Writer.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -12,10 +10,11 @@ import (
 	"testing"
 )
 
-// readAll copies everything from r into a buffer and returns it as a string.
 func readAll(r io.Reader) (string, error) {
 	var buf bytes.Buffer
-	// FIXME: use io.Copy(&buf, r) to stream r into buf; return on any error.
+	if _, err := io.Copy(&buf, r); err != nil {
+		return "", err
+	}
 	return buf.String(), nil
 }
 

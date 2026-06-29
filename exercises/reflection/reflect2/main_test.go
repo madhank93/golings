@@ -1,17 +1,20 @@
 // reflect2
 // Walk a struct's fields with reflection, calling a function for each string.
 
-// I AM NOT DONE
 package main_test
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-// walk visits struct x and calls fn with the value of every string field.
 func walk(x any, fn func(string)) {
-	// FIXME: import "reflect". Take v := reflect.ValueOf(x); for each field
-	// i in 0..v.NumField(), if v.Field(i).Kind() == reflect.String call
-	// fn(v.Field(i).String()).
-	_ = x
+	v := reflect.ValueOf(x)
+	for i := 0; i < v.NumField(); i++ {
+		if v.Field(i).Kind() == reflect.String {
+			fn(v.Field(i).String())
+		}
+	}
 }
 
 type person struct {

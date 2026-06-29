@@ -1,8 +1,6 @@
 // stdlib1 — encoding/json
 // Struct field tags control the JSON key names used during (un)marshaling.
-// Add tags so the JSON keys map onto the struct fields.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -10,13 +8,9 @@ import (
 	"testing"
 )
 
-// User should decode JSON like {"full_name":"alice","user_age":30}.
-// (json matching is case-insensitive, so tags are required here because the
-// keys differ by more than case.)
 type User struct {
-	// FIXME: add `json:"full_name"` and `json:"user_age"` struct tags.
-	Name string
-	Age  int
+	Name string `json:"full_name"`
+	Age  int    `json:"user_age"`
 }
 
 func parseUser(data []byte) (User, error) {

@@ -2,7 +2,6 @@
 // A fixed set of worker goroutines pulls jobs from one channel and pushes
 // results to another. Implement the worker so the pool produces every result.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -14,8 +13,9 @@ import (
 // square is a worker: it reads jobs and sends each job's square to results.
 func square(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	// FIXME: range over jobs and send n*n to results for each job.
-	_ = jobs
+	for n := range jobs {
+		results <- n * n
+	}
 }
 
 // runPool runs `workers` squarers over inputs and returns the sorted results.

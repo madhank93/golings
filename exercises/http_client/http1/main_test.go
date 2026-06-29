@@ -1,8 +1,6 @@
 // http1 — HTTP client
-// net/http makes requests. http.Get performs a GET; always close the response
-// body. The test spins up a local httptest.Server so the call is deterministic.
+// net/http makes requests. http.Get performs a GET; always close the body.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -12,14 +10,17 @@ import (
 	"testing"
 )
 
-// fetch performs a GET request to url and returns the response body as a string.
 func fetch(url string) (string, error) {
-	// FIXME:
-	//   resp, err := http.Get(url); if err != nil { return "", err }
-	//   defer resp.Body.Close()
-	//   body, err := io.ReadAll(resp.Body); if err != nil { return "", err }
-	//   return string(body), nil
-	return "", nil
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
 }
 
 func TestFetch(t *testing.T) {

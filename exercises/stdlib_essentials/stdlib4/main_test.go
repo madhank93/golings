@@ -1,9 +1,6 @@
 // stdlib4 — time
-// Go formats and parses time using a REFERENCE date, not strftime codes:
-//   Mon Jan 2 15:04:05 MST 2006   (i.e. 01/02 03:04:05PM '06 -0700)
-// Parse a date string using the layout "2006-01-02".
+// Go formats and parses time using a REFERENCE date: 2006-01-02 15:04:05.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -11,10 +8,8 @@ import (
 	"time"
 )
 
-// parseDate parses s (formatted as YYYY-MM-DD) into a time.Time.
 func parseDate(s string) (time.Time, error) {
-	// FIXME: return time.Parse("2006-01-02", s).
-	return time.Time{}, nil
+	return time.Parse("2006-01-02", s)
 }
 
 func TestParseDate(t *testing.T) {

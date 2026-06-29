@@ -1,8 +1,6 @@
 // testadv3 — httptest
-// net/http/httptest exercises HTTP handlers without a real network: build a
-// request, record the response, assert on it. Implement the handler.
+// net/http/httptest exercises HTTP handlers without a real network.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -12,12 +10,10 @@ import (
 	"testing"
 )
 
-// pingHandler should respond with status 200 and the body "pong".
 func pingHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME: write the body "pong" to w. w.Write returns (n, err); check the
-	// error and, on failure, reply with http.Error(w, ..., 500).
-	// (A handler that writes a body returns status 200 by default.)
-	_ = w
+	if _, err := w.Write([]byte("pong")); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func TestPingHandler(t *testing.T) {

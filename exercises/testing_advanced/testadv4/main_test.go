@@ -1,18 +1,16 @@
 // testadv4 — benchmarks
-// A benchmark (func BenchmarkXxx(*testing.B)) measures performance; run it with
-// `go test -bench=.`. The Go 1.24+ form is `for b.Loop() { ... }`.
-// The benchmark below is complete — your job is to implement sumSlice so the
-// correctness test passes (normal `go test` runs the Test, not the Benchmark).
+// A benchmark measures performance; run it with `go test -bench=.`.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
-// sumSlice returns the sum of all elements.
 func sumSlice(nums []int) int {
-	// FIXME: range over nums and add each value.
-	return 0
+	sum := 0
+	for _, n := range nums {
+		sum += n
+	}
+	return sum
 }
 
 func TestSumSlice(t *testing.T) {

@@ -1,7 +1,6 @@
 // httpsrv3
 // Decode a JSON request body and encode a JSON response with encoding/json.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -20,15 +19,14 @@ type echoResp struct {
 	Greeting string `json:"greeting"`
 }
 
-// echoHandler decodes {"name": "..."} and responds with
-// {"greeting": "Hello, <name>!"} and Content-Type application/json.
 func echoHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME:
-	//   1. decode the body:  var req echoReq; json.NewDecoder(r.Body).Decode(&req)
-	//   2. set the header:    w.Header().Set("Content-Type", "application/json")
-	//   3. encode the reply:  json.NewEncoder(w).Encode(echoResp{Greeting: "Hello, " + req.Name + "!"})
-	_ = w
-	_ = r
+	var req echoReq
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(echoResp{Greeting: "Hello, " + req.Name + "!"})
 }
 
 func TestEchoHandler(t *testing.T) {

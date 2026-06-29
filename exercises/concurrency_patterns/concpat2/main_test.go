@@ -2,7 +2,6 @@
 // Fan-in merges values from several input channels into one output channel.
 // Implement merge so it copies every input into out and closes out when done.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -16,9 +15,19 @@ func merge(chans ...<-chan int) <-chan int {
 	out := make(chan int)
 	var wg sync.WaitGroup
 
-	// FIXME: for each input channel c, wg.Add(1) and start a goroutine that
-	// copies c's values into out then calls wg.Done(). Then start one more
-	// goroutine that does wg.Wait() followed by close(out).
+	for _, c := range chans {
+		wg.Add(1)
+		go func(c <-chan int) {
+			defer wg.Done()
+			for v := range c {
+				out <- v
+			}
+		}(c)
+	}
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
 
 	return out
 }
