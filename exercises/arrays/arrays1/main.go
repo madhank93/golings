@@ -3,7 +3,6 @@
 //
 // Arrays are zero-indexed — fix the out-of-range access.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
@@ -15,6 +14,6 @@ func main() {
 	colors[1] = "green"
 	colors[2] = "blue"
 
-	fmt.Printf("First color is %s\n", colors[])
-	fmt.Printf("Last color is %s\n", colors[])
+	fmt.Printf("First color is %s\n", colors[0])
+	fmt.Printf("Last color is %s\n", colors[2])
 }

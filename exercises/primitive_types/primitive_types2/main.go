@@ -3,11 +3,11 @@
 //
 // Declare the string before formatting it.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
 func main() {
+	who := "Gopher"
 	fmt.Printf("Hello, %s\n", who) // '%s' is used to format strings
 }

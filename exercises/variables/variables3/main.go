@@ -3,12 +3,11 @@
 //
 // A variable declaration needs a type or an initial value.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
 func main() {
-	var x
+	var x int
 	fmt.Printf("x has the value %d", x)
 }

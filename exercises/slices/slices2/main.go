@@ -3,13 +3,12 @@
 //
 // Take a sub-slice using [low:high] bounds.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
 func main() {
 	names := [4]string{"John", "Maria", "Carl", "Peter"}
-	lastTwoNames := names[] // after figuring out the answer, try with other low/high bounds
+	lastTwoNames := names[2:]
 	fmt.Println(lastTwoNames)
 }

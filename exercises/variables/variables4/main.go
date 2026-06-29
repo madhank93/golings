@@ -3,7 +3,6 @@
 //
 // See what happens when a block reuses a name with a new type.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
@@ -13,7 +12,7 @@ func main() {
 	fmt.Printf("x has the value %s\n", x)
 
 	if true {
-		x = 1
+		x := 1
 		fmt.Println(x + 1)
 	}
 

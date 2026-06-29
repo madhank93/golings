@@ -3,13 +3,12 @@
 //
 // Return a closure that remembers state across calls.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
 func updateStatus() func() string {
-	var index int
+	index := 1
 	orderStatus := map[int]string{
 		1: "TO DO",
 		2: "DOING",
@@ -18,7 +17,7 @@ func updateStatus() func() string {
 
 	return func() string {
 		index++
-		return "What should I return?"
+		return orderStatus[index]
 	}
 }
 

@@ -3,12 +3,11 @@
 //
 // Constants must be given a value when declared.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
-const Pi
+const Pi = 3.14
 
 func main() {
 	fmt.Println(Pi)

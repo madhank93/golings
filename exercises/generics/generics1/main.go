@@ -3,7 +3,6 @@
 //
 // Write one function that works for any type.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
@@ -13,6 +12,6 @@ func main() {
 	print(42)
 }
 
-func print(value) {
+func print[T any](value T) {
 	fmt.Println(value)
 }

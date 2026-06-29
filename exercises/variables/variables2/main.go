@@ -3,12 +3,11 @@
 //
 // Declare a variable before assigning to it.
 
-// I AM NOT DONE
 package main
 
 import "fmt"
 
 func main() {
-	x = 5
+	x := 5
 	fmt.Printf("x has the value %d", x)
 }
