@@ -1,9 +1,7 @@
 // interfaces1
 // An interface is a set of method signatures. A type satisfies it IMPLICITLY,
 // just by having those methods — there is no "implements" keyword.
-// Give Rectangle and Circle an Area method so both satisfy Shape.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -11,7 +9,6 @@ import (
 	"testing"
 )
 
-// Shape is satisfied by anything with an Area() float64 method.
 type Shape interface {
 	Area() float64
 }
@@ -19,9 +16,8 @@ type Shape interface {
 type Rectangle struct{ W, H float64 }
 type Circle struct{ R float64 }
 
-// FIXME: add methods so each type satisfies Shape:
-//   func (r Rectangle) Area() float64 { return r.W * r.H }
-//   func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
+func (r Rectangle) Area() float64 { return r.W * r.H }
+func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
 
 func totalArea(shapes []Shape) float64 {
 	var sum float64

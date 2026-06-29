@@ -1,20 +1,16 @@
 // errors1
 // In Go, errors are ordinary values returned alongside results.
-// Make divide return an error when the divisor is zero.
 
-// I AM NOT DONE
 package main_test
 
 import (
+	"errors"
 	"testing"
 )
 
-// divide should return (quotient, nil) normally, and (0, error) when b == 0.
 func divide(a, b int) (int, error) {
 	if b == 0 {
-		// FIXME: a zero divisor is invalid. Return 0 and an error
-		// created with errors.New (you'll need to import "errors").
-		return 0, nil
+		return 0, errors.New("cannot divide by zero")
 	}
 	return a / b, nil
 }

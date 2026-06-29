@@ -1,9 +1,6 @@
 // errors3
 // A custom error type is any type implementing the error interface.
-// errors.As extracts a wrapped error of a concrete type.
-// Implement ValidationError.Error so the message is built from its field.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -12,15 +9,12 @@ import (
 	"testing"
 )
 
-// ValidationError is a custom error type carrying the offending field.
 type ValidationError struct {
 	Field string
 }
 
-// Error implements the error interface.
 func (e *ValidationError) Error() string {
-	// FIXME: return a message like `name is required`, built from e.Field.
-	return ""
+	return fmt.Sprintf("%s is required", e.Field)
 }
 
 func validate(name string) error {

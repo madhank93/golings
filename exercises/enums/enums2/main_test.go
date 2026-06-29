@@ -1,8 +1,6 @@
 // enums2
-// Pair iota constants with a String() method to get readable names (and free
-// pretty-printing via fmt, since this satisfies fmt.Stringer).
+// Pair iota constants with a String() method to get readable names.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -15,11 +13,17 @@ const (
 	Blue
 )
 
-// String returns the name of the color.
 func (c Color) String() string {
-	// FIXME: return "Red"/"Green"/"Blue" depending on c (a switch works well);
-	// return "Unknown" for anything else.
-	return ""
+	switch c {
+	case Red:
+		return "Red"
+	case Green:
+		return "Green"
+	case Blue:
+		return "Blue"
+	default:
+		return "Unknown"
+	}
 }
 
 func TestColorString(t *testing.T) {

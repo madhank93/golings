@@ -1,21 +1,17 @@
 // di1
 // Inject an io.Writer so the output can be captured and asserted in a test.
 
-// I AM NOT DONE
 package main_test
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"testing"
 )
 
-// Greet writes "Hello, <name>!" to w. Real code can pass os.Stdout; a test
-// passes a *bytes.Buffer and inspects what was written.
 func Greet(w io.Writer, name string) {
-	// FIXME: write the greeting to w with fmt.Fprintf(w, "Hello, %s!", name).
-	// You'll need to import "fmt".
-	_ = w
+	fmt.Fprintf(w, "Hello, %s!", name)
 }
 
 func TestGreet(t *testing.T) {

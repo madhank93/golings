@@ -1,20 +1,19 @@
 // errors4
-// panic/recover is Go's last-resort mechanism, not normal error handling.
 // Use a deferred function to recover from a panic and turn it into an error.
 
-// I AM NOT DONE
 package main_test
 
 import (
+	"fmt"
 	"testing"
 )
 
-// safeRun calls fn and, if fn panics, recovers and returns a non-nil error
-// via the named return value. If fn does not panic, it returns nil.
 func safeRun(fn func()) (err error) {
-	// FIXME: add `defer func() { ... }()` that calls recover() and, when the
-	// recovered value is non-nil, assigns an error to `err`
-	// (e.g. fmt.Errorf("recovered: %v", r) — import "fmt").
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("recovered: %v", r)
+		}
+	}()
 	fn()
 	return nil
 }
@@ -26,9 +25,8 @@ func TestSafeRunRecovers(t *testing.T) {
 	}
 }
 
-func TestSafeRunNoPanic(t *testing.T) {
-	err := safeRun(func() {})
-	if err != nil {
+func TestSafeRunOk(t *testing.T) {
+	if err := safeRun(func() {}); err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
 }

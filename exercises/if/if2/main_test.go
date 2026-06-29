@@ -1,41 +1,33 @@
 // if2
-// Make me compile!
-//
 // Map each input string to an output with if/else.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
 func fooIfFizz(fizzish string) string {
-	// When the input is fizz return foo
-	// When the input is fuzz return bar
-	// When the input is neither fizz or fuzz return baz
 	if fizzish == "fizz" {
 		return "foo"
-	} else {
-		return "complete me"
+	} else if fizzish == "fuzz" {
+		return "bar"
 	}
+	return "baz"
 }
 
 func TestFooForFizz(t *testing.T) {
-	result := fooIfFizz("fizz")
-	if result != "foo" {
+	if result := fooIfFizz("fizz"); result != "foo" {
 		t.Errorf("should be 'foo' but got %s", result)
 	}
 }
 
 func TestBarForFuzz(t *testing.T) {
-	result := fooIfFizz("fuzz")
-	if result != "bar" {
+	if result := fooIfFizz("fuzz"); result != "bar" {
 		t.Errorf("should be 'bar' but got %s", result)
 	}
 }
 
 func TestDefaultForBazz(t *testing.T) {
-	result := fooIfFizz("random stuff")
-	if result != "baz" {
+	if result := fooIfFizz("random stuff"); result != "baz" {
 		t.Errorf("should be 'baz' but got %s", result)
 	}
 }

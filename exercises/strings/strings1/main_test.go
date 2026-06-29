@@ -1,16 +1,16 @@
 // strings1
 // The strings package holds the everyday string utilities.
 
-// I AM NOT DONE
 package main_test
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 // slugify lowercases s and replaces every space with a hyphen.
 func slugify(s string) string {
-	// FIXME: use strings.ToLower and strings.ReplaceAll(s, " ", "-")
-	// (import "strings").
-	return s
+	return strings.ReplaceAll(strings.ToLower(s), " ", "-")
 }
 
 func TestSlugify(t *testing.T) {

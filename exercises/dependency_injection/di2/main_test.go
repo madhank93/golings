@@ -1,7 +1,6 @@
 // di2
 // Inject behaviour through a small interface to make time-dependent code testable.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -9,21 +8,17 @@ import (
 	"time"
 )
 
-// Clock reports the current time. Real code uses the system clock; a test
-// injects a fixed one.
 type Clock interface {
 	Now() time.Time
 }
 
-// Greeting returns "Good morning" before noon, otherwise "Good evening",
-// reading the time from the injected clock.
 func Greeting(c Clock) string {
-	// FIXME: if c.Now().Hour() is less than 12 return "Good morning",
-	// otherwise return "Good evening".
-	return ""
+	if c.Now().Hour() < 12 {
+		return "Good morning"
+	}
+	return "Good evening"
 }
 
-// fixedClock is a test double whose Now() always returns the same time.
 type fixedClock struct{ t time.Time }
 
 func (f fixedClock) Now() time.Time { return f.t }

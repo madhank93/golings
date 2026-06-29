@@ -1,31 +1,28 @@
 // generics3
 // Build a generic data structure: a Stack[T] that works for any element type.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
-// Stack is a last-in-first-out stack of any type T.
 type Stack[T any] struct {
 	items []T
 }
 
-// Push adds x to the top of the stack.
 func (s *Stack[T]) Push(x T) {
-	// FIXME: append x to s.items.
+	s.items = append(s.items, x)
 }
 
-// Pop removes and returns the top item. The bool is false when the stack is
-// empty (and the T is its zero value).
 func (s *Stack[T]) Pop() (T, bool) {
-	// FIXME: if s.items is empty, return the zero value and false. Otherwise
-	// take the last item, shrink the slice, and return (item, true).
 	var zero T
-	return zero, false
+	if len(s.items) == 0 {
+		return zero, false
+	}
+	x := s.items[len(s.items)-1]
+	s.items = s.items[:len(s.items)-1]
+	return x, true
 }
 
-// Len reports how many items are on the stack.
 func (s *Stack[T]) Len() int { return len(s.items) }
 
 func TestStackLIFO(t *testing.T) {

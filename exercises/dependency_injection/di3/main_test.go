@@ -1,29 +1,24 @@
 // di3
 // Constructor injection: a struct holds a dependency interface and delegates to it.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
-// Store abstracts where greeted names are recorded.
 type Store interface {
 	Save(name string)
 	Count() int
 }
 
-// Greeter depends on a Store, injected when the Greeter is built.
 type Greeter struct {
 	store Store
 }
 
-// Greet records the name in the store and returns "Hi, <name>".
 func (g Greeter) Greet(name string) string {
-	// FIXME: call g.store.Save(name), then return "Hi, " + name.
-	return ""
+	g.store.Save(name)
+	return "Hi, " + name
 }
 
-// memStore is an in-memory test double for Store.
 type memStore struct{ names []string }
 
 func (m *memStore) Save(name string) { m.names = append(m.names, name) }

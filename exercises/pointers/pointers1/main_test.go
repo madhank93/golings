@@ -2,14 +2,13 @@
 // A pointer holds the address of a value. &x takes the address; *p reads or
 // writes the value at that address. Modify the caller's int through a pointer.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
 // double multiplies the value that p points to by 2, in place.
 func double(p *int) {
-	// FIXME: write back through the pointer, e.g. *p = *p * 2
+	*p = *p * 2
 }
 
 func TestDouble(t *testing.T) {

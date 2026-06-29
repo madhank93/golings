@@ -2,17 +2,20 @@
 // Go has no enum keyword; the idiom is a named integer type plus a const block
 // using iota, which yields 0, 1, 2, ... for successive constants.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
 type Weekday int
 
-// FIXME: declare the rest of the weekdays so Sunday=0 ... Saturday=6.
-// After the first `= iota`, each subsequent line repeats it automatically.
 const (
 	Sunday Weekday = iota
+	Monday
+	Tuesday
+	Wednesday
+	Thursday
+	Friday
+	Saturday
 )
 
 func TestWeekdayValues(t *testing.T) {

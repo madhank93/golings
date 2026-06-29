@@ -2,21 +2,24 @@
 // Recover the concrete type held by an interface value with a type switch
 // (or a comma-ok type assertion).
 
-// I AM NOT DONE
 package main_test
 
 import (
+	"fmt"
 	"testing"
 )
 
 // describe reports v as "int: N" for ints, "string: S" for strings,
 // or "unknown" for anything else.
 func describe(v any) string {
-	// FIXME: use a type switch on v.(type) (import "fmt"):
-	//   case int:    return fmt.Sprintf("int: %d", x)
-	//   case string: return fmt.Sprintf("string: %s", x)
-	//   default:     return "unknown"
-	return ""
+	switch x := v.(type) {
+	case int:
+		return fmt.Sprintf("int: %d", x)
+	case string:
+		return fmt.Sprintf("string: %s", x)
+	default:
+		return "unknown"
+	}
 }
 
 func TestDescribe(t *testing.T) {

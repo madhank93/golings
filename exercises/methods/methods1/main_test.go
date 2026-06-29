@@ -1,9 +1,7 @@
 // methods1
-// Methods attach behavior to a type. A value receiver (r Rectangle) works on a
-// copy and can only read; a pointer receiver (r *Rectangle) can mutate the
-// original. Implement both.
+// A value receiver works on a copy and only reads; a pointer receiver can
+// mutate the original. Implement both.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -12,15 +10,13 @@ type Rectangle struct {
 	Width, Height float64
 }
 
-// Area returns Width*Height. Value receiver — it only reads.
 func (r Rectangle) Area() float64 {
-	// FIXME: return r.Width * r.Height
-	return 0
+	return r.Width * r.Height
 }
 
-// Scale multiplies both sides by factor IN PLACE. Pointer receiver — it mutates.
 func (r *Rectangle) Scale(factor float64) {
-	// FIXME: multiply r.Width and r.Height by factor.
+	r.Width *= factor
+	r.Height *= factor
 }
 
 func TestArea(t *testing.T) {

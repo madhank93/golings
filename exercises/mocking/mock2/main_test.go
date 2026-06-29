@@ -1,7 +1,6 @@
 // mock2
 // A stub/fake returns canned data so you can test logic, including error paths.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -9,20 +8,18 @@ import (
 	"testing"
 )
 
-// Fetcher loads a user's name by id. The real one might hit a database.
 type Fetcher interface {
 	Fetch(id int) (string, error)
 }
 
-// WelcomeMessage returns "Welcome, <name>!" for a known user, or
-// "Welcome, guest!" when Fetch returns an error.
 func WelcomeMessage(f Fetcher, id int) string {
-	// FIXME: call f.Fetch(id). If it returns an error, return "Welcome, guest!".
-	// Otherwise return "Welcome, " + name + "!".
-	return ""
+	name, err := f.Fetch(id)
+	if err != nil {
+		return "Welcome, guest!"
+	}
+	return "Welcome, " + name + "!"
 }
 
-// fakeFetcher returns canned results: a name for known ids, an error otherwise.
 type fakeFetcher struct{ names map[int]string }
 
 func (f fakeFetcher) Fetch(id int) (string, error) {

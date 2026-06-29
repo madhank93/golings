@@ -1,9 +1,7 @@
 // pointers3
 // A value parameter receives a COPY, so changes don't reach the caller.
-// Only a pointer parameter can mutate the caller's data. Make incPointer work
-// (incValue is intentionally a no-op from the caller's view).
+// Only a pointer parameter can mutate the caller's data.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -19,7 +17,7 @@ func incValue(c Counter) {
 
 // incPointer takes a pointer — incrementing here MUST affect the caller.
 func incPointer(c *Counter) {
-	// FIXME: increment the caller's N through the pointer (c.N++).
+	c.N++
 }
 
 func TestValueVsPointer(t *testing.T) {

@@ -1,8 +1,6 @@
 // defer2
-// defer is the idiomatic way to guarantee cleanup runs on every return path
-// (the classic `f, _ := os.Open(...); defer f.Close()` pattern).
+// defer is the idiomatic way to guarantee cleanup runs on every return path.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -11,14 +9,12 @@ type Resource struct{ closed bool }
 
 func (r *Resource) Close() { r.closed = true }
 
-// process must Close r before returning, whether it returns early or not.
 func process(r *Resource, early bool) {
-	// FIXME: defer r.Close() at the top so it runs on EVERY return path below.
+	defer r.Close()
 
 	if early {
 		return
 	}
-	// ... imagine more work here ...
 }
 
 func TestDeferCleanup(t *testing.T) {

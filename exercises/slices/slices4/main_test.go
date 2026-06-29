@@ -1,9 +1,6 @@
 // slices4
-// Make me compile!
-//
 // Index a slice within its bounds.
 
-// I AM NOT DONE
 package main_test
 
 import (
@@ -13,8 +10,7 @@ import (
 
 func TestGetOnlyFirstName(t *testing.T) {
 	names := []string{"John", "Maria", "Carl", "Peter"}
-	firstName := names[3]
-
+	firstName := names[0]
 	if firstName != "John" {
 		t.Errorf("firstName value must be John")
 	}
@@ -22,20 +18,18 @@ func TestGetOnlyFirstName(t *testing.T) {
 
 func TestGetFirstTwoNames(t *testing.T) {
 	names := []string{"John", "Maria", "Carl", "Peter"}
-	firstTwoNames := names[5:10]
-	expectedFirstTwoNames := []string{"John", "Maria"}
-
-	if !reflect.DeepEqual(firstTwoNames, expectedFirstTwoNames) {
-		t.Errorf("firstTwoNames should be %v, but got %v", expectedFirstTwoNames, firstTwoNames)
+	firstTwoNames := names[0:2]
+	expected := []string{"John", "Maria"}
+	if !reflect.DeepEqual(firstTwoNames, expected) {
+		t.Errorf("firstTwoNames should be %v, but got %v", expected, firstTwoNames)
 	}
 }
 
 func TestGetLastTwoNames(t *testing.T) {
 	names := []string{"John", "Maria", "Carl", "Peter"}
-	lastTwoNames := names[5:10]
-	expectedLastTwoNames := []string{"Carl", "Peter"}
-
-	if !reflect.DeepEqual(lastTwoNames, expectedLastTwoNames) {
-		t.Errorf("lastTwoNames should be %v, but got %v", expectedLastTwoNames, lastTwoNames)
+	lastTwoNames := names[2:4]
+	expected := []string{"Carl", "Peter"}
+	if !reflect.DeepEqual(lastTwoNames, expected) {
+		t.Errorf("lastTwoNames should be %v, but got %v", expected, lastTwoNames)
 	}
 }

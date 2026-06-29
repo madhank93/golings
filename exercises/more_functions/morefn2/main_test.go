@@ -1,8 +1,6 @@
 // morefn2 — variadic functions
-// A variadic parameter (nums ...int) accepts any number of arguments and is
-// seen inside the function as a slice. A slice can be spread with slice... .
+// A variadic parameter (nums ...int) accepts any number of arguments.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -10,7 +8,9 @@ import "testing"
 // sum returns the total of all its arguments.
 func sum(nums ...int) int {
 	total := 0
-	// FIXME: range over nums and add each value to total.
+	for _, n := range nums {
+		total += n
+	}
 	return total
 }
 
@@ -22,7 +22,7 @@ func TestSum(t *testing.T) {
 		t.Errorf("sum() = %d, want 0", got)
 	}
 	nums := []int{4, 5, 6}
-	if got := sum(nums...); got != 15 { // spread a slice into a variadic call
+	if got := sum(nums...); got != 15 {
 		t.Errorf("sum(nums...) = %d, want 15", got)
 	}
 }

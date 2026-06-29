@@ -1,18 +1,14 @@
 // methods2
 // You can define methods on ANY named type you declare, not just structs.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
 
-// Celsius is a named type whose underlying type is float64.
 type Celsius float64
 
-// Fahrenheit converts the temperature to degrees Fahrenheit: c*9/5 + 32.
 func (c Celsius) Fahrenheit() float64 {
-	// FIXME: convert c to float64 and apply the formula.
-	return 0
+	return float64(c)*9/5 + 32
 }
 
 func TestFahrenheit(t *testing.T) {

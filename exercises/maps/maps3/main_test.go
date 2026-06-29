@@ -1,9 +1,6 @@
 // maps3
-// Make me compile!
-//
 // Look up the correct key in a map.
-//
-// I AM NOT DONE
+
 package main
 
 import "testing"
@@ -14,7 +11,7 @@ func TestGetPhone(t *testing.T) {
 		"John": "+01 333 666",
 	}
 
-	phone, _ := phoneBook["Anna"] // something seems wrong here
+	phone := phoneBook["Ana"]
 	expectedPhone := "+01 101 102"
 	if phone != expectedPhone {
 		t.Errorf("phone should be %s but got %s", expectedPhone, phone)
@@ -27,7 +24,8 @@ func TestInsertPhone(t *testing.T) {
 		"John": "+01 333 666",
 	}
 
-	phone, _ := phoneBook["Laura"] // don't change this line
+	phoneBook["Laura"] = "+11 99 98 97"
+	phone := phoneBook["Laura"] // don't change this line
 	expectedPhone := "+11 99 98 97"
 	if phone != expectedPhone {
 		t.Errorf("phone should be %s but got %s", expectedPhone, phone)
@@ -40,6 +38,7 @@ func TestDeletePhone(t *testing.T) {
 		"John": "+01 333 666",
 	} // don't change the original map
 
+	delete(phoneBook, "John")
 	totalPhones := len(phoneBook)
 	expectedTotalPhones := 1
 	if totalPhones != expectedTotalPhones {

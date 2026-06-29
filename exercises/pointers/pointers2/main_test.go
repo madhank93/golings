@@ -2,7 +2,6 @@
 // Passing a *struct lets a function mutate the caller's struct. Go
 // auto-dereferences, so you write a.Field even when a is a pointer.
 
-// I AM NOT DONE
 package main_test
 
 import "testing"
@@ -13,7 +12,7 @@ type Account struct {
 
 // deposit adds amount to the account's balance, mutating the original.
 func deposit(a *Account, amount int) {
-	// FIXME: add amount to a.Balance.
+	a.Balance += amount
 }
 
 func TestDeposit(t *testing.T) {
