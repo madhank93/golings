@@ -11,10 +11,7 @@ import "testing"
 // order records the sequence in which deferred calls run. Defer appends of
 // 1, then 2, then 3; because defers are LIFO, seq must end up [3, 2, 1].
 func order() (seq []int) {
-	// FIXME: add three deferred appends:
-	//   defer func() { seq = append(seq, 1) }()
-	//   defer func() { seq = append(seq, 2) }()
-	//   defer func() { seq = append(seq, 3) }()
+	// FIXME: defer three appends of 1, 2, 3 — LIFO makes them run in reverse.
 	return
 }
 

@@ -20,9 +20,7 @@ type ByAge []Person
 
 func (a ByAge) Len() int { return len(a) }
 
-// FIXME: implement the other two methods of sort.Interface:
-//   func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
-//   func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+// FIXME: implement Less (compare ages) and Swap (exchange elements).
 
 func TestSortByAge(t *testing.T) {
 	people := ByAge{

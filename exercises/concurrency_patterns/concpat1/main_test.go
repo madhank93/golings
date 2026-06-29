@@ -14,7 +14,7 @@ import (
 // square is a worker: it reads jobs and sends each job's square to results.
 func square(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	// FIXME: range over jobs and send n*n to results for each job.
+	// FIXME: range the jobs channel and send each square to results.
 	_ = jobs
 }
 

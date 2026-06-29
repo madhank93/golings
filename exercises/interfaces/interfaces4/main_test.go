@@ -20,9 +20,7 @@ type Buffer struct {
 	data string
 }
 
-// FIXME: implement these on *Buffer so it satisfies ReadWriter:
-//   func (b *Buffer) Read() string  { return b.data }
-//   func (b *Buffer) Write(s string) { b.data += s }
+// FIXME: implement Read and Write on *Buffer.
 
 func useRW(rw ReadWriter) string {
 	rw.Write("hello")

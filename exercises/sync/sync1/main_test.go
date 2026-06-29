@@ -17,9 +17,7 @@ type Counter struct {
 }
 
 func (c *Counter) Inc() {
-	// FIXME: take the lock before touching n and release it after, e.g.
-	//   c.mu.Lock()
-	//   defer c.mu.Unlock()
+	// FIXME: take the lock before touching n and release it after (defer).
 	c.n++
 }
 

@@ -19,7 +19,7 @@ func countHits(n int) int64 {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			// FIXME: this plain increment races. Use atomic.AddInt64(&hits, 1).
+			// FIXME: increment atomically instead of a plain ++ (sync/atomic).
 			hits++
 		}()
 	}

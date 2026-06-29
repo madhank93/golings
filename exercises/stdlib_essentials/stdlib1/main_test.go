@@ -14,7 +14,7 @@ import (
 // (json matching is case-insensitive, so tags are required here because the
 // keys differ by more than case.)
 type User struct {
-	// FIXME: add `json:"full_name"` and `json:"user_age"` struct tags.
+	// FIXME: add struct tags that map the JSON keys onto the fields.
 	Name string
 	Age  int
 }

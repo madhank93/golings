@@ -18,8 +18,7 @@ type Clock interface {
 // Greeting returns "Good morning" before noon, otherwise "Good evening",
 // reading the time from the injected clock.
 func Greeting(c Clock) string {
-	// FIXME: if c.Now().Hour() is less than 12 return "Good morning",
-	// otherwise return "Good evening".
+	// FIXME: pick the greeting from the hour reported by c.Now() (before noon is morning).
 	return ""
 }
 

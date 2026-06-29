@@ -14,8 +14,7 @@ import (
 // userHandler responds with "user <id>", taking id from the path —
 // e.g. GET /users/42 -> "user 42".
 func userHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME: read the {id} path value with r.PathValue("id"), then write
-	// "user <id>" with fmt.Fprintf(w, "user %s", id).
+	// FIXME: read the {id} path value and write it back.
 	_ = w
 	_ = r
 }
@@ -23,7 +22,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 // newMux wires the routes.
 func newMux() *http.ServeMux {
 	mux := http.NewServeMux()
-	// FIXME: register userHandler for the pattern "GET /users/{id}".
+	// FIXME: register the handler for the GET method + path pattern.
 	return mux
 }
 

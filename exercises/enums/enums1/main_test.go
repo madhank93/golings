@@ -9,8 +9,7 @@ import "testing"
 
 type Weekday int
 
-// FIXME: declare the rest of the weekdays so Sunday=0 ... Saturday=6.
-// After the first `= iota`, each subsequent line repeats it automatically.
+// FIXME: list the remaining weekdays — after the first = iota, each line auto-increments.
 const (
 	Sunday Weekday = iota
 )

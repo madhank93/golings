@@ -13,10 +13,7 @@ import (
 
 // saveAndLoad writes content to path, then reads it back and returns it.
 func saveAndLoad(path, content string) (string, error) {
-	// FIXME:
-	//   if err := os.WriteFile(path, []byte(content), 0o644); err != nil { return "", err }
-	//   data, err := os.ReadFile(path); if err != nil { return "", err }
-	//   return string(data), nil
+	// FIXME: write the content to the path, then read it back (os.WriteFile / os.ReadFile).
 	return "", nil
 }
 

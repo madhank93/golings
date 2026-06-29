@@ -13,7 +13,7 @@ import (
 
 // parseDate parses s (formatted as YYYY-MM-DD) into a time.Time.
 func parseDate(s string) (time.Time, error) {
-	// FIXME: return time.Parse("2006-01-02", s).
+	// FIXME: parse with the reference layout for a YYYY-MM-DD date.
 	return time.Time{}, nil
 }
 

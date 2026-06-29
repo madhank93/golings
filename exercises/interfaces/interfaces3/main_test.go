@@ -12,10 +12,7 @@ import (
 // describe reports v as "int: N" for ints, "string: S" for strings,
 // or "unknown" for anything else.
 func describe(v any) string {
-	// FIXME: use a type switch on v.(type) (import "fmt"):
-	//   case int:    return fmt.Sprintf("int: %d", x)
-	//   case string: return fmt.Sprintf("string: %s", x)
-	//   default:     return "unknown"
+	// FIXME: switch on the dynamic type (int, string) and format each; default to "unknown".
 	return ""
 }
 

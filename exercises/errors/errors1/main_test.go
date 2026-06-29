@@ -12,8 +12,7 @@ import (
 // divide should return (quotient, nil) normally, and (0, error) when b == 0.
 func divide(a, b int) (int, error) {
 	if b == 0 {
-		// FIXME: a zero divisor is invalid. Return 0 and an error
-		// created with errors.New (you'll need to import "errors").
+		// FIXME: a zero divisor is invalid — return a non-nil error (errors.New).
 		return 0, nil
 	}
 	return a / b, nil

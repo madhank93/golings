@@ -16,9 +16,7 @@ func merge(chans ...<-chan int) <-chan int {
 	out := make(chan int)
 	var wg sync.WaitGroup
 
-	// FIXME: for each input channel c, wg.Add(1) and start a goroutine that
-	// copies c's values into out then calls wg.Done(). Then start one more
-	// goroutine that does wg.Wait() followed by close(out).
+	// FIXME: fan each input channel into out via its own goroutine; close out once all finish.
 
 	return out
 }

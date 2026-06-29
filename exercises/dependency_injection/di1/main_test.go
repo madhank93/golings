@@ -13,8 +13,7 @@ import (
 // Greet writes "Hello, <name>!" to w. Real code can pass os.Stdout; a test
 // passes a *bytes.Buffer and inspects what was written.
 func Greet(w io.Writer, name string) {
-	// FIXME: write the greeting to w with fmt.Fprintf(w, "Hello, %s!", name).
-	// You'll need to import "fmt".
+	// FIXME: write the greeting to w — which fmt function writes formatted text to an io.Writer?
 	_ = w
 }
 

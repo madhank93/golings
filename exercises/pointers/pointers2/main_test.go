@@ -13,7 +13,7 @@ type Account struct {
 
 // deposit adds amount to the account's balance, mutating the original.
 func deposit(a *Account, amount int) {
-	// FIXME: add amount to a.Balance.
+	// FIXME: add amount to the balance via the pointer.
 }
 
 func TestDeposit(t *testing.T) {

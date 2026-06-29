@@ -9,7 +9,7 @@ import "testing"
 // Reduce folds items into an accumulator: starting from init, it applies f to
 // the running accumulator and each element in turn, and returns the result.
 func Reduce[A, B any](items []A, init B, f func(B, A) B) B {
-	// FIXME: range over items, updating acc := f(acc, item), then return acc.
+	// FIXME: fold left: start from init and combine each element into the accumulator.
 	return init
 }
 

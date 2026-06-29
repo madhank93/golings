@@ -17,8 +17,7 @@ var ErrNotFound = errors.New("not found")
 // lookup returns an error that WRAPS ErrNotFound when id is empty.
 func lookup(id string) error {
 	if id == "" {
-		// FIXME: add context AND wrap the sentinel using the %w verb,
-		// e.g. fmt.Errorf("lookup %q: %w", id, ErrNotFound)
+		// FIXME: wrap the sentinel with the %w verb so errors.Is can match it.
 		return fmt.Errorf("lookup failed")
 	}
 	return nil

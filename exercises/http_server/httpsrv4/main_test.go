@@ -15,8 +15,7 @@ import (
 func withHeader(value string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// FIXME: set w.Header().Set("X-App", value), then call
-			// next.ServeHTTP(w, r) so the wrapped handler still runs.
+			// FIXME: set the header, then call the next handler so the chain continues.
 		})
 	}
 }

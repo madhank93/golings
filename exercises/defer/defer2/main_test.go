@@ -13,7 +13,7 @@ func (r *Resource) Close() { r.closed = true }
 
 // process must Close r before returning, whether it returns early or not.
 func process(r *Resource, early bool) {
-	// FIXME: defer r.Close() at the top so it runs on EVERY return path below.
+	// FIXME: defer the Close at the top so it runs on every return path.
 
 	if early {
 		return

@@ -14,8 +14,7 @@ import (
 
 // reverse should reverse s by runes so it round-trips and stays valid UTF-8.
 func reverse(s string) string {
-	// FIXME: reversing bytes breaks multibyte characters. Convert to []rune,
-	// swap from both ends, and return string(runes).
+	// FIXME: reverse by runes, not bytes, so multibyte characters survive.
 	b := []byte(s)
 	for i, j := 0, len(b)-1; i < j; i, j = i+1, j-1 {
 		b[i], b[j] = b[j], b[i]

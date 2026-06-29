@@ -10,7 +10,7 @@ import "testing"
 // sum returns the total of all its arguments.
 func sum(nums ...int) int {
 	total := 0
-	// FIXME: range over nums and add each value to total.
+	// FIXME: range the variadic slice, adding each value.
 	return total
 }
 

@@ -14,8 +14,7 @@ import (
 // greetHandler responds with "Hello, <name>!", where name comes from the
 // "name" query parameter and defaults to "world".
 func greetHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME: read r.URL.Query().Get("name"); if it's empty use "world"; then
-	// write the greeting with fmt.Fprintf(w, "Hello, %s!", name).
+	// FIXME: read the name query param (default "world") and write the greeting.
 	_ = w
 	_ = r
 }

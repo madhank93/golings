@@ -82,6 +82,24 @@ time it's shown. Reset an exercise (`r`) and its completion is dropped, so the
 streak adjusts automatically; miss a day and your next completion starts a fresh
 streak of 1.
 
+## Getting unstuck
+
+Help comes in three escalating levels, so you can take only as much as you need:
+
+1. **The `// FIXME` comment** in each file tells you *what* to do — a nudge, not
+   the answer.
+2. **The hint** (`h` in the TUI, or `./bin/golings hint <name>`) shows the actual
+   code when the nudge isn't enough.
+3. **The `solution` branch** has the full worked answer for every exercise, if
+   you want to compare:
+
+   ```sh
+   git show solution:exercises/variables/variables1/main.go
+   ```
+
+   Try the first two before reaching for it — the point is to write the code
+   yourself.
+
 ## Staying up to date
 
 To pull the latest exercises and tool improvements **without losing your

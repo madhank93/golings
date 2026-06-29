@@ -17,8 +17,7 @@ const userKey ctxKey = "user"
 
 // userFromContext returns the user stored under userKey, or "anonymous" if none.
 func userFromContext(ctx context.Context) string {
-	// FIXME: ctx.Value(userKey) returns an interface{}. Type-assert it to
-	// string with the comma-ok form; return it when present, else "anonymous".
+	// FIXME: type-assert the value to string (comma-ok); fall back to the default.
 	return ""
 }
 

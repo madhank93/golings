@@ -12,9 +12,7 @@ import (
 // safeRun calls fn and, if fn panics, recovers and returns a non-nil error
 // via the named return value. If fn does not panic, it returns nil.
 func safeRun(fn func()) (err error) {
-	// FIXME: add `defer func() { ... }()` that calls recover() and, when the
-	// recovered value is non-nil, assigns an error to `err`
-	// (e.g. fmt.Errorf("recovered: %v", r) — import "fmt").
+	// FIXME: defer a func that calls recover(); on a non-nil value, set the named error.
 	fn()
 	return nil
 }

@@ -14,8 +14,7 @@ import (
 // doWork simulates work that takes d, but must stop early and return ctx.Err()
 // if the context is cancelled first. Returns nil when the work finishes in time.
 func doWork(ctx context.Context, d time.Duration) error {
-	// FIXME: replace the blocking sleep with a select that waits on EITHER
-	// time.After(d) (work done -> return nil) OR ctx.Done() (return ctx.Err()).
+	// FIXME: select between the work finishing and the context being done.
 	time.Sleep(d)
 	return nil
 }

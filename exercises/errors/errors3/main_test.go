@@ -19,7 +19,7 @@ type ValidationError struct {
 
 // Error implements the error interface.
 func (e *ValidationError) Error() string {
-	// FIXME: return a message like `name is required`, built from e.Field.
+	// FIXME: build the message from the field with fmt.
 	return ""
 }
 

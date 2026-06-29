@@ -14,13 +14,13 @@ type Rectangle struct {
 
 // Area returns Width*Height. Value receiver — it only reads.
 func (r Rectangle) Area() float64 {
-	// FIXME: return r.Width * r.Height
+	// FIXME: return the product of the two sides.
 	return 0
 }
 
 // Scale multiplies both sides by factor IN PLACE. Pointer receiver — it mutates.
 func (r *Rectangle) Scale(factor float64) {
-	// FIXME: multiply r.Width and r.Height by factor.
+	// FIXME: multiply both sides by factor (a pointer receiver mutates in place).
 }
 
 func TestArea(t *testing.T) {

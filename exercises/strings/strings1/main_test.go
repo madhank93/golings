@@ -8,8 +8,7 @@ import "testing"
 
 // slugify lowercases s and replaces every space with a hyphen.
 func slugify(s string) string {
-	// FIXME: use strings.ToLower and strings.ReplaceAll(s, " ", "-")
-	// (import "strings").
+	// FIXME: lowercase the input, then replace spaces with hyphens (strings package).
 	return s
 }
 

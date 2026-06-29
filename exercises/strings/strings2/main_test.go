@@ -9,7 +9,7 @@ import "testing"
 
 // charCount returns the number of characters (runes) in s, not bytes.
 func charCount(s string) int {
-	// FIXME: return utf8.RuneCountInString(s) (import "unicode/utf8").
+	// FIXME: count runes, not bytes — unicode/utf8 has a helper for that.
 	return len(s)
 }
 

@@ -17,8 +17,7 @@ const (
 
 // String returns the name of the color.
 func (c Color) String() string {
-	// FIXME: return "Red"/"Green"/"Blue" depending on c (a switch works well);
-	// return "Unknown" for anything else.
+	// FIXME: switch on the color and return its name.
 	return ""
 }
 

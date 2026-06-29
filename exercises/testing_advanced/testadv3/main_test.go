@@ -14,9 +14,7 @@ import (
 
 // pingHandler should respond with status 200 and the body "pong".
 func pingHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME: write the body "pong" to w. w.Write returns (n, err); check the
-	// error and, on failure, reply with http.Error(w, ..., 500).
-	// (A handler that writes a body returns status 200 by default.)
+	// FIXME: write the body "pong" to w and check the write error.
 	_ = w
 }
 

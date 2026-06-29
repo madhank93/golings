@@ -26,8 +26,7 @@ func validatePassword(p string) error {
 	if !strings.ContainsAny(p, "0123456789") {
 		errs = append(errs, ErrNoDigit)
 	}
-	// FIXME: combine errs into ONE error with errors.Join(errs...) and return it.
-	// (errors.Join returns nil when errs is empty, so a valid password -> nil.)
+	// FIXME: combine the collected errors into one (errors.Join).
 	return nil
 }
 

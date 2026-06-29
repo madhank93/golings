@@ -17,8 +17,7 @@ type Fetcher interface {
 // WelcomeMessage returns "Welcome, <name>!" for a known user, or
 // "Welcome, guest!" when Fetch returns an error.
 func WelcomeMessage(f Fetcher, id int) string {
-	// FIXME: call f.Fetch(id). If it returns an error, return "Welcome, guest!".
-	// Otherwise return "Welcome, " + name + "!".
+	// FIXME: Fetch returns a value and an error — handle the error path, then format the name.
 	return ""
 }
 

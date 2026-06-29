@@ -9,13 +9,13 @@ import "testing"
 
 // bounds returns the smallest and largest of three ints.
 func bounds(a, b, c int) (lo, hi int) {
-	// FIXME: use the built-ins:  lo = min(a, b, c); hi = max(a, b, c)
+	// FIXME: use the built-in min and max.
 	return 0, 0
 }
 
 // wipe empties the map in place.
 func wipe(m map[string]int) {
-	// FIXME: clear(m)
+	// FIXME: use the built-in clear.
 }
 
 func TestBounds(t *testing.T) {

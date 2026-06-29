@@ -14,9 +14,7 @@ import (
 // flag funcs) keeps it testable.
 func parseGreeting(args []string) (string, int) {
 	fs := flag.NewFlagSet("greet", flag.ContinueOnError)
-	// FIXME: define a string flag "name" (default "world") and an int flag
-	// "count" (default 1) with fs.String / fs.Int, call fs.Parse(args), then
-	// return the two values (remember fs.String/fs.Int return pointers).
+	// FIXME: define the name and count flags, parse the args, and return their values.
 	_ = fs
 	return "", 0
 }

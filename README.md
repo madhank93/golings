@@ -74,6 +74,15 @@ mise run site            # run the docs site locally
 completion record (`.golings-state.json`) is untracked, so your done count and
 streak survive every update.
 
+## Getting unstuck
+
+Help escalates so you take only what you need: the `// FIXME` comment in each
+file nudges you toward *what* to do; the hint (`h`, or `./bin/golings hint
+<name>`) shows the actual code; and the [`solution`](https://github.com/madhank93/golings/tree/solution)
+branch has the full worked answer for every exercise — e.g.
+`git show solution:exercises/variables/variables1/main.go`. Try the first two
+before peeking.
+
 ## Editor setup (VS Code)
 
 The repo ships a `.vscode/` config. On open, VS Code prompts you to install the

@@ -16,7 +16,7 @@ import (
 func countLines(r io.Reader) int {
 	scanner := bufio.NewScanner(r)
 	n := 0
-	// FIXME: advance the scanner line by line: for scanner.Scan() { n++ }
+	// FIXME: advance the scanner one line at a time, counting each.
 	return n
 }
 

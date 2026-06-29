@@ -16,7 +16,7 @@ func countUntilCancelled(ctx context.Context) int {
 	count := 0
 	for {
 		select {
-		// FIXME: add a `case <-ctx.Done():` that returns count.
+		// FIXME: add a case that returns when the context is done.
 		case <-time.After(time.Millisecond):
 			count++
 		}

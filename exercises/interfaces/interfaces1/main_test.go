@@ -19,9 +19,7 @@ type Shape interface {
 type Rectangle struct{ W, H float64 }
 type Circle struct{ R float64 }
 
-// FIXME: add methods so each type satisfies Shape:
-//   func (r Rectangle) Area() float64 { return r.W * r.H }
-//   func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
+// FIXME: give each type an Area method so it satisfies Shape.
 
 func totalArea(shapes []Shape) float64 {
 	var sum float64

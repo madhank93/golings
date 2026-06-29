@@ -13,8 +13,7 @@ import (
 // sortDesc returns a new slice with nums sorted from largest to smallest.
 func sortDesc(nums []int) []int {
 	out := slices.Clone(nums)
-	// FIXME: sort out descending. slices.Sort sorts ascending — sort then
-	// slices.Reverse(out), or use slices.SortFunc with a comparison.
+	// FIXME: sort ascending then reverse — or sort with a custom comparison.
 	return out
 }
 

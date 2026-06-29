@@ -19,7 +19,7 @@ func incValue(c Counter) {
 
 // incPointer takes a pointer — incrementing here MUST affect the caller.
 func incPointer(c *Counter) {
-	// FIXME: increment the caller's N through the pointer (c.N++).
+	// FIXME: increment N through the pointer so the caller sees the change.
 }
 
 func TestValueVsPointer(t *testing.T) {

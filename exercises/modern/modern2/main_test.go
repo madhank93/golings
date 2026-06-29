@@ -10,7 +10,7 @@ import "testing"
 // sumTo returns 0 + 1 + ... + (n-1) using range over an integer.
 func sumTo(n int) int {
 	total := 0
-	// FIXME: for i := range n { total += i }
+	// FIXME: range over the integer n and accumulate.
 	return total
 }
 

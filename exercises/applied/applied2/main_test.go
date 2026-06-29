@@ -27,7 +27,7 @@ func NewStore() *Store {
 
 // Set stores v under key, safely for concurrent callers.
 func (s *Store) Set(key string, v int) {
-	// FIXME: lock the mutex (defer unlock) and write s.m[key] = v.
+	// FIXME: lock the mutex (defer unlock), then store the value.
 }
 
 // Get returns the value for key, or ErrNotFound if it is absent.

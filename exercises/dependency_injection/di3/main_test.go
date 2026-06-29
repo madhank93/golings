@@ -19,7 +19,7 @@ type Greeter struct {
 
 // Greet records the name in the store and returns "Hi, <name>".
 func (g Greeter) Greet(name string) string {
-	// FIXME: call g.store.Save(name), then return "Hi, " + name.
+	// FIXME: record the name via the injected store, then return the greeting.
 	return ""
 }
 

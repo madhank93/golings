@@ -9,7 +9,7 @@ import "testing"
 
 // double multiplies the value that p points to by 2, in place.
 func double(p *int) {
-	// FIXME: write back through the pointer, e.g. *p = *p * 2
+	// FIXME: write through the pointer to change the caller's value.
 }
 
 func TestDouble(t *testing.T) {

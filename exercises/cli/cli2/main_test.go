@@ -15,8 +15,7 @@ func firstArg(args []string) string {
 	fs := flag.NewFlagSet("cmd", flag.ContinueOnError)
 	verbose := fs.Bool("v", false, "verbose output")
 	_ = verbose
-	// FIXME: call fs.Parse(args), then return the first positional with
-	// fs.Arg(0) (it already returns "" when there is none).
+	// FIXME: parse the args, then return the first positional argument.
 	return ""
 }
 

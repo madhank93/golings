@@ -13,8 +13,7 @@ import (
 
 type Point struct{ X, Y int }
 
-// FIXME: implement String() string on Point returning "(X, Y)",
-// e.g. Point{3, 4} -> "(3, 4)". Use fmt.Sprintf.
+// FIXME: implement String() returning the point as "(X, Y)".
 
 func TestStringer(t *testing.T) {
 	var _ fmt.Stringer = Point{} // compile-time check: Point must satisfy Stringer

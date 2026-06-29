@@ -23,10 +23,7 @@ type echoResp struct {
 // echoHandler decodes {"name": "..."} and responds with
 // {"greeting": "Hello, <name>!"} and Content-Type application/json.
 func echoHandler(w http.ResponseWriter, r *http.Request) {
-	// FIXME:
-	//   1. decode the body:  var req echoReq; json.NewDecoder(r.Body).Decode(&req)
-	//   2. set the header:    w.Header().Set("Content-Type", "application/json")
-	//   3. encode the reply:  json.NewEncoder(w).Encode(echoResp{Greeting: "Hello, " + req.Name + "!"})
+	// FIXME: decode the JSON body, set the JSON content-type, then encode the reply.
 	_ = w
 	_ = r
 }

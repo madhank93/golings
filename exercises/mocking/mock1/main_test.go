@@ -13,8 +13,7 @@ type Notifier interface {
 
 // Alert notifies when temp exceeds threshold, and stays silent otherwise.
 func Alert(n Notifier, temp, threshold int) {
-	// FIXME: when temp is greater than threshold, call n.Notify("too hot").
-	// Otherwise do nothing.
+	// FIXME: only notify when the temperature is above the threshold.
 }
 
 // spyNotifier records every message it is asked to send.

@@ -8,9 +8,7 @@ import "testing"
 
 // isEmail reports whether s looks like a basic email: something@something.tld.
 func isEmail(s string) bool {
-	// FIXME: compile a pattern and match it (import "regexp"):
-	//   re := regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
-	//   return re.MatchString(s)
+	// FIXME: compile an email-shaped pattern and match the string (regexp).
 	return false
 }
 

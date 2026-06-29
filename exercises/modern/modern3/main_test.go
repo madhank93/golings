@@ -14,7 +14,7 @@ import (
 // countUp returns an iterator that yields 1, 2, ..., n.
 func countUp(n int) iter.Seq[int] {
 	return func(yield func(int) bool) {
-		// FIXME: for i := 1; i <= n; i++ { if !yield(i) { return } }
+		// FIXME: loop 1..n and yield each value; stop early if yield returns false.
 	}
 }
 

@@ -11,7 +11,7 @@ type Celsius float64
 
 // Fahrenheit converts the temperature to degrees Fahrenheit: c*9/5 + 32.
 func (c Celsius) Fahrenheit() float64 {
-	// FIXME: convert c to float64 and apply the formula.
+	// FIXME: convert the receiver to float64 and apply the C→F formula.
 	return 0
 }
 

@@ -9,8 +9,7 @@ import "testing"
 // parseAndDouble parses s as an int and returns it doubled. It returns an
 // error when s is not a valid integer.
 func parseAndDouble(s string) (int, error) {
-	// FIXME: n, err := strconv.Atoi(s); if err != nil { return 0, err }
-	//        return n * 2, nil   (import "strconv")
+	// FIXME: convert the string to an int (strconv), handle the error, then double it.
 	return 0, nil
 }
 

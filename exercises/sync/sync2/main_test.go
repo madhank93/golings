@@ -16,8 +16,7 @@ type Config struct {
 }
 
 func (c *Config) Load() {
-	// FIXME: wrap the body in c.once.Do(func() { ... }) so that loads is
-	// incremented exactly once across all calls.
+	// FIXME: run the body inside once.Do so it happens exactly once.
 	c.loads++
 }
 

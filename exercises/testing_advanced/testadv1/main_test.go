@@ -12,8 +12,7 @@ import (
 // fizzbuzz returns "Fizz" for multiples of 3, "Buzz" for multiples of 5,
 // "FizzBuzz" for multiples of 15, otherwise the number as a string.
 func fizzbuzz(n int) string {
-	// FIXME: implement the FizzBuzz rules. strconv.Itoa(n) turns an int into
-	// its decimal string (import "strconv").
+	// FIXME: apply the FizzBuzz rules; strconv.Itoa renders the plain number.
 	return ""
 }
 

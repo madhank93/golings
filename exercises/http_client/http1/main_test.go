@@ -14,11 +14,7 @@ import (
 
 // fetch performs a GET request to url and returns the response body as a string.
 func fetch(url string) (string, error) {
-	// FIXME:
-	//   resp, err := http.Get(url); if err != nil { return "", err }
-	//   defer resp.Body.Close()
-	//   body, err := io.ReadAll(resp.Body); if err != nil { return "", err }
-	//   return string(body), nil
+	// FIXME: GET the url, defer-close the body, and read it all.
 	return "", nil
 }
 

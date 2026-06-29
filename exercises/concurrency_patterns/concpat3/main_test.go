@@ -26,8 +26,7 @@ func generate(nums ...int) <-chan int {
 func double(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
-		// FIXME: range over in, send n*2 to out for each value,
-		// then close(out) (already called below — move/keep it after the loop).
+		// FIXME: range the input, send each doubled value, then close out after the loop.
 		close(out)
 	}()
 	return out

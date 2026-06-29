@@ -13,14 +13,13 @@ type Stack[T any] struct {
 
 // Push adds x to the top of the stack.
 func (s *Stack[T]) Push(x T) {
-	// FIXME: append x to s.items.
+	// FIXME: add x to the backing slice.
 }
 
 // Pop removes and returns the top item. The bool is false when the stack is
 // empty (and the T is its zero value).
 func (s *Stack[T]) Pop() (T, bool) {
-	// FIXME: if s.items is empty, return the zero value and false. Otherwise
-	// take the last item, shrink the slice, and return (item, true).
+	// FIXME: guard the empty case (zero value, false); otherwise remove and return the top item.
 	var zero T
 	return zero, false
 }

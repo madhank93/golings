@@ -15,7 +15,7 @@ import (
 // readAll copies everything from r into a buffer and returns it as a string.
 func readAll(r io.Reader) (string, error) {
 	var buf bytes.Buffer
-	// FIXME: use io.Copy(&buf, r) to stream r into buf; return on any error.
+	// FIXME: stream the reader into the buffer in one call (io.Copy).
 	return buf.String(), nil
 }
 
