@@ -13,3 +13,5 @@ coverage.out
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
+# local LinkedIn/demo exports (not committed)
+golings-demo.*
