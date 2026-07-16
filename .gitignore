@@ -9,9 +9,9 @@ coverage.out
 .golings-state.json
 
 # editor — ignore personal VS Code files but share the recommended config
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+**/.vscode/*
+!**/.vscode/extensions.json
+!**/.vscode/settings.json
 .idea/
 # local LinkedIn/demo exports (not committed)
-golings-demo.*
+golings-demo*
