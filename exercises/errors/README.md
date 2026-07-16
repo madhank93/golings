@@ -7,6 +7,7 @@ These exercises cover the idiomatic toolkit:
 - wrapping with `fmt.Errorf("...: %w", err)` and matching with `errors.Is`
 - custom error types and extracting them with `errors.As`
 - `panic`/`recover` and why it is a last resort, not flow control
+- deep wrap chains: `%w` keeps `errors.Is` working, `%v` breaks it
 
 ## Resources
 

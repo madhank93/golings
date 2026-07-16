@@ -515,6 +515,15 @@ return errors.Join(errs...)
 """
 
 [[exercises]]
+name = "errors6"
+path = "exercises/errors/errors6/main_test.go"
+mode = "test"
+hint = """
+errors.Is walks the whole wrap chain, but only through %w links. %v flattens the
+error to text and breaks the chain — change the middle Errorf to use %w.
+"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
@@ -591,6 +600,15 @@ hint = """
 Call yield for each value; stop early if it returns false:
 
 for i := 1; i <= n; i++ { if !yield(i) { return } }
+"""
+
+[[exercises]]
+name = "modern4"
+path = "exercises/modern/modern4/main_test.go"
+mode = "test"
+hint = """
+Go 1.25: wg.Go(f) does Add(1) + go + defer Done() for you. Replace the bare
+`go func(){...}()` with wg.Go(func() { total.Add(int64(n)) }).
 """
 
 [[exercises]]
@@ -1090,4 +1108,245 @@ Guard the write like the read does:
 s.mu.Lock()
 defer s.mu.Unlock()
 s.m[key] = v
+"""
+
+# ── type_aliases ──────────────────────────────────────────────────────────────
+[[exercises]]
+name = "typealias1"
+path = "exercises/type_aliases/typealias1/main.go"
+mode = "compile"
+hint = """
+type Celsius float64 is a distinct type. To pass it to a func taking float64,
+convert explicitly at the call site: toFahrenheit(float64(boiling)).
+"""
+
+[[exercises]]
+name = "typealias2"
+path = "exercises/type_aliases/typealias2/main_test.go"
+mode = "test"
+hint = """
+Add a method: func (c Celsius) String() string { return fmt.Sprintf("%g°C", float64(c)) }
+Use float64(c) inside — fmt.Sprint(c) would recurse.
+"""
+
+[[exercises]]
+name = "typealias3"
+path = "exercises/type_aliases/typealias3/main_test.go"
+mode = "test"
+hint = """
+Write `type MyByte = byte` (with the =). That makes MyByte a true alias — the
+same type as byte — so it passes to asByte with no conversion.
+"""
+
+# ── iterators ─────────────────────────────────────────────────────────────────
+[[exercises]]
+name = "iter1"
+path = "exercises/iterators/iter1/main_test.go"
+mode = "test"
+hint = """
+Only forward values that pass the predicate:
+
+if keep(v) { if !yield(v) { return } }
+"""
+
+[[exercises]]
+name = "iter2"
+path = "exercises/iterators/iter2/main_test.go"
+mode = "test"
+hint = """
+iter.Seq2[K, V] yields (K, V) pairs. For Enumerate the key is the index and the
+value is the element: yield(i, v), not yield(v, i).
+"""
+
+[[exercises]]
+name = "iter3"
+path = "exercises/iterators/iter3/main_test.go"
+mode = "test"
+hint = """
+Range the pairs and yield only the value, producing an iter.Seq[V]:
+
+for _, v := range seq { if !yield(v) { return } }
+"""
+
+# ── maps_package ──────────────────────────────────────────────────────────────
+[[exercises]]
+name = "mapspkg1"
+path = "exercises/maps_package/mapspkg1/main_test.go"
+mode = "test"
+hint = """
+Assigning a map shares it. Use maps.Clone for an independent copy (import "maps"):
+
+cp := maps.Clone(settings)
+"""
+
+[[exercises]]
+name = "mapspkg2"
+path = "exercises/maps_package/mapspkg2/main_test.go"
+mode = "test"
+hint = """
+Delete in one pass with maps.DeleteFunc (import "maps"):
+
+maps.DeleteFunc(m, func(k string, v int) bool { return v <= 0 })
+"""
+
+# ── structured_logging (slog) ─────────────────────────────────────────────────
+[[exercises]]
+name = "slog1"
+path = "exercises/structured_logging/slog1/main_test.go"
+mode = "test"
+hint = """
+The handler's Level filters records. Set it to slog.LevelInfo so Info appears:
+
+&slog.HandlerOptions{Level: slog.LevelInfo}
+"""
+
+[[exercises]]
+name = "slog2"
+path = "exercises/structured_logging/slog2/main_test.go"
+mode = "test"
+hint = """
+With() returns a NEW logger — assign it back:
+
+logger = logger.With("service", "api")
+"""
+
+[[exercises]]
+name = "slog3"
+path = "exercises/structured_logging/slog3/main_test.go"
+mode = "test"
+hint = """
+Implement Handle to record the message:
+
+*h.msgs = append(*h.msgs, r.Message)
+return nil
+"""
+
+# ── goroutine_safety ──────────────────────────────────────────────────────────
+[[exercises]]
+name = "safety1"
+path = "exercises/goroutine_safety/safety1/main_test.go"
+mode = "test"
+hint = """
+Add a sync.RWMutex field. Lock/Unlock around the write in Inc; RLock/RUnlock
+around the read in Value.
+"""
+
+[[exercises]]
+name = "safety2"
+path = "exercises/goroutine_safety/safety2/main_test.go"
+mode = "test"
+hint = """
+Replace the map field with a sync.Map. Set uses m.Store(name, id); Get uses
+v, ok := m.Load(name) then a v.(int) type assertion.
+"""
+
+[[exercises]]
+name = "safety3"
+path = "exercises/goroutine_safety/safety3/main_test.go"
+mode = "test"
+hint = """
+A receiver must not close a channel it does not own. The owner already closed ch
+once — delete the close(ch) inside the worker goroutine.
+"""
+
+# ── synctest ──────────────────────────────────────────────────────────────────
+[[exercises]]
+name = "synctest1"
+path = "exercises/synctest/synctest1/main_test.go"
+mode = "test"
+hint = """
+synctest.Wait() only works inside a bubble. Wrap the whole body in:
+
+synctest.Test(t, func(t *testing.T) { ... })
+"""
+
+[[exercises]]
+name = "synctest2"
+path = "exercises/synctest/synctest2/main_test.go"
+mode = "test"
+hint = """
+Virtual time only advances when every goroutine blocks. Block on the channel —
+add `<-done` — so the sleeper's virtual hour elapses.
+"""
+
+# ── http_server_advanced ──────────────────────────────────────────────────────
+[[exercises]]
+name = "httpadv1"
+path = "exercises/http_server_advanced/httpadv1/main_test.go"
+mode = "test"
+hint = """
+Wrap the handler with cross-origin protection:
+
+return http.NewCrossOriginProtection().Handler(h)
+"""
+
+[[exercises]]
+name = "httpadv2"
+path = "exercises/http_server_advanced/httpadv2/main_test.go"
+mode = "test"
+hint = """
+PathValue's argument must match a {wildcard} in the pattern exactly. Use
+r.PathValue("postID"), not "post_id".
+"""
+
+[[exercises]]
+name = "httpadv3"
+path = "exercises/http_server_advanced/httpadv3/main_test.go"
+mode = "test"
+hint = """
+Point the outbound request at the backend inside Rewrite:
+
+pr.SetURL(target)
+"""
+
+# ── unsafe_pkg ────────────────────────────────────────────────────────────────
+[[exercises]]
+name = "unsafe1"
+path = "exercises/unsafe_pkg/unsafe1/main_test.go"
+mode = "test"
+hint = """
+unsafe.Offsetof reports a field's byte offset:
+
+return unsafe.Offsetof(Record{}.C)
+"""
+
+[[exercises]]
+name = "unsafe2"
+path = "exercises/unsafe_pkg/unsafe2/main_test.go"
+mode = "test"
+hint = """
+Zero-copy []byte -> string shares the backing array:
+
+return unsafe.String(unsafe.SliceData(b), len(b))
+"""
+
+# ── profiling ─────────────────────────────────────────────────────────────────
+[[exercises]]
+name = "pprof1"
+path = "exercises/profiling/pprof1/main_test.go"
+mode = "test"
+hint = """
+The profile is only flushed on stop. Add it right after StartCPUProfile:
+
+defer pprof.StopCPUProfile()
+"""
+
+[[exercises]]
+name = "pprof2"
+path = "exercises/profiling/pprof2/main_test.go"
+mode = "test"
+hint = """
+Return the heap growth between the two snapshots:
+
+return after.HeapAlloc - before.HeapAlloc
+"""
+
+[[exercises]]
+name = "pprof3"
+path = "exercises/profiling/pprof3/main_test.go"
+mode = "test"
+hint = """
+The pprof handlers live on http.DefaultServeMux. Forward the prefix:
+
+mux.Handle("/debug/pprof/", http.DefaultServeMux)
 """
