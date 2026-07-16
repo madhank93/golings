@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 const SITE = 'https://golings.madhan.app';
 const BASE = '/';
 const DESCRIPTION =
-	'Learn Go the rustlings way — 112 hands-on exercises you fix one at a time, from variables to concurrency, current through Go 1.26.';
+	'Learn Go the rustlings way — 138 hands-on exercises you fix one at a time, from variables to concurrency, current through Go 1.26.';
 
 export default defineConfig({
 	site: SITE,
@@ -34,6 +34,7 @@ export default defineConfig({
 			],
 			sidebar: [
 				{ label: 'Getting started', slug: 'getting-started' },
+				{ label: 'Catalog', link: '/catalog/' },
 				{ label: 'Curriculum', slug: 'curriculum' },
 				{ label: 'Topics', items: [{ autogenerate: { directory: 'curriculum/topics' } }] },
 			],

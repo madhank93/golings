@@ -3,21 +3,26 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/mauricioabreu/golings/golings/exercises"
 )
 
 const (
-	infoFile  = "info.toml"
-	outDir    = "web/src/content/docs/curriculum"          // overview (index.md)
-	topicsDir = "web/src/content/docs/curriculum/topics"   // one page per topic
-	baseURL   = ""                                         // empty = served at root (custom domain); use "/golings" for project pages
-	repoBlob  = "https://github.com/madhank93/golings/blob/main"
-	exerciseR = "exercises"
+	infoFile   = "info.toml"
+	outDir     = "web/src/content/docs/curriculum"        // overview (index.md)
+	topicsDir  = "web/src/content/docs/curriculum/topics" // one page per topic
+	dataDir    = "web/src/data"                           // catalog.ts for /catalog
+	detailsDir = "web/src/data/lesson-details"            // per-exercise hint markdown
+	baseURL    = ""                                       // empty = served at root (custom domain); use "/golings" for project pages
+	repoBlob   = "https://github.com/madhank93/golings/blob/main"
+	exerciseR  = "exercises"
 )
 
 // tier groups topics into a beginner→advanced section (mirrors CURRICULUM.md).
@@ -29,14 +34,20 @@ type tier struct {
 var tiers = []tier{
 	{"Beginner · Fundamentals", []string{"variables", "primitive_types", "if", "switch", "functions", "more_functions", "strings"}},
 	{"Beginner · Collections & Loops", []string{"arrays", "slices", "maps", "range"}},
-	{"Intermediate · Types & Methods", []string{"structs", "pointers", "methods", "interfaces", "enums"}},
+	{"Intermediate · Types & Methods", []string{"structs", "pointers", "methods", "interfaces", "enums", "type_aliases"}},
 	{"Intermediate · Functions & Errors", []string{"anonymous_functions", "defer", "errors"}},
-	{"Intermediate · Generics & Modern Go", []string{"generics", "modern"}},
+	{"Intermediate · Generics & Modern Go", []string{"generics", "modern", "iterators"}},
 	{"Intermediate · Testable Design", []string{"dependency_injection", "mocking"}},
-	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns"}},
-	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "reflection", "files", "http_client"}},
-	{"Advanced · Building Applications", []string{"http_server", "cli"}},
-	{"Advanced · Testing & Applied", []string{"testing_advanced", "applied"}},
+	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns", "goroutine_safety", "synctest"}},
+	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "maps_package", "structured_logging", "reflection", "unsafe_pkg", "files", "http_client"}},
+	{"Advanced · Building Applications", []string{"http_server", "http_server_advanced", "cli"}},
+	{"Advanced · Testing & Applied", []string{"testing_advanced", "profiling", "applied"}},
+}
+
+// tierColors gives every topic in a tier the same chip color on /catalog.
+var tierColors = []string{
+	"#4fa86d", "#3b9eff", "#7c6af5", "#d29922", "#9b5de5",
+	"#1f8a9c", "#c53030", "#e36f0e", "#db6d28", "#e85d9f",
 }
 
 func main() {
@@ -57,6 +68,12 @@ func run() error {
 		byTopic[t] = append(byTopic[t], e)
 	}
 
+	// Every topic must be placed in a tier, or its exercises silently vanish
+	// from the site (this happened to the 9 Phase-5 topics).
+	if err := checkCoverage(byTopic); err != nil {
+		return err
+	}
+
 	if err := os.RemoveAll(outDir); err != nil {
 		return err
 	}
@@ -73,19 +90,48 @@ func run() error {
 			}
 		}
 	}
-	return writeOverview(byTopic)
+	if err := writeOverview(byTopic); err != nil {
+		return err
+	}
+	return writeCatalog(byTopic)
+}
+
+// checkCoverage fails when info.toml has a topic the tiers table doesn't place.
+func checkCoverage(byTopic map[string][]exercises.Exercise) error {
+	placed := map[string]bool{}
+	for _, ti := range tiers {
+		for _, t := range ti.topics {
+			placed[t] = true
+		}
+	}
+	var missing []string
+	for t := range byTopic {
+		if !placed[t] {
+			missing = append(missing, t)
+		}
+	}
+	if len(missing) > 0 {
+		sort.Strings(missing)
+		return fmt.Errorf("topics missing from the tiers table: %s", strings.Join(missing, ", "))
+	}
+	return nil
 }
 
 func writeOverview(byTopic map[string][]exercises.Exercise) error {
+	total, topics := 0, 0
+	for _, ti := range tiers {
+		for _, topic := range ti.topics {
+			total += len(byTopic[topic])
+			topics++
+		}
+	}
 	var b strings.Builder
 	b.WriteString("---\ntitle: Curriculum\ndescription: The full golings track, beginner to advanced.\n---\n\n")
-	b.WriteString("97 exercises across 32 topics, grouped into a progressive track. Work through them in order with `mise run watch`.\n\n")
-	total := 0
+	fmt.Fprintf(&b, "%d exercises across %d topics, grouped into a progressive track. Work through them in order with `mise run watch`, or browse the whole set in the filterable [Catalog](%s/catalog/).\n\n", total, topics, baseURL)
 	for _, ti := range tiers {
 		b.WriteString("## " + ti.name + "\n\n")
 		for _, topic := range ti.topics {
 			n := len(byTopic[topic])
-			total += n
 			fmt.Fprintf(&b, "- [%s](%s/curriculum/%s/) — %d exercise%s\n", pretty(topic), baseURL, topic, n, plural(n))
 		}
 		b.WriteString("\n")
@@ -116,6 +162,87 @@ func writeTopic(order int, topic, tierName string, exs []exercises.Exercise) err
 
 	name := fmt.Sprintf("%02d-%s.md", order, topic)
 	return os.WriteFile(filepath.Join(topicsDir, name), []byte(b.String()), 0o644)
+}
+
+// writeCatalog emits the /catalog data: src/data/catalog.ts (typed entries the
+// page renders at build time) and src/data/lesson-details/<name>.md (the hint,
+// fetched into the modal on demand so spoilers never load with the table).
+func writeCatalog(byTopic map[string][]exercises.Exercise) error {
+	if err := os.RemoveAll(detailsDir); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(detailsDir, 0o755); err != nil {
+		return err
+	}
+
+	var b strings.Builder
+	b.WriteString("// AUTO-GENERATED by `go run ./web/gen` from info.toml — do not hand-edit.\n\n")
+	b.WriteString("export type CatalogEntry = {\n")
+	b.WriteString("  topic: string;\n  slug: string;\n  mode: 'compile' | 'test';\n")
+	b.WriteString("  description: string;\n  path: string;\n  hint: boolean; // has src/data/lesson-details/<slug>.md\n};\n\n")
+
+	b.WriteString("export const TOPICS: Record<string, { label: string; tier: string; color: string; learn: string }> = {\n")
+	for i, ti := range tiers {
+		color := tierColors[i%len(tierColors)]
+		for _, topic := range ti.topics {
+			fmt.Fprintf(&b, "  %s: { label: %s, tier: %s, color: %s, learn: %s },\n",
+				js(topic), js(pretty(topic)), js(ti.name), js(color), js(learnText(topic)))
+		}
+	}
+	b.WriteString("};\n\n")
+
+	b.WriteString("export const CATALOG: CatalogEntry[] = [\n")
+	for _, ti := range tiers {
+		for _, topic := range ti.topics {
+			for _, e := range byTopic[topic] {
+				hint := strings.TrimSpace(e.Hint) != ""
+				fmt.Fprintf(&b, "  { topic: %s, slug: %s, mode: %s, description: %s, path: %s, hint: %t },\n",
+					js(topic), js(e.Name), js(e.Mode), js(e.Description()), js(e.Path), hint)
+				if hint {
+					if err := writeDetail(e); err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+	b.WriteString("];\n")
+	return os.WriteFile(filepath.Join(dataDir, "catalog.ts"), []byte(b.String()), 0o644)
+}
+
+// writeDetail renders one exercise hint as markdown for the catalog modal.
+// The hint stays behind a <details> so opening the modal doesn't spoil it.
+func writeDetail(e exercises.Exercise) error {
+	var b strings.Builder
+	fmt.Fprintf(&b, "---\ntitle: %s\n---\n\n", e.Name)
+	b.WriteString("<details>\n<summary>Show hint (spoiler)</summary>\n\n```text\n" + strings.TrimSpace(e.Hint) + "\n```\n\n</details>\n")
+	return os.WriteFile(filepath.Join(detailsDir, e.Name+".md"), []byte(b.String()), 0o644)
+}
+
+// js renders s as a JavaScript string literal.
+func js(s string) string {
+	out, _ := json.Marshal(s)
+	return string(out)
+}
+
+var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
+
+// learnText returns the first prose paragraph of the topic README — the
+// "what you learn here" line shown in the catalog's topic popover.
+func learnText(topic string) string {
+	intro := readme(topic)
+	if intro == "" {
+		return ""
+	}
+	for _, para := range strings.Split(intro, "\n\n") {
+		para = strings.TrimSpace(para)
+		if para == "" || strings.HasPrefix(para, "#") {
+			continue
+		}
+		para = strings.ReplaceAll(para, "\n", " ")
+		return mdLink.ReplaceAllString(para, "$1")
+	}
+	return ""
 }
 
 // readme returns the topic README with its leading H1 stripped (the page has a
