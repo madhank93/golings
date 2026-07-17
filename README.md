@@ -18,7 +18,7 @@ exercise the moment you save and only lets you advance when the tests pass **and
 > This is a maintained fork of the original
 > [golings by mauricioabreu](https://github.com/mauricioabreu/golings), rebuilt
 > around a [mise](https://mise.jdx.dev/) toolchain, a Bubble Tea TUI, an expanded
-> 32-topic curriculum, and a docs site.
+> 46-topic curriculum, and a docs site.
 
 ## Quick start
 

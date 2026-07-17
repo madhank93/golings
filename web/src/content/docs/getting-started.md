@@ -106,4 +106,4 @@ mise run test            # test the tool itself (-race)
 mise run lint            # lint the tool source
 ```
 
-Next: browse the [Curriculum](/curriculum/) to see the full track.
+Next: browse the [Catalog](/catalog/) to see the full track.
