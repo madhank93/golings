@@ -1,6 +1,7 @@
-// Per-exercise hint, prerendered as static JSON and fetched by the /catalog
-// modal on open. Keeping it out of catalog.astro stops 138 hints from loading
-// with the table — and keeps spoilers off the page until asked for.
+// Per-exercise detail (broken source, hint, solution), prerendered as static
+// JSON and fetched by the /catalog modal on open. Keeping it out of
+// catalog.astro stops 138 exercises' worth of code from loading with the
+// table — and keeps spoilers off the page until asked for.
 import type { APIRoute } from 'astro';
 import { CATALOG } from '../../data/catalog';
 
@@ -18,14 +19,14 @@ const DETAILS = Object.fromEntries(
 );
 
 export function getStaticPaths() {
-  return CATALOG.filter((e) => e.hint).map((e) => ({ params: { slug: e.slug } }));
+  return CATALOG.map((e) => ({ params: { slug: e.slug } }));
 }
 
 export const GET: APIRoute = async ({ params }) => {
   const slug = params.slug!;
   const detail = DETAILS[slug];
   return new Response(
-    JSON.stringify({ slug, hint: detail ? await detail.compiledContent() : null }),
+    JSON.stringify({ slug, detail: detail ? await detail.compiledContent() : null }),
     { headers: { 'Content-Type': 'application/json' } }
   );
 };
