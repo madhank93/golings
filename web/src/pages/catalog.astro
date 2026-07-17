@@ -115,7 +115,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
             rows.push(
               <tr class="ex-row" data-i={i} data-slug={e.slug} data-mode={e.mode} data-topic={e.topic}
                   data-search={search} data-desc={e.description} data-path={e.path}
-                  data-hint={e.hint ? '1' : '0'} tabindex="0" role="button">
+                  tabindex="0" role="button">
                 <td><span class={`badge b-${e.mode}`}>{MODE_LABEL[e.mode]}</span></td>
                 <td class="c-topic"><span class="tchip" style={`background:${t.color}`}>{t.label}</span></td>
                 <td><span class="slug">{e.slug}</span></td>
@@ -158,11 +158,11 @@ for (const [slug, t] of Object.entries(TOPICS)) {
           </div>
         </div>
         <div class="m-links" id="mLinks"></div>
-        <div class="m-section" id="mHintWrap" hidden>
-          <h3>Hint</h3>
-          <div class="sl-markdown-content m-md" id="mHint"></div>
+        <div class="m-section" id="mDetailWrap" hidden>
+          <h3>The exercise</h3>
+          <div class="sl-markdown-content m-md" id="mDetail"></div>
         </div>
-        <p class="m-loading" id="mLoading" hidden>Loading the hint…</p>
+        <p class="m-loading" id="mLoading" hidden>Loading the exercise…</p>
       </div>
       <footer>
         <button id="mPrev">← Previous</button>
@@ -450,8 +450,8 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     const mDesc = document.getElementById('mDesc')!;
     const mRunCmd = document.getElementById('mRunCmd')!;
     const mLinks = document.getElementById('mLinks')!;
-    const mHintWrap = document.getElementById('mHintWrap')!;
-    const mHint = document.getElementById('mHint')!;
+    const mDetailWrap = document.getElementById('mDetailWrap')!;
+    const mDetail = document.getElementById('mDetail')!;
     const mLoading = document.getElementById('mLoading')!;
     const mPrev = document.getElementById('mPrev') as HTMLButtonElement;
     const mNext = document.getElementById('mNext') as HTMLButtonElement;
@@ -497,10 +497,10 @@ for (const [slug, t] of Object.entries(TOPICS)) {
         mLinks.append(a);
       }
 
-      mHintWrap.hidden = true;
-      mHint.innerHTML = '';
-      mLoading.hidden = d.hint !== '1';
-      mLoading.textContent = 'Loading the hint…';
+      mDetailWrap.hidden = true;
+      mDetail.innerHTML = '';
+      mLoading.hidden = false;
+      mLoading.textContent = 'Loading the exercise…';
       mBody.scrollTop = 0;
 
       const idx = visibleRows().indexOf(row);
@@ -515,17 +515,16 @@ for (const [slug, t] of Object.entries(TOPICS)) {
         history.pushState({ exercise: slug }, '', url);
       }
 
-      if (d.hint !== '1') return;
       try {
         const data = await loadDetail(slug);
         if (current !== row) return; // a faster click won
         mLoading.hidden = true;
-        if (data.hint) {
-          mHint.innerHTML = data.hint;
-          mHintWrap.hidden = false;
+        if (data.detail) {
+          mDetail.innerHTML = data.detail;
+          mDetailWrap.hidden = false;
         }
       } catch {
-        mLoading.textContent = 'Could not load the hint for this exercise.';
+        mLoading.textContent = 'Could not load the details for this exercise.';
       }
     }
 

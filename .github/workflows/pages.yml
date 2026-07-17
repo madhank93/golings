@@ -6,7 +6,7 @@ on:
     paths:
       - 'web/**'
       - 'info.toml'
-      - 'exercises/**/README.md'
+      - 'exercises/**'
       - 'CURRICULUM.md'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -25,6 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # The generator embeds worked solutions (from the solution branch) into
+      # the catalog's detail pages; the default checkout only has main.
+      - name: Fetch solution branch
+        run: git fetch --depth=1 origin solution:refs/remotes/origin/solution
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26'
