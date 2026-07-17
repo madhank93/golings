@@ -2,10 +2,11 @@
 dist/
 # generated types
 .astro/
-# generated curriculum pages + catalog data (produced by `go run ./web/gen`)
+# generated catalog data (produced by `go run ./web/gen`)
 src/content/docs/curriculum/
 src/data/catalog.ts
 src/data/lesson-details/
+src/data/curriculum-redirects.json
 
 # dependencies
 node_modules/

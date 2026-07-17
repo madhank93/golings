@@ -261,7 +261,9 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .topic-pop { position: fixed; z-index: 5; box-sizing: border-box;
       background: var(--sl-color-bg); border: 1px solid var(--sl-color-accent);
       border-radius: 0.5rem; box-shadow: 0 12px 32px rgb(0 0 0 / 0.4);
-      padding: 0.75rem 2.2rem 0.85rem 0.9rem; }
+      padding: 0.75rem 2.2rem 0.85rem 0.9rem;
+      /* The popover holds the whole topic README now — cap and scroll. */
+      max-height: min(22rem, 55vh); overflow-y: auto; }
     .topic-pop h3 { margin: 0 0 0.35rem; font-size: 0.8rem; text-transform: uppercase;
       letter-spacing: 0.05em; color: var(--sl-color-accent-high); }
     .topic-pop p { margin: 0; font-size: 0.84rem; color: var(--sl-color-gray-1); line-height: 1.6; }
@@ -396,7 +398,9 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     let topicPopOwner: HTMLTableRowElement | null = null;
 
     const withCode = (s: string) =>
-      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/`([^`]+)`/g, '<code>$1</code>');
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\n\n/g, '<br><br>'); // README paragraphs
 
     function positionTopicPop(tr: HTMLTableRowElement) {
       // The sticky rule is on the <td>, so the <tr> keeps its natural (possibly
@@ -577,9 +581,17 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); search.focus(); search.select(); }
     });
 
-    // Deep link: /catalog/?exercise=<name> opens straight into the modal.
+    // Deep links: /catalog/?exercise=<name> opens straight into the modal;
+    // /catalog/?topic=<topic> preselects the topic filter (the retired
+    // /curriculum/<topic>/ pages redirect here with it).
     function openFromUrl(push = false) {
-      const want = new URL(window.location.href).searchParams.get('exercise');
+      const params = new URL(window.location.href).searchParams;
+      const topic = params.get('topic');
+      if (topic && [...topicSel.options].some((o) => o.value === topic)) {
+        topicSel.value = topic;
+        apply();
+      }
+      const want = params.get('exercise');
       if (!want) { closeModal(); return; }
       const row = exRows.find((r) => r.dataset.slug === want);
       if (row) openRow(row, push);

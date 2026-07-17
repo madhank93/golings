@@ -1,5 +1,6 @@
-// Command gen renders the golings curriculum into Starlight content pages from
-// info.toml + per-topic READMEs. Run from the repo root: `go run ./web/gen`.
+// Command gen renders the golings catalog data (catalog.ts, per-exercise
+// detail markdown, redirects) from info.toml + exercise sources + per-topic
+// READMEs. Run from the repo root: `go run ./web/gen`.
 package main
 
 import (
@@ -17,12 +18,9 @@ import (
 
 const (
 	infoFile   = "info.toml"
-	outDir     = "web/src/content/docs/curriculum"        // overview (index.md)
-	topicsDir  = "web/src/content/docs/curriculum/topics" // one page per topic
-	dataDir    = "web/src/data"                           // catalog.ts for /catalog
-	detailsDir = "web/src/data/lesson-details"            // per-exercise hint markdown
-	baseURL    = ""                                       // empty = served at root (custom domain); use "/golings" for project pages
-	repoBlob   = "https://github.com/madhank93/golings/blob/main"
+	legacyDir  = "web/src/content/docs/curriculum" // retired pages, absorbed by /catalog — removed if present
+	dataDir    = "web/src/data"                    // catalog.ts + redirects for /catalog
+	detailsDir = "web/src/data/lesson-details"     // per-exercise detail markdown
 	exerciseR  = "exercises"
 )
 
@@ -75,26 +73,32 @@ func run() error {
 		return err
 	}
 
-	if err := os.RemoveAll(outDir); err != nil {
-		return err
-	}
-	if err := os.MkdirAll(topicsDir, 0o755); err != nil {
+	// The old per-topic curriculum pages were absorbed by /catalog (see the
+	// redirects) — clear them out of stale checkouts so they don't build.
+	if err := os.RemoveAll(legacyDir); err != nil {
 		return err
 	}
 
-	order := 0
-	for _, ti := range tiers {
-		for _, topic := range ti.topics {
-			order++
-			if err := writeTopic(order, topic, ti.name, byTopic[topic]); err != nil {
-				return err
-			}
-		}
-	}
-	if err := writeOverview(byTopic); err != nil {
+	if err := writeCatalog(byTopic); err != nil {
 		return err
 	}
-	return writeCatalog(byTopic)
+	return writeRedirects()
+}
+
+// writeRedirects maps the retired curriculum URLs onto the catalog so old
+// links keep working: topic pages deep-link into the topic filter.
+func writeRedirects() error {
+	m := map[string]string{"/curriculum/": "/catalog/"}
+	for _, ti := range tiers {
+		for _, topic := range ti.topics {
+			m["/curriculum/"+topic+"/"] = "/catalog/?topic=" + topic
+		}
+	}
+	out, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(dataDir, "curriculum-redirects.json"), append(out, '\n'), 0o644)
 }
 
 // checkCoverage fails when info.toml has a topic the tiers table doesn't place.
@@ -118,56 +122,10 @@ func checkCoverage(byTopic map[string][]exercises.Exercise) error {
 	return nil
 }
 
-func writeOverview(byTopic map[string][]exercises.Exercise) error {
-	total, topics := 0, 0
-	for _, ti := range tiers {
-		for _, topic := range ti.topics {
-			total += len(byTopic[topic])
-			topics++
-		}
-	}
-	var b strings.Builder
-	b.WriteString("---\ntitle: Curriculum\ndescription: The full golings track, beginner to advanced.\n---\n\n")
-	fmt.Fprintf(&b, "%d exercises across %d topics, grouped into a progressive track. Work through them in order with `mise run watch`, or browse the whole set in the filterable [Catalog](%s/catalog/).\n\n", total, topics, baseURL)
-	for _, ti := range tiers {
-		b.WriteString("## " + ti.name + "\n\n")
-		for _, topic := range ti.topics {
-			n := len(byTopic[topic])
-			fmt.Fprintf(&b, "- [%s](%s/curriculum/%s/) — %d exercise%s\n", pretty(topic), baseURL, topic, n, plural(n))
-		}
-		b.WriteString("\n")
-	}
-	return os.WriteFile(filepath.Join(outDir, "index.md"), []byte(b.String()), 0o644)
-}
-
-func writeTopic(order int, topic, tierName string, exs []exercises.Exercise) error {
-	var b strings.Builder
-	fmt.Fprintf(&b, "---\ntitle: %s\nslug: curriculum/%s\nsidebar:\n  order: %d\n---\n\n", pretty(topic), topic, order)
-	fmt.Fprintf(&b, "*%s*\n\n", tierName)
-
-	if intro := readme(topic); intro != "" {
-		b.WriteString(intro + "\n\n")
-	}
-
-	b.WriteString("## Exercises\n\n")
-	for _, e := range exs {
-		fmt.Fprintf(&b, "### %s `%s`\n\n", e.Name, e.Mode)
-		if d := e.Description(); d != "" {
-			fmt.Fprintf(&b, "%s\n\n", d)
-		}
-		if h := strings.TrimSpace(e.Hint); h != "" {
-			b.WriteString("<details>\n<summary>Show hint</summary>\n\n```\n" + h + "\n```\n\n</details>\n\n")
-		}
-		fmt.Fprintf(&b, "[Source](%s/%s)\n\n", repoBlob, e.Path)
-	}
-
-	name := fmt.Sprintf("%02d-%s.md", order, topic)
-	return os.WriteFile(filepath.Join(topicsDir, name), []byte(b.String()), 0o644)
-}
-
 // writeCatalog emits the /catalog data: src/data/catalog.ts (typed entries the
-// page renders at build time) and src/data/lesson-details/<name>.md (the hint,
-// fetched into the modal on demand so spoilers never load with the table).
+// page renders at build time) and src/data/lesson-details/<name>.md (source,
+// hint and solution, fetched into the modal on demand so spoilers never load
+// with the table).
 func writeCatalog(byTopic map[string][]exercises.Exercise) error {
 	if err := os.RemoveAll(detailsDir); err != nil {
 		return err
@@ -282,26 +240,28 @@ func js(s string) string {
 
 var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
 
-// learnText returns the first prose paragraph of the topic README — the
-// "what you learn here" line shown in the catalog's topic popover.
+// learnText returns the topic README as popover-ready plain text: the whole
+// intro (the catalog popover is its only home on the site now), headings
+// dropped, links unwrapped, paragraphs kept as blank-line breaks.
 func learnText(topic string) string {
 	intro := readme(topic)
 	if intro == "" {
 		return ""
 	}
+	var paras []string
 	for _, para := range strings.Split(intro, "\n\n") {
 		para = strings.TrimSpace(para)
 		if para == "" || strings.HasPrefix(para, "#") {
 			continue
 		}
 		para = strings.ReplaceAll(para, "\n", " ")
-		return mdLink.ReplaceAllString(para, "$1")
+		paras = append(paras, mdLink.ReplaceAllString(para, "$1"))
 	}
-	return ""
+	return strings.Join(paras, "\n\n")
 }
 
-// readme returns the topic README with its leading H1 stripped (the page has a
-// title already), or "" if there is no README.
+// readme returns the topic README with its leading H1 stripped (the popover
+// has a title already), or "" if there is no README.
 func readme(topic string) string {
 	data, err := os.ReadFile(filepath.Join(exerciseR, topic, "README.md"))
 	if err != nil {
@@ -330,11 +290,4 @@ func pretty(topic string) string {
 		}
 	}
 	return strings.Join(words, " ")
-}
-
-func plural(n int) string {
-	if n == 1 {
-		return ""
-	}
-	return "s"
 }
