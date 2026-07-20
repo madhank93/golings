@@ -13,9 +13,11 @@ var genericComment = regexp.MustCompile(`(?i)^make( me compile| the tests? pass|
 // mdLink turns a markdown link [text](url) into just text.
 var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
 
-// Description returns a one-line summary of what the exercise is about, taken
-// from the first meaningful comment in the exercise file (the line after the
-// "// <name>" header). Returns "" when there's nothing useful.
+// Description returns a summary of what the exercise is about, taken from the
+// first meaningful comment paragraph in the exercise file (the lines after the
+// "// <name>" header). Continuation lines are joined with spaces, so a header
+// wrapped across several lines reads as one sentence. Returns "" when there's
+// nothing useful.
 func (e Exercise) Description() string {
 	// An explicit desc in info.toml wins (specific, non-spoiler one-liner).
 	if strings.TrimSpace(e.Desc) != "" {
@@ -26,19 +28,26 @@ func (e Exercise) Description() string {
 	if err != nil {
 		return ""
 	}
+	var para []string
 	for _, line := range strings.Split(string(data), "\n") {
 		trimmed := strings.TrimSpace(line)
 		if !strings.HasPrefix(trimmed, "//") {
-			if trimmed == "" {
-				continue // allow blank lines above/within the header
+			if trimmed == "" && len(para) == 0 {
+				continue // allow blank lines above the header
 			}
-			break // reached code; stop
+			break // reached code, or a blank line ending the paragraph
 		}
 		c := strings.TrimSpace(strings.TrimPrefix(trimmed, "//"))
 		if c == "" || sameIdent(c, e.Name) || notDoneRegex.MatchString(line) || genericComment.MatchString(c) {
+			if len(para) > 0 {
+				break // a "//" spacer (or the NOT DONE marker) ends the paragraph
+			}
 			continue
 		}
-		return mdLink.ReplaceAllString(c, "$1")
+		para = append(para, mdLink.ReplaceAllString(c, "$1"))
+	}
+	if len(para) > 0 {
+		return strings.Join(para, " ")
 	}
 	// Stock exercises often have only a "Make me compile!" header; fall back to
 	// the topic README's first sentence so every exercise shows something.

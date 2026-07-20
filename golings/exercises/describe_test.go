@@ -18,7 +18,16 @@ func writeTmp(t *testing.T, content string) string {
 func TestDescription(t *testing.T) {
 	path := writeTmp(t, "// errors2\n// Wrapping an error with %w keeps the original reachable.\n// Make lookup wrap it.\n\n// I AM NOT DONE\npackage main_test\n")
 	e := Exercise{Name: "errors2", Path: path}
-	if got := e.Description(); got != "Wrapping an error with %w keeps the original reachable." {
+	if got := e.Description(); got != "Wrapping an error with %w keeps the original reachable. Make lookup wrap it." {
+		t.Errorf("got %q", got)
+	}
+}
+
+func TestDescriptionStopsAtSpacer(t *testing.T) {
+	// a "//" spacer ends the paragraph; later comment blocks aren't pulled in
+	path := writeTmp(t, "// maps1\n// Make me compile!\n//\n// Declare a map's key and value types.\n//\n// I AM NOT DONE\npackage main\n")
+	e := Exercise{Name: "maps1", Path: path}
+	if got := e.Description(); got != "Declare a map's key and value types." {
 		t.Errorf("got %q", got)
 	}
 }
