@@ -119,7 +119,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
                 <td><span class={`badge b-${e.mode}`}>{MODE_LABEL[e.mode]}</span></td>
                 <td class="c-topic"><span class="tchip" style={`background:${t.color}`}>{t.label}</span></td>
                 <td><span class="slug">{e.slug}</span></td>
-                <td class="dsc"><span class="exp">▸</span><span class="dtxt">{e.description}</span></td>
+                <td class="dsc"><span class="txt">{e.description}</span><span class="exp">▸</span></td>
               </tr>
             );
             return rows;
@@ -279,11 +279,14 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .b-compile { background: color-mix(in oklab, var(--sl-color-accent) 22%, transparent); color: var(--sl-color-accent-high); }
     .b-test { background: color-mix(in oklab, #d29922 25%, transparent); color: #e3b341; }
 
-    .dsc { color: var(--sl-color-gray-2); position: relative; padding-right: 1.2rem; }
-    /* Descriptions are full comment paragraphs and can run several lines; clamp
-       to two here so the table stays scannable — the modal shows all of it. */
-    .dsc .dtxt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .dsc .exp { position: absolute; top: 0.55rem; right: 0.35rem; color: var(--sl-color-gray-4); }
+    /* Descriptions are full multi-paragraph header comments now — clamp the
+       table cell to two lines; the modal shows the whole thing. Flex keeps the
+       ▸ affordance vertically centered next to the clamped block (a float
+       would drop below it). */
+    .dsc { color: var(--sl-color-gray-2); display: flex; align-items: center; gap: 0.4rem; }
+    .dsc .txt { flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; }
+    .dsc .exp { color: var(--sl-color-gray-4); }
     .ex-row:hover .exp { color: var(--sl-color-accent); }
 
     .cat-empty { text-align: center; padding: 2.5rem 1rem; color: var(--sl-color-gray-3); }
@@ -305,7 +308,9 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .cat-modal .m-close:hover { color: var(--sl-color-white); background: var(--sl-color-gray-6); }
 
     .cat-modal .m-body { overflow-y: auto; padding: 1.1rem 1.4rem 1.4rem; }
-    .cat-modal .m-desc { margin: 0 0 0.8rem; color: var(--sl-color-gray-1); font-size: 0.92rem; line-height: 1.6; }
+    /* pre-line keeps the description's paragraph breaks (\n\n) without <br>s. */
+    .cat-modal .m-desc { margin: 0 0 0.8rem; color: var(--sl-color-gray-1); font-size: 0.92rem; line-height: 1.6;
+      white-space: pre-line; }
     .cat-modal .m-run { background: color-mix(in oklab, var(--sl-color-accent) 10%, var(--sl-color-gray-6));
       border: 1px solid color-mix(in oklab, var(--sl-color-accent) 30%, transparent);
       border-radius: 0.4rem; padding: 0.6rem 0.8rem; margin-bottom: 0.8rem; }
@@ -339,9 +344,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       .cat-table { font-size: 0.8rem; table-layout: auto; }
       .cat-table thead th[style] { width: auto !important; }
       .slug { word-break: break-word; }
-      .dsc { padding-right: 0.5rem; }
       .dsc .exp { display: none; }
-      .dsc .dtxt { -webkit-line-clamp: 3; }
     }
   </style>
 

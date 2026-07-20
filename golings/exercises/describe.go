@@ -13,11 +13,10 @@ var genericComment = regexp.MustCompile(`(?i)^make( me compile| the tests? pass|
 // mdLink turns a markdown link [text](url) into just text.
 var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
 
-// Description returns a summary of what the exercise is about, taken from the
-// first meaningful comment paragraph in the exercise file (the lines after the
-// "// <name>" header). Continuation lines are joined with spaces, so a header
-// wrapped across several lines reads as one sentence. Returns "" when there's
-// nothing useful.
+// Description returns the exercise's full header comment: every meaningful
+// comment line above the code, with wrapped lines joined by a space and blank
+// comment lines kept as paragraph breaks. Returns "" when there's nothing
+// useful.
 func (e Exercise) Description() string {
 	// An explicit desc in info.toml wins (specific, non-spoiler one-liner).
 	if strings.TrimSpace(e.Desc) != "" {
@@ -28,26 +27,35 @@ func (e Exercise) Description() string {
 	if err != nil {
 		return ""
 	}
-	var para []string
+	var paras []string
+	var cur []string
+	flush := func() {
+		if len(cur) > 0 {
+			paras = append(paras, strings.Join(cur, " "))
+			cur = nil
+		}
+	}
 	for _, line := range strings.Split(string(data), "\n") {
 		trimmed := strings.TrimSpace(line)
 		if !strings.HasPrefix(trimmed, "//") {
-			if trimmed == "" && len(para) == 0 {
-				continue // allow blank lines above the header
+			if trimmed == "" {
+				continue // allow blank lines above/within the header
 			}
-			break // reached code, or a blank line ending the paragraph
+			break // reached code; stop
 		}
 		c := strings.TrimSpace(strings.TrimPrefix(trimmed, "//"))
-		if c == "" || sameIdent(c, e.Name) || notDoneRegex.MatchString(line) || genericComment.MatchString(c) {
-			if len(para) > 0 {
-				break // a "//" spacer (or the NOT DONE marker) ends the paragraph
-			}
+		if c == "" {
+			flush() // blank comment line = paragraph break
 			continue
 		}
-		para = append(para, mdLink.ReplaceAllString(c, "$1"))
+		if sameIdent(c, e.Name) || notDoneRegex.MatchString(line) || genericComment.MatchString(c) {
+			continue
+		}
+		cur = append(cur, mdLink.ReplaceAllString(c, "$1"))
 	}
-	if len(para) > 0 {
-		return strings.Join(para, " ")
+	flush()
+	if len(paras) > 0 {
+		return strings.Join(paras, "\n\n")
 	}
 	// Stock exercises often have only a "Make me compile!" header; fall back to
 	// the topic README's first sentence so every exercise shows something.
