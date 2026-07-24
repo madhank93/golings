@@ -42,9 +42,9 @@ Constants can't be changed."""
 
 [[exercises]]
 name = "primitive_types1"
-path = "exercises/primitive_types/primitive_types1/main.go"
-mode = "compile"
-hint = "Update the code to reflect the store closing before the second check."
+path = "exercises/primitive_types/primitive_types1/main_test.go"
+mode = "test"
+hint = "Assign storeIsOpen a new value (false) so the store ends up closed."
 
 [[exercises]]
 name = "primitive_types2"
@@ -178,8 +178,8 @@ return utf8.RuneCountInString(s)
 
 [[exercises]]
 name = "arrays1"
-path = "exercises/arrays/arrays1/main.go"
-mode = "compile"
+path = "exercises/arrays/arrays1/main_test.go"
+mode = "test"
 hint = """
 Arrays use zero-based indexing."""
 
@@ -199,15 +199,15 @@ Slices can be created with the `make` function and must have a specified type.""
 
 [[exercises]]
 name = "slices2"
-path = "exercises/slices/slices2/main.go"
-mode = "compile"
+path = "exercises/slices/slices2/main_test.go"
+mode = "test"
 hint = """
 Slices can be created from arrays using the [low:high] syntax."""
 
 [[exercises]]
 name = "slices3"
-path = "exercises/slices/slices3/main.go"
-mode = "compile"
+path = "exercises/slices/slices3/main_test.go"
+mode = "test"
 hint = """
 Use the `append` function to add elements to an existing slice.
 Check the output after adding some elements.
@@ -238,8 +238,8 @@ Check the spec for more info: https://go.dev/ref/spec#Map_types"""
 
 [[exercises]]
 name = "maps2"
-path = "exercises/maps/maps2/main.go"
-mode = "compile"
+path = "exercises/maps/maps2/main_test.go"
+mode = "test"
 hint = """
 Similar to `maps1`, but you can initialize a new map in the same line using a different syntax."""
 
@@ -273,16 +273,16 @@ Use a `for` loop with `range` to check if each number is even and append it to t
 
 [[exercises]]
 name = "structs1"
-path = "exercises/structs/structs1/main.go"
-mode = "compile"
+path = "exercises/structs/structs1/main_test.go"
+mode = "test"
 hint = """
 Structs are created using the `type structName struct {}` syntax.
 Fields inside the brackets must have their types declared along with their names."""
 
 [[exercises]]
 name = "structs2"
-path = "exercises/structs/structs2/main.go"
-mode = "compile"
+path = "exercises/structs/structs2/main_test.go"
+mode = "test"
 hint = """
 Embedding a struct is done using just the struct name.
 
@@ -290,8 +290,8 @@ After embedding, fields can be accessed directly through the base struct without
 
 [[exercises]]
 name = "structs3"
-path = "exercises/structs/structs3/main.go"
-mode = "compile"
+path = "exercises/structs/structs3/main_test.go"
+mode = "test"
 hint = """
 Add a function to a struct by defining it as follows:
 
@@ -539,8 +539,8 @@ func FuncName[T any](value T) {
 
 [[exercises]]
 name = "generics2"
-path = "exercises/generics/generics2/main.go"
-mode = "compile"
+path = "exercises/generics/generics2/main_test.go"
+mode = "test"
 hint = """
 Type mismatches in arithmetic operations are not allowed, but generics enable functions to handle different types while maintaining the same logic.
 
