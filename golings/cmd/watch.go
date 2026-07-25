@@ -17,7 +17,7 @@ func WatchCmd(infoFile string) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			p := tea.NewProgram(m, tea.WithAltScreen())
+			p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 			_, err = p.Run()
 			return err
 		},

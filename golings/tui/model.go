@@ -49,6 +49,7 @@ type Model struct {
 	verifying bool
 	hasResult bool
 	showHint  bool
+	showNotes bool // teaching walk-through: auto on pass, toggled with the Explain key
 
 	keys     keyMap
 	help     help.Model
@@ -59,9 +60,10 @@ type Model struct {
 	filtering bool   // typing a search query in the list pane
 	filter    string // current search query
 
-	total  int
-	width  int
-	height int
+	total     int
+	width     int
+	height    int
+	leftPaneW int // outer width of the left list pane; splits mouse-wheel targets
 
 	notice string // transient message (e.g. after reset)
 }

@@ -68,6 +68,24 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.verifying = true
 		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
 
+	case tea.MouseMsg:
+		// Wheel scrolls whichever pane the pointer is over: the left list moves
+		// the cursor, the right pane scrolls its detail viewport.
+		isWheel := msg.Button == tea.MouseButtonWheelUp || msg.Button == tea.MouseButtonWheelDown
+		if isWheel && msg.X < m.leftPaneW {
+			if msg.Button == tea.MouseButtonWheelUp {
+				m.moveCursor(-1)
+			} else {
+				m.moveCursor(1)
+			}
+			m.onSelectionChange()
+			m.refreshOutput()
+			return m, nil
+		}
+		var cmd tea.Cmd
+		m.output, cmd = m.output.Update(msg)
+		return m, cmd
+
 	case verifiedMsg:
 		return m.handleVerified(msg)
 	}
@@ -116,6 +134,14 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.Hint):
 		m.showHint = !m.showHint
 		m.refreshOutput()
+		return m, nil
+
+	case key.Matches(msg, m.keys.Explain):
+		m.showNotes = !m.showNotes
+		m.refreshOutput()
+		if m.showNotes {
+			m.output.GotoBottom() // bring the Learn section into view
+		}
 		return m, nil
 
 	case key.Matches(msg, m.keys.Reset):
@@ -214,13 +240,23 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 		m.refreshHeaderCounts()
 	}
 
+	// Whenever the exercise passes — first time or on a re-run — surface the
+	// teaching walk-through automatically (if the exercise has one).
+	if msg.status == exercises.StatusDone && m.current().Notes() != "" {
+		m.showNotes = true
+	}
+
 	m.refreshOutput()
+	if m.showNotes {
+		m.output.GotoBottom() // put the Learn section on screen after a pass
+	}
 	return m, nil
 }
 
 // onSelectionChange resets per-exercise detail state when the cursor moves.
 func (m *Model) onSelectionChange() {
 	m.showHint = false
+	m.showNotes = false
 	m.hasResult = false
 	m.notice = ""
 	m.result = exercises.Result{}
