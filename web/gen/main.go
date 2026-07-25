@@ -202,7 +202,13 @@ func writeDetail(e exercises.Exercise) error {
 		fmt.Fprintf(&sol, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(src, "\n"))
 	}
 	if sol.Len() > 0 {
-		b.WriteString("<details>\n<summary>Show solution (spoiler)</summary>\n\n" + sol.String() + "</details>\n")
+		b.WriteString("<details>\n<summary>Show solution (spoiler)</summary>\n\n" + sol.String() + "</details>\n\n")
+	}
+
+	// Teaching notes: annotated walk-through + nuance + references. Behind a
+	// spoiler like the solution, since it contains the answer.
+	if n := strings.TrimSpace(e.Notes()); n != "" {
+		b.WriteString("<details>\n<summary>Show notes (explanation & references)</summary>\n\n" + n + "\n\n</details>\n")
 	}
 
 	return os.WriteFile(filepath.Join(detailsDir, e.Name+".md"), []byte(b.String()), 0o644)
