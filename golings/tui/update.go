@@ -61,12 +61,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// re-verify the current exercise on any save; keep listening
 		m.verifying = true
 		m.notice = ""
-		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case editorClosedMsg:
 		// returned from $EDITOR — re-verify the exercise just edited
 		m.verifying = true
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case tea.MouseMsg:
 		// Wheel scrolls whichever pane the pointer is over: the left list moves
@@ -102,6 +102,14 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.Quit):
 		return m, tea.Quit
 
+	// A run that has wedged — an infinite loop, a deadlocked test — used to be
+	// unescapable: the only way out was killing the terminal.
+	case key.Matches(msg, m.keys.Cancel):
+		if m.verifying {
+			m.cancel.cancel()
+		}
+		return m, nil
+
 	case key.Matches(msg, m.keys.Search):
 		m.filtering = true
 		m.filter = ""
@@ -123,7 +131,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, m.keys.Run):
 		m.verifying = true
 		m.notice = ""
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case key.Matches(msg, m.keys.Edit):
 		cur := m.current()
@@ -157,13 +165,13 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.hasResult = false
 		m.status = exercises.StatusPending
 		m.verifying = true
-		return m, tea.Batch(verifyCmd(cur), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(m.cancel, cur), m.spinner.Tick)
 
 	case key.Matches(msg, m.keys.Next):
 		m.advance()
 		m.onSelectionChange()
 		m.verifying = true
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 	}
 
 	// let the viewport scroll (pgup/pgdn etc.)
@@ -189,7 +197,7 @@ func (m Model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.filter = ""
 		m.onSelectionChange()
 		m.verifying = true
-		return m, tea.Batch(verifyCmd(m.current()), m.spinner.Tick)
+		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case tea.KeyUp:
 		m.moveCursor(-1)
