@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mauricioabreu/golings/golings/exercises"
+	"github.com/madhank93/golings/golings/exercises"
 )
 
 // editorClosedMsg is sent when the external editor process exits.

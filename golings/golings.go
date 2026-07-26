@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/mauricioabreu/golings/golings/cmd"
+	"github.com/madhank93/golings/golings/cmd"
 )
 
 var (

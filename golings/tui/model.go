@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mauricioabreu/golings/golings/exercises"
+	"github.com/madhank93/golings/golings/exercises"
 )
 
 // cFooter is a readable foreground for the keybind bar on light/dark.
