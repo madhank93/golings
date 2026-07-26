@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mauricioabreu/golings/golings/exercises"
+	"github.com/madhank93/golings/golings/exercises"
 )
 
 // Adaptive colors so the UI reads well on both light and dark terminals.
@@ -116,7 +116,7 @@ func (m Model) welcome() string {
 		"  • Press n to move to the next exercise",
 	)
 
-	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · e edit · h hint · x explain · r reset · n next · q quit")
+	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · esc cancel · e edit · h hint · x explain · r reset · n next · q quit")
 	cta := markStyle.Render("press any key to start →")
 
 	content := lipgloss.JoinVertical(lipgloss.Left,

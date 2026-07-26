@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mauricioabreu/golings/golings/exercises"
+	"github.com/madhank93/golings/golings/exercises"
 )
 
 func TestTopicOf(t *testing.T) {

@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   ci:
+    name: lint + test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,3 +20,25 @@ jobs:
         run: mise run lint
       - name: Test the tool source
         run: mise run test
+
+  catalog:
+    name: catalog.ts is in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      # Regenerating also validates info.toml: List() rejects an entry whose
+      # path escapes exercises/ or names a file that isn't there. Without this
+      # job that validation would never run anywhere.
+      - name: Regenerate the catalog
+        run: go run ./web/gen
+      - name: Fail if the committed catalog is stale
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::catalog.ts / lesson-details / redirects are out of date."
+            echo "Run 'mise run gen-site' and commit the result."
+            git diff --stat
+            exit 1
+          fi
