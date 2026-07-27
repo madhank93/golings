@@ -21,6 +21,7 @@ export default defineConfig({
 		starlight({
 			title: 'golings',
 			description: DESCRIPTION,
+			logo: { src: './src/assets/golang.png' },
 			customCss: ['./src/styles/hero.css'],
 			favicon: '/favicon.svg',
 			social: [
