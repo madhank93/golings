@@ -14,7 +14,7 @@ func bigger(a int, b int) int {
 - When `a > b` the function returns `a` early; otherwise control falls through
   to `return b`. No `else` is needed — an early `return` handles the split.
 
-**Nuance:** Go conditions take **no parentheses** but the braces are
+**Key detail:** Go conditions take **no parentheses** but the braces are
 **mandatory**, even for one line. There is no ternary (`?:`) operator — an `if`
 is the idiomatic way to choose a value.
 

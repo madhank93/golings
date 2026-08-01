@@ -12,7 +12,7 @@ for _, v := range evenNumbers {
   the element**. Here the index is unused, so `_` discards it and `v` is the
   value.
 
-**Nuance:** `v` is a **copy** — assigning to it doesn't change the slice. To
+**Key detail:** `v` is a **copy** — assigning to it doesn't change the slice. To
 mutate elements in place, index through them: `for i := range s { s[i] = ... }`.
 
 **References**

@@ -15,7 +15,7 @@ func incPointer(c *Counter) { c.N++ } // c is the address of the original
 - `incPointer(&c)` passes the **address**, so `c.N++` writes through to the
   caller's struct and `c.N` becomes `1`.
 
-**Nuance — Go is *always* pass-by-value.** Even the pointer case is
+**Key detail — Go is *always* pass-by-value.** Even the pointer case is
 pass-by-value: Go copies the **pointer** (the address), and both copies point at
 the same struct. There is no pass-by-reference in Go. As Dave Cheney puts it:
 

@@ -19,7 +19,7 @@ ctx, cancel := context.WithCancel(context.Background())
 - `ctx.Done()` is a channel that **closes** when `cancel()` is called. Selecting
   on it lets long-running work notice cancellation and stop promptly.
 
-**Nuance:** cancellation is **cooperative** — the context can't kill your
+**Key detail:** cancellation is **cooperative** — the context can't kill your
 goroutine; your code must *watch* `Done()` and return. `context.Background()` is
 the empty root context you derive others from. Always call `cancel` (usually
 `defer cancel()`) to release resources, even after normal completion.

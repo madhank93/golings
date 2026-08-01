@@ -15,7 +15,7 @@ func (r *Registry) Get(name string) (int, bool) {
   writes"). `sync.Map`'s `Store`/`Load` are safe for simultaneous use, so many
   goroutines can populate the registry at once.
 
-**Nuance:** `sync.Map` stores `any`, so `Load` returns `(any, bool)` and you
+**Key detail:** `sync.Map` stores `any`, so `Load` returns `(any, bool)` and you
 type-assert `v.(int)`. Reach for it only in its niche — **stable keys with lots
 of concurrent reads** (caches, registries). For most code a `map` + `RWMutex`
 (safety1) is clearer and just as fast.

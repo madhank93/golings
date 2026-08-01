@@ -13,7 +13,7 @@ func call_me(num int) { ... }
 - `call_me` requires one `int`, but was called as `call_me()`. Passing `call_me(10)`
   supplies the missing argument.
 
-**Nuance:** Go checks argument **count and type** at compile time — too few, too
+**Key detail:** Go checks argument **count and type** at compile time — too few, too
 many, or a wrong-typed argument all fail to build. There are no default
 parameter values in Go; every declared parameter must be supplied.
 

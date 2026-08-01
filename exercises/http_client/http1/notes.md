@@ -14,7 +14,7 @@ body, err := io.ReadAll(resp.Body)
 - `http.Get` performs a GET and returns a `*http.Response`. The body is an
   `io.ReadCloser`, so `io.ReadAll` drains it into bytes.
 
-**Nuance:** **always `defer resp.Body.Close()`** — leaking bodies exhausts
+**Key detail:** **always `defer resp.Body.Close()`** — leaking bodies exhausts
 connections and file descriptors. Do it *after* checking `err != nil` (on error
 there's no body to close). Note the test spins up an `httptest.NewServer` — the
 idiomatic way to test HTTP code without hitting the network. For real use, set

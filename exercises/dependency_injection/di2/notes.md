@@ -17,7 +17,7 @@ func (f fixedClock) Now() time.Time { return f.t }
   the wall clock. Injecting a `Clock` interface lets the test pass a `fixedClock`
   that returns any moment, so both the morning and evening branches are reachable.
 
-**Nuance:** wrap **non-deterministic** dependencies (time, randomness, network,
+**Key detail:** wrap **non-deterministic** dependencies (time, randomness, network,
 filesystem) behind a small interface so tests can substitute a predictable fake.
 Define the interface with only the method you actually use (`Now`), not the whole
 `time` API.

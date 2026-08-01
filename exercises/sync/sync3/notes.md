@@ -12,7 +12,7 @@ atomic.LoadInt64(&hits)     // atomic read
   operation**, so 1000 concurrent increments never lose an update — no mutex
   needed.
 
-**Nuance:** atomics are faster than a mutex but only cover **single-word**
+**Key detail:** atomics are faster than a mutex but only cover **single-word**
 operations (one counter, one flag, one pointer). The moment you must update two
 fields together, you need a mutex. Always go through `atomic.Load`/`Store` for
 *every* access to the value — mixing a plain read with atomic writes is still a

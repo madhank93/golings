@@ -17,7 +17,7 @@ go func() {
   the `sync.Mutex` serializes them so no increment is lost — the total is exactly
   100.
 
-**Nuance:** run this exercise with `go test -race` — without the lock the detector
+**Key detail:** run this exercise with `go test -race` — without the lock the detector
 flags the concurrent writes as a data race. A mutex is the general answer; for a
 single counter, `sync/atomic` (see sync3) is a lock-free alternative.
 

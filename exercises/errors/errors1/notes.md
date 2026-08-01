@@ -14,7 +14,7 @@ func divide(a, b int) (int, error) {
 - Go has **no exceptions** for ordinary failures. A function returns an `error`
   as its last value; `nil` means success, non-`nil` means failure.
 
-**Nuance:** the caller must **check** `err` before trusting the result — the
+**Key detail:** the caller must **check** `err` before trusting the result — the
 `result, err := f()` then `if err != nil` pattern is everywhere in Go. Return a
 zero result alongside a non-nil error so callers never use a half-built value.
 

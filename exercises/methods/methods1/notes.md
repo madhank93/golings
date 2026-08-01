@@ -14,7 +14,7 @@ func (r *Rectangle) Scale(factor float64) {                     // mutates origi
 - `Scale` must change the caller's rectangle, so it needs a **pointer receiver**
   `(r *Rectangle)`. A value receiver would scale a throwaway copy.
 
-**Nuance:** Go auto-takes the address, so `r.Scale(2)` works on an addressable
+**Key detail:** Go auto-takes the address, so `r.Scale(2)` works on an addressable
 `r` without writing `(&r).Scale(2)`. Rule of thumb: **be consistent** — if any
 method needs a pointer receiver, give them all pointer receivers.
 

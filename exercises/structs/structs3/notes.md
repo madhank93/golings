@@ -11,7 +11,7 @@ func (p Person) FullName() string {
 - The `(p Person)` **receiver** binds the function to `Person`, so you can call
   `person.FullName()`. It returns the two names joined by a single space.
 
-**Nuance:** this is exactly the kind of bug a test catches but the compiler
+**Key detail:** this is exactly the kind of bug a test catches but the compiler
 can't — `p.firstName + p.lastName` (no space) still compiles and returns
 `"MaurícioAntunes"`. The receiver here is a **value** (`p Person`), a read-only
 copy, which is right since `FullName` only reads.

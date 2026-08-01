@@ -18,7 +18,7 @@ func describe(v any) string {
 - A **type switch** (`v.(type)`) inspects the concrete type inside an interface
   value and binds `x` to it, correctly typed, in each case.
 
-**Nuance:** for a single type use the **comma-ok assertion** `n, ok := v.(int)` —
+**Key detail:** for a single type use the **comma-ok assertion** `n, ok := v.(int)` —
 `ok` is `false` instead of panicking when the type doesn't match. Plain
 `v.(int)` (no `ok`) **panics** on a mismatch. `any` is just an alias for
 `interface{}` — the empty interface every type satisfies.

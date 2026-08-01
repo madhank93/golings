@@ -14,7 +14,7 @@ sayBye("Gopher")
   must have the **exact same signature**, so the closure needs the `name string`
   parameter (and must use it).
 
-**Nuance:** functions are **first-class values** in Go — you can store them in
+**Key detail:** functions are **first-class values** in Go — you can store them in
 variables, pass them as arguments, and return them. The variable's type is the
 function signature, and assignment is type-checked against it.
 

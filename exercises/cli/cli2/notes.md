@@ -13,7 +13,7 @@ fs.Arg(0) // first NON-flag argument, e.g. "build"
   flag) are available via `fs.Args()` / `fs.Arg(i)`. Given `["-v", "build", "./..."]`,
   `Arg(0)` is `"build"`.
 
-**Nuance:** `Arg(i)` returns `""` for an out-of-range index (no panic), so
+**Key detail:** `Arg(i)` returns `""` for an out-of-range index (no panic), so
 `firstArg(["-v"])` safely yields `""`. Flag parsing **stops** at the first
 non-flag argument — this is how CLIs separate global flags from a subcommand and
 its args (`tool -v build ./...`).

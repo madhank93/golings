@@ -14,7 +14,7 @@ asByte(m) // works with NO conversion — MyByte IS byte
   another spelling of `byte`. So `MyByte` and `byte` are fully interchangeable and
   `asByte(m)` needs no conversion.
 
-**Nuance:** the single `=` is the whole difference. `type MyByte byte` (no `=`)
+**Key detail:** the single `=` is the whole difference. `type MyByte byte` (no `=`)
 would be a **distinct** defined type requiring `byte(m)` — that's typealias1's
 world. Aliases exist mainly for **gradual refactoring** (moving a type between
 packages without breaking callers); `byte` and `rune` are themselves aliases for

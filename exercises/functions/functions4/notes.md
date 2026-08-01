@@ -12,7 +12,7 @@ func addNumbers(a int, b int) int {
   `int`. Without the `int` after the parameter list, `return a + b` is a compile
   error.
 
-**Nuance:** the return type goes **after** the parameter list. Go functions can
+**Key detail:** the return type goes **after** the parameter list. Go functions can
 return **multiple** values too — `func vals() (int, int)` — which is how Go
 idiomatically returns a result alongside an `error`.
 

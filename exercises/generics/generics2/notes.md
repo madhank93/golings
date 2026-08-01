@@ -17,7 +17,7 @@ func addNumbers[T Number](n1, n2 T) T {
   compiles. The function then works for both `addNumbers(1, 2)` and
   `addNumbers(1.5, 2.5)`.
 
-**Nuance:** constraint interfaces can list a **union of types** (a "type set"),
+**Key detail:** constraint interfaces can list a **union of types** (a "type set"),
 not just methods — that's the generics-era extension of `interface`. The standard
 `golang.org/x/exp/constraints` package (and `cmp.Ordered`) provide ready-made
 ones like `Ordered`.

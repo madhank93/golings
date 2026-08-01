@@ -22,7 +22,7 @@ wg.Wait()
   and `Wait()` blocks until all are done. The `mu.Lock()` serializes the shared
   `buf` so the writes don't race.
 
-**Nuance:** pass the loop variable as an argument — `go func(i int){...}(i)` —
+**Key detail:** pass the loop variable as an argument — `go func(i int){...}(i)` —
 so each goroutine captures its **own** `i`. Also: without the `WaitGroup`, `main`
 would return before the goroutines run; without the mutex, concurrent writes to
 `buf` are a data race (`go test -race` would flag it).

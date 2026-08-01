@@ -16,7 +16,7 @@ type ReadWriter interface {
   a type satisfies `ReadWriter` by having both `Read` and `Write`. `*Buffer` has
   both, so it fits.
 
-**Nuance:** this is exactly how the standard library builds `io.ReadWriter` from
+**Key detail:** this is exactly how the standard library builds `io.ReadWriter` from
 `io.Reader` + `io.Writer`. Compose small, single-method interfaces into larger
 ones rather than declaring one big interface up front — smaller interfaces are
 easier to satisfy and mock.

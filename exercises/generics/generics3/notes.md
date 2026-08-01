@@ -13,7 +13,7 @@ func (s *Stack[T]) Pop() (T, bool)  { ... }
   `Stack[string]`, anything. Methods repeat the receiver's type parameter as
   `*Stack[T]` and use `T` for elements.
 
-**Nuance:** `var zero T` yields `T`'s zero value — the only way to return "nothing"
+**Key detail:** `var zero T` yields `T`'s zero value — the only way to return "nothing"
 generically when `Pop` fails, since you can't write `nil` or `0` for an unknown
 `T`. Returning `(T, bool)` is the generic take on the comma-ok idiom.
 

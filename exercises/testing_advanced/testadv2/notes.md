@@ -19,7 +19,7 @@ func FuzzReverse(f *testing.F) {
   reversing valid UTF-8 stays valid) rather than exact outputs. `reverse` works on
   `[]rune` so multibyte characters survive.
 
-**Nuance:** fuzzing shines for **round-trip / invariant** properties. Run it with
+**Key detail:** fuzzing shines for **round-trip / invariant** properties. Run it with
 `go test -fuzz=FuzzReverse`; on a failure the offending input is saved to
 `testdata/fuzz/` as a permanent regression test. The classic bug it catches:
 reversing by **byte** instead of **rune** corrupts UTF-8.

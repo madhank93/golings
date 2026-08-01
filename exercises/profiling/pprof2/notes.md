@@ -16,7 +16,7 @@ return after.HeapAlloc - before.HeapAlloc
   **after** — with a `runtime.GC()` each time so freed garbage isn't counted —
   gives the bytes the allocation **retains**.
 
-**Nuance:** two subtleties. `runtime.GC()` before the "after" read forces
+**Key detail:** two subtleties. `runtime.GC()` before the "after" read forces
 collection so only still-live memory is measured. And `runtime.KeepAlive(keep)`
 stops the optimizer from freeing `keep` early — without it the compiler might
 decide the allocation is dead before you measure it.

@@ -15,7 +15,7 @@ default:
 - Each `case` returns the matching weekday; `default` catches any number outside
   0–6, so the function always returns something.
 
-**Nuance:** always give a `switch` a `default` when the input isn't guaranteed to
+**Key detail:** always give a `switch` a `default` when the input isn't guaranteed to
 be one of the listed cases — it's your total-coverage safety net. Cases can also
 list several values at once (`case 6, 0:`) when they share a result.
 

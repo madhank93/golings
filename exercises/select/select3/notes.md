@@ -15,7 +15,7 @@ default:
   never blocks. `tryReceive` reports `(value, true)` if a value is waiting, else
   `(0, false)`.
 
-**Nuance:** `default` turns a blocking channel op into a **poll**. Handy for "take
+**Key detail:** `default` turns a blocking channel op into a **poll**. Handy for "take
 it if it's there," but beware busy-looping — a `for { select { ... default: } }`
 with no pause spins the CPU. Use it for a single try, not a tight loop.
 

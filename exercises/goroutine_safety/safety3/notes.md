@@ -18,7 +18,7 @@ for range 3 {
   The three workers only **receive** (`range ch`), which ends cleanly for all of
   them when the channel closes.
 
-**Nuance:** the ownership rule — **the sender closes, never a receiver**, and only
+**Key detail:** the ownership rule — **the sender closes, never a receiver**, and only
 once. A consumer closing (or a second close) panics with "close of closed
 channel". A single close broadcasts "no more values" to every ranging consumer
 simultaneously, which is how you fan work out and shut it down.

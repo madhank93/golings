@@ -10,7 +10,7 @@ names := [4]string{"John", "Maria", "Carl", "Peter"}
   an array shares the **one** declared element type, so the stray `int` had to
   become a string.
 
-**Nuance:** Go has no heterogeneous arrays. If you genuinely need mixed types,
+**Key detail:** Go has no heterogeneous arrays. If you genuinely need mixed types,
 that's a struct (named fields) or `[]any` (an explicit escape hatch you rarely
 want) — not an array.
 

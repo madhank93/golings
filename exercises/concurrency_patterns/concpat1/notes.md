@@ -16,7 +16,7 @@ func square(jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
   ends every worker's loop; `wg.Wait()` then knows they're done, so `results` can
   be closed and drained.
 
-**Nuance:** the ordering dance matters — close `jobs` after sending, `wg.Wait()`
+**Key detail:** the ordering dance matters — close `jobs` after sending, `wg.Wait()`
 for the workers, **then** close `results`. Closing `results` early would panic a
 still-writing worker. A buffered `results` (size = len(inputs)) keeps workers from
 blocking on a full channel.

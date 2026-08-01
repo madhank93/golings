@@ -15,7 +15,7 @@ case 1 > 0:
   must be a **boolean expression**. The broken `case:` was empty — every case
   needs a condition (or use `default`).
 
-**Nuance:** `switch { ... }` (no value) is the idiomatic replacement for a long
+**Key detail:** `switch { ... }` (no value) is the idiomatic replacement for a long
 `if/else if` ladder — often cleaner because each condition lines up as a `case`.
 
 **References**

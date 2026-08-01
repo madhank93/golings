@@ -13,7 +13,7 @@ mux.Handle("/debug/pprof/", http.DefaultServeMux) // forward to the default mux
   `/debug/pprof/` handlers on `http.DefaultServeMux`. A server using its **own**
   mux won't expose them unless it forwards that prefix to the default mux.
 
-**Nuance:** the blank import runs the package's `init()`, which does the
+**Key detail:** the blank import runs the package's `init()`, which does the
 registration — you never call anything from it directly. If your app uses a
 custom mux (most do), you must explicitly `Handle("/debug/pprof/", ...)` to wire
 the profiler in. Never expose pprof on a public interface — it's debug-only.

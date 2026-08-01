@@ -14,7 +14,7 @@ for _, n := range numbers {
 - Range each number, test `n%2 == 0`, and append the ones that pass. Starting
   from an empty slice and appending is the standard "filter" pattern.
 
-**Nuance:** `evenNumbers = append(...)` reassigns each iteration — the growing
+**Key detail:** `evenNumbers = append(...)` reassigns each iteration — the growing
 slice must be captured back into the variable. Starting from `[]int{}` (not a
 `nil` slice) makes the result a non-nil empty slice when nothing matches, which
 `reflect.DeepEqual` treats as distinct from `nil`.

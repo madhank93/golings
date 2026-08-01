@@ -12,7 +12,7 @@ func slugify(s string) string {
   `strings.ReplaceAll`, which swaps every space for a hyphen. Reading inside-out:
   lowercase first, then replace.
 
-**Nuance:** Go strings are **immutable** — every `strings` helper returns a *new*
+**Key detail:** Go strings are **immutable** — every `strings` helper returns a *new*
 string rather than editing in place. That's why you chain and return the result
 instead of mutating `s`.
 

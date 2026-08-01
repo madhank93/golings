@@ -18,7 +18,7 @@ func withHeader(value string) func(http.Handler) http.Handler {
   `next.ServeHTTP`. Wrapping `withHeader("golings")(final)` produces a handler that
   runs the header logic before `final`.
 
-**Nuance:** this is the **decorator** pattern — chain middleware
+**Key detail:** this is the **decorator** pattern — chain middleware
 (`a(b(c(handler)))`) for logging, auth, CORS, recovery, each a small wrapper. Do
 work **before** `next.ServeHTTP` (request side) and/or **after** (response side).
 Everything composes because they all share the `http.Handler` interface.

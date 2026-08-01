@@ -17,7 +17,7 @@ person.phone // promoted from ContactDetails
   are **promoted**, so `person.phone` works directly instead of
   `person.contact.phone`.
 
-**Nuance:** embedding is Go's **composition**, not inheritance. `Person` gains
+**Key detail:** embedding is Go's **composition**, not inheritance. `Person` gains
 `ContactDetails`' fields *and* methods, but it's not a subtype of it. Set an
 embedded field in a literal by its type name: `ContactDetails: ContactDetails{...}`.
 

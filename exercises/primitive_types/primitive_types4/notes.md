@@ -10,7 +10,7 @@ fmt.Println("representation for b2:", b2) // prints 97
 - `''` (empty) is an illegal rune literal. A single-quoted character like `'a'`
   is a **rune constant** whose numeric value (97) fits in a `byte`.
 
-**Nuance:** `byte` is an alias for `uint8` — it stores a *number*, so printing it
+**Key detail:** `byte` is an alias for `uint8` — it stores a *number*, so printing it
 shows `97`, not `a`. Single quotes make a character/rune; double quotes make a
 `string`. They are different types.
 

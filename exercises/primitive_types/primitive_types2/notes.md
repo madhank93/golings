@@ -10,7 +10,7 @@ fmt.Printf("Hello, %s\n", who)
 - `who` was used in `Printf` without ever being declared. Declaring it with
   `who := "Gopher"` gives `%s` something to substitute.
 
-**Nuance:** `%s` is the verb for strings. Match the verb to the type — `%d` for
+**Key detail:** `%s` is the verb for strings. Match the verb to the type — `%d` for
 integers, `%v` for "any value, default format", `%q` for a quoted string. A
 mismatch compiles but prints a `%!s(...)` error marker at run time.
 

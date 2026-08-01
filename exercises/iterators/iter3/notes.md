@@ -19,7 +19,7 @@ slices.Collect(valuesOf(maps.All(m))) // []V of the map's values
   pair-iterator (`Seq2`). `valuesOf` **projects** a `Seq2[K,V]` down to a
   `Seq[V]` by ranging the pairs and yielding only the value.
 
-**Nuance:** this is the adapter pattern between the two iterator shapes — the
+**Key detail:** this is the adapter pattern between the two iterator shapes — the
 standard library also ships `maps.Values`/`maps.Keys` for maps specifically.
 Writing your own `valuesOf` shows how `Seq` and `Seq2` interconvert so any
 pair-source can feed a value-only sink like `Collect`.

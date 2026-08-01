@@ -14,7 +14,7 @@ print(42)              // T inferred as int
   type; `any` is the constraint that permits all of them. The broken `print(value)`
   had no type for its parameter.
 
-**Nuance:** the compiler **infers** `T` from the argument, so you rarely write
+**Key detail:** the compiler **infers** `T` from the argument, so you rarely write
 `print[int](42)` explicitly. Generics let you write one function instead of one
 per type — without giving up compile-time type safety (unlike `any` + type
 assertions).

@@ -11,7 +11,7 @@ for name, phone := range phoneBook {
 - `range` over a map yields **key, value** each step (unlike a slice's
   index, value). So `name` is the key and `phone` is the value.
 
-**Nuance:** map iteration order is **randomized** by design — never rely on it.
+**Key detail:** map iteration order is **randomized** by design — never rely on it.
 If you need a stable order, collect the keys into a slice and `sort` them, then
 range over that.
 

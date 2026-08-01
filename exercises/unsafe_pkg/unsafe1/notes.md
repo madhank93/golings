@@ -12,7 +12,7 @@ func offsetOfC() uintptr {
   struct — compile-time layout introspection with zero runtime cost and no
   reflection.
 
-**Nuance:** the offset isn't just the sum of field sizes — the compiler inserts
+**Key detail:** the offset isn't just the sum of field sizes — the compiler inserts
 **padding** to satisfy alignment (`A byte` then `B int64` leaves 7 bytes of
 padding so `B` lands on an 8-byte boundary). That's why field **order** affects
 struct size. `unsafe` is for interop/serialization/hot paths; it bypasses type

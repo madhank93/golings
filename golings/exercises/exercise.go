@@ -20,7 +20,7 @@ type Exercise struct {
 // Notes returns the exercise's teaching walk-through: the contents of a
 // notes.md file sitting next to the exercise, or "" when absent. Shown once the
 // learner solves the exercise (or on demand via the Explain key) to explain the
-// language nuances the exercise exercised.
+// language details the exercise exercised.
 func (e Exercise) Notes() string {
 	data, err := os.ReadFile(filepath.Join(filepath.Dir(e.Path), "notes.md"))
 	if err != nil {

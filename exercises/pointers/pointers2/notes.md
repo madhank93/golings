@@ -19,7 +19,7 @@ func deposit(a *Account, amount int) {
   > Selectors automatically dereference pointers to structs. If `x` is a pointer
   > to a struct, `x.y` is shorthand for `(*x).y`.
 
-**Nuance:** in `pointers1` you had to spell out `*p` because Go does **not**
+**Key detail:** in `pointers1` you had to spell out `*p` because Go does **not**
 auto-dereference a `*int`. Here, because `a` points to a **struct**,
 `a.Balance` just works. The auto-deref shorthand is a struct-only convenience.
 

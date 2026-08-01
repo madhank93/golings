@@ -15,7 +15,7 @@ for i := 0; i < v.NumField(); i++ {
   `Field(i)` iterate a struct's fields; checking `Kind() == reflect.String` and
   reading `.String()` visits only the string fields (`Name`, `City` — not `Age`).
 
-**Nuance:** this field-walking is exactly how `encoding/json`, validators, and ORMs
+**Key detail:** this field-walking is exactly how `encoding/json`, validators, and ORMs
 work generically. Caveats: `NumField` panics if `x` isn't a struct, and you can
 only read **exported** fields' values via reflection. It's powerful but slower and
 unchecked — use it for framework-level code, not everyday logic.

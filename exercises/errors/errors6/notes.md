@@ -14,7 +14,7 @@ errors.Is(level3, ErrNotFound) // true — three layers deep
   down. A single `%v` anywhere flattens that layer to plain text and severs the
   chain below it.
 
-**Nuance:** `%w` vs `%v` is the switch between "wrap (still matchable)" and
+**Key detail:** `%w` vs `%v` is the switch between "wrap (still matchable)" and
 "format (text only)". Use `%w` when a caller might need `errors.Is`/`As`; use
 `%v` only when you deliberately want to hide the underlying error.
 

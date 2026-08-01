@@ -12,7 +12,7 @@ func lastTwo(names [4]string) []string {
   **half-open**: `low` is included, `high` is **not**, so `[2:4]` gives 2 items,
   not 3.
 
-**Nuance:** slicing does **not** copy — the result shares the same backing array
+**Key detail:** slicing does **not** copy — the result shares the same backing array
 as the original. Writing through the sub-slice can change the parent (and vice
 versa) until an `append` forces a re-allocation.
 

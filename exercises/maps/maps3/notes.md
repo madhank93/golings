@@ -11,7 +11,7 @@ delete(phoneBook, "John")      // remove a key
 - Indexing with the right key returns its value; assigning to a key inserts or
   overwrites; `delete` removes a pair and shrinks `len`.
 
-**Nuance:** reading a missing key returns the zero value, which is
+**Key detail:** reading a missing key returns the zero value, which is
 indistinguishable from a key whose value *is* the zero value. When you must know
 whether a key exists, use the **comma-ok** form: `v, ok := m[k]` — `ok` is
 `false` when the key is absent.

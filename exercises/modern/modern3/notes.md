@@ -19,7 +19,7 @@ for v := range countUp(3) { ... } // 1, 2, 3
   `func(yield func(V) bool)`. Your function calls `yield(v)` for each value; the
   `range` loop body *is* that `yield`.
 
-**Nuance:** always check `yield`'s return — `false` means the consumer did `break`
+**Key detail:** always check `yield`'s return — `false` means the consumer did `break`
 (or returned), so you must **stop** producing. This is the foundation of custom,
 composable iterators without allocating a slice up front.
 

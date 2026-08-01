@@ -14,7 +14,7 @@ for msg := range messages { ... } // receives until closed
 - One goroutine **sends** two strings then closes the channel; the main goroutine
   **ranges** over it, receiving each value until the close ends the loop.
 
-**Nuance:** an **unbuffered** channel (`make(chan string)`) is a synchronization
+**Key detail:** an **unbuffered** channel (`make(chan string)`) is a synchronization
 point — each send blocks until a receiver is ready, so the two goroutines hand
 values off in lock-step. The sender must `close`, or the `range` would block
 forever waiting for a third value.

@@ -16,7 +16,7 @@ greetHandler(rec, httptest.NewRequest("GET", "/greet?name=Go", nil))
   reads a query param. `httptest.NewRecorder` captures what the handler wrote so
   you can assert on it — **no real network** needed.
 
-**Nuance:** `ResponseWriter` is a stream you write to (via `Fprintf`, `Write`), not
+**Key detail:** `ResponseWriter` is a stream you write to (via `Fprintf`, `Write`), not
 a value you return. `httptest.NewRecorder()` + `NewRequest()` is the standard way
 to unit-test handlers directly; call the handler as a plain function.
 

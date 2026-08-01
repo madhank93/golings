@@ -14,7 +14,7 @@ func factorial(n int) int {
 - `factorial` calls itself with a smaller `n` each time. The `n <= 1` **base
   case** ends the chain; without it the calls would never stop.
 
-**Nuance:** every recursion needs (1) a base case that returns without recursing
+**Key detail:** every recursion needs (1) a base case that returns without recursing
 and (2) a recursive step that provably moves **toward** it. Miss either and you
 get infinite recursion → a stack-overflow crash.
 

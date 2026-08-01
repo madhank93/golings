@@ -14,7 +14,7 @@ return "baz"
 - Each branch handles one input; the final `return "baz"` is the catch-all when
   neither condition matched.
 
-**Nuance:** `else if` chains are checked **top to bottom** and stop at the first
+**Key detail:** `else if` chains are checked **top to bottom** and stop at the first
 match. The tests also show `if result := fooIfFizz(...); result != ... {` — an
 **if with a short statement**: `result` is scoped to the `if`/`else` only.
 

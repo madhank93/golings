@@ -14,7 +14,7 @@ case v := <-b:
 - `select` blocks until **one** of its cases can proceed, then runs that case. So
   `firstReady` returns whichever of `a` or `b` has a value first.
 
-**Nuance:** if several cases are ready at once, `select` picks one **at random** —
+**Key detail:** if several cases are ready at once, `select` picks one **at random** —
 never top-to-bottom — so you can't rely on ordering for fairness. A `select` with
 no ready case and no `default` blocks; an **empty** `select {}` blocks forever.
 

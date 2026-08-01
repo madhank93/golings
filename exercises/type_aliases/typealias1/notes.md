@@ -14,7 +14,7 @@ toFahrenheit(float64(boiling)) // explicit conversion required
   underlying type is `float64`, Go won't pass a `Celsius` where a `float64` is
   wanted without `float64(boiling)`.
 
-**Nuance:** that friction is a **feature** — distinct types stop you from
+**Key detail:** that friction is a **feature** — distinct types stop you from
 accidentally adding a `Celsius` to a `Meter`, catching unit mix-ups at compile
 time. Contrast with a type **alias** (typealias3), where no conversion is needed.
 

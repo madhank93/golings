@@ -17,7 +17,7 @@ synctest.Test(t, func(t *testing.T) {
   blocks until every goroutine in the bubble is idle — a **deterministic**
   replacement for `time.Sleep`-and-hope when waiting on background goroutines.
 
-**Nuance:** `Wait` only works **inside** a bubble; called outside `synctest.Test`
+**Key detail:** `Wait` only works **inside** a bubble; called outside `synctest.Test`
 it panics. This kills flaky concurrency tests: instead of sleeping an arbitrary
 duration and praying the goroutines finished, you wait for provable quiescence.
 

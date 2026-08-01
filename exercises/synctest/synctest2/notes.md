@@ -16,7 +16,7 @@ go func() {
   one-hour `time.Sleep` completes instantly — but only once the test goroutine
   itself blocks (here, on `<-done`).
 
-**Nuance:** the subtlety is that virtual time advances only when the whole bubble
+**Key detail:** the subtlety is that virtual time advances only when the whole bubble
 is idle. Read the clock **without** blocking and no time passes (elapsed = 0).
 This makes timeout/retry/ticker tests exact and instant instead of slow and
 flaky.

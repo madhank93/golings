@@ -10,7 +10,7 @@ m["John"] = 30
 - `make(map)` is incomplete — a map type is `map[KeyType]ValueType`. Here keys
   are `string` (names) and values are `int` (ages), so `map[string]int`.
 
-**Nuance:** a map must be **initialized** with `make` (or a literal) before you
+**Key detail:** a map must be **initialized** with `make` (or a literal) before you
 write to it. The zero value of a map is `nil`; reading a `nil` map is fine
 (returns the zero value), but **writing** to one **panics**.
 

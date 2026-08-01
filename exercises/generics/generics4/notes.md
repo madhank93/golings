@@ -16,7 +16,7 @@ func Reduce[A, B any](items []A, init B, f func(B, A) B) B {
   folds `[]A` into a single `B` by repeatedly applying `f`. Summing ints uses
   `A=int, B=int`; concatenating strings uses `A=string, B=string` — both inferred.
 
-**Nuance:** separating `A` and `B` lets the result type differ from the element
+**Key detail:** separating `A` and `B` lets the result type differ from the element
 type — e.g. reduce `[]string` into an `int` length. This is the generic version
 of fold/reduce; higher-order functions plus type parameters give you reusable,
 type-safe building blocks.

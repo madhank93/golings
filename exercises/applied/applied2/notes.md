@@ -21,7 +21,7 @@ func (s *Store) Get(key string) (int, error) {
   **sentinel error** (`ErrNotFound`) for the missing-key case that callers match
   with `errors.Is`.
 
-**Nuance:** maps are **not** safe for concurrent use — a bare concurrent map
+**Key detail:** maps are **not** safe for concurrent use — a bare concurrent map
 write can crash the program, so every access goes through the mutex. Returning
 `(value, error)` instead of the map's comma-ok turns "missing" into a first-class
 error the caller handles like any other.

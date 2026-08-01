@@ -11,7 +11,7 @@ func callMe(num int) {
 - `func callMe(num)` is invalid — every parameter must declare its type. `num int`
   fixes it.
 
-**Nuance:** when consecutive parameters share a type you may write it once —
+**Key detail:** when consecutive parameters share a type you may write it once —
 `func add(a, b int)` means both `a` and `b` are `int`. But the type can never be
 omitted entirely.
 

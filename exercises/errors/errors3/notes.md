@@ -15,7 +15,7 @@ errors.As(err, &ve) // extracts the concrete type from the chain
   the wrap chain for one matching `*ValidationError` and, when found, sets `ve` to
   it so you can read `ve.Field`.
 
-**Nuance:** `errors.Is` answers *"is this a specific error value?"*; `errors.As`
+**Key detail:** `errors.Is` answers *"is this a specific error value?"*; `errors.As`
 answers *"is there an error of this type, and give it to me."* Use `As` when you
 need the typed error's **fields**, not just its identity.
 

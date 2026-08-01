@@ -15,7 +15,7 @@ func (f fakeFetcher) Fetch(id int) (string, error) {
   both `WelcomeMessage` branches ("Welcome, Go!" and "Welcome, guest!") are
   covered.
 
-**Nuance:** spy (mock1) vs stub — a spy records *how it was called*; a stub
+**Key detail:** spy (mock1) vs stub — a spy records *how it was called*; a stub
 *controls what it returns*. Stubs make error handling testable without needing a
 real failing dependency (a down database, a 500 response). A `fake` is a stub with
 a bit of real behaviour (here, a map lookup).

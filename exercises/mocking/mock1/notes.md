@@ -14,7 +14,7 @@ Alert(spy, 30, 25)
   captures every `Notify` message, so the test can assert that `Alert` fired
   exactly one "too hot" (and stayed silent when cool).
 
-**Nuance:** use a spy to verify **interactions** — that a side effect happened —
+**Key detail:** use a spy to verify **interactions** — that a side effect happened —
 when there's no return value to check. Because `Alert` depends on the `Notifier`
 interface, swapping the real notifier for the spy needs no change to `Alert`
 itself. In Go you usually hand-write these small doubles rather than use a

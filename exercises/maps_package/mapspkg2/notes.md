@@ -11,7 +11,7 @@ maps.DeleteFunc(m, func(k string, v int) bool {
 - `maps.DeleteFunc` (Go 1.21+) removes every entry for which the predicate returns
   `true`, in a single pass — replacing the collect-keys-then-delete two-step.
 
-**Nuance:** it's safe because the standard library handles the deletion correctly
+**Key detail:** it's safe because the standard library handles the deletion correctly
 internally. Doing it by hand, you can't both `range` a map and `delete` from it
 across separate passes without care — `DeleteFunc` encapsulates that. Pairs with
 `slices.DeleteFunc` for the slice equivalent.

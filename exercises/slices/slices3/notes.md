@@ -11,7 +11,7 @@ func addPeter(names []string) []string {
 - `append(names, "Peter")` returns a slice with the element added at the end. The
   broken `append()` gave it nothing to append.
 
-**Nuance — you must use the return value.** `append` may allocate a **new**
+**Key detail — you must use the return value.** `append` may allocate a **new**
 backing array (when capacity runs out), so `names = append(names, x)` is the
 rule. Ignoring the result — `append(names, x)` on its own — is a classic bug that
 silently drops the new element.

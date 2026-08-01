@@ -205,7 +205,7 @@ func writeDetail(e exercises.Exercise) error {
 		b.WriteString("<details>\n<summary>Show solution (spoiler)</summary>\n\n" + sol.String() + "</details>\n\n")
 	}
 
-	// Teaching notes: annotated walk-through + nuance + references. Behind a
+	// Teaching notes: annotated walk-through + key details + references. Behind a
 	// spoiler like the solution, since it contains the answer.
 	if n := strings.TrimSpace(e.Notes()); n != "" {
 		b.WriteString("<details>\n<summary>Show notes (explanation & references)</summary>\n\n" + n + "\n\n</details>\n")

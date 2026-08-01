@@ -11,7 +11,7 @@ fmt.Printf("x has the value %d", x)
   (`var x int`) **or** an initializer (`var x = 0`). With the type only, `x`
   takes its **zero value** — `0` for `int`.
 
-**Nuance:** every Go type has a zero value (`0`, `false`, `""`, `nil`), so a
+**Key detail:** every Go type has a zero value (`0`, `false`, `""`, `nil`), so a
 declared-but-uninitialized variable is always usable, never garbage.
 
 **References**

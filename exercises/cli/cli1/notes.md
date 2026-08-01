@@ -14,7 +14,7 @@ fs.Parse(args)
   **pointer**; `fs.Parse(args)` fills those pointers from the arguments. Missing
   flags keep their defaults (`world`, `1`).
 
-**Nuance:** the flag values are pointers, so you dereference (`*name`) after
+**Key detail:** the flag values are pointers, so you dereference (`*name`) after
 `Parse`. Using a `flag.NewFlagSet` (instead of the global `flag.CommandLine`) makes
 parsing testable — you feed it an explicit `args` slice. `ContinueOnError` returns
 an error instead of calling `os.Exit` on a bad flag.

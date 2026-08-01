@@ -17,7 +17,7 @@ func readAll(r io.Reader) (string, error) {
   one-method interfaces, so `readAll` works without caring about the concrete
   types.
 
-**Nuance:** `io.Reader`/`io.Writer` are the two most important interfaces in Go —
+**Key detail:** `io.Reader`/`io.Writer` are the two most important interfaces in Go —
 files, network sockets, HTTP bodies, buffers, and compressors all implement them,
 so code written against them composes universally. Streaming with `io.Copy` also
 avoids loading everything into memory at once.

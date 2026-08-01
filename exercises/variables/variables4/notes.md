@@ -15,7 +15,7 @@ fmt.Println(x) // still "TEN"
   error. Using `x :=` inside the `if` **declares a second `x`** scoped to that
   block, so the types never clash.
 
-**Nuance — shadowing:** `:=` in an inner block creates a *new* variable that
+**Key detail — shadowing:** `:=` in an inner block creates a *new* variable that
 hides the outer one; changes to it don't touch the outer `x`. This is a common
 source of bugs — `go vet`'s shadow check exists precisely for it.
 

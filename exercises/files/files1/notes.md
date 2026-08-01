@@ -11,7 +11,7 @@ data, err := os.ReadFile(path)
   truncating it); `os.ReadFile` slurps the whole file back. The `0o644` is the
   Unix permission mode (owner read/write, others read).
 
-**Nuance:** these are the simple, no-`defer`-`Close` path for **small** files —
+**Key detail:** these are the simple, no-`defer`-`Close` path for **small** files —
 both open, do the I/O, and close internally. For large files or streaming, open
 with `os.Open`/`os.Create` and use a reader/writer instead. The test uses
 `t.TempDir()`, which gives a fresh directory that's auto-cleaned.

@@ -13,7 +13,7 @@ func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
   satisfies `Shape` — no `implements` keyword. That lets `[]Shape` hold both and
   `totalArea` call `Area()` polymorphically.
 
-**Nuance:** satisfaction is **structural** — if the methods match, the type fits
+**Key detail:** satisfaction is **structural** — if the methods match, the type fits
 the interface, even one defined in another package. This is what makes Go
 interfaces so composable: you can satisfy an interface you didn't know existed.
 

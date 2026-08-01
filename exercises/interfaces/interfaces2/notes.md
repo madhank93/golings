@@ -12,7 +12,7 @@ var _ fmt.Stringer = Point{} // compile-time proof Point satisfies Stringer
 - `fmt` looks for a `String() string` method; implementing it makes `%v`/`Println`
   print `(3, 4)` instead of the default `{3 4}`.
 
-**Nuance:** the line `var _ fmt.Stringer = Point{}` is a common idiom — a
+**Key detail:** the line `var _ fmt.Stringer = Point{}` is a common idiom — a
 throwaway assignment that makes the **compiler verify** `Point` satisfies
 `Stringer`. If the method is missing or has the wrong signature, the build fails
 at that line with a clear message, instead of silently falling back to default

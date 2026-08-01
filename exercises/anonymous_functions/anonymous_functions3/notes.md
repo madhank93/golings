@@ -16,7 +16,7 @@ func updateStatus() func() string {
 - The returned function **closes over** `index` and `orderStatus`. Each call
   increments the *same* `index`, so successive calls return "DOING" then "DONE".
 
-**Nuance:** the captured variables live on **past** `updateStatus`'s return —
+**Key detail:** the captured variables live on **past** `updateStatus`'s return —
 they're promoted to the heap and shared by every call to the returned closure.
 That persistent, private state is exactly what makes closures useful (counters,
 generators, memoization).

@@ -14,7 +14,7 @@ r.PathValue("id") // the {id} segment
   the `{id}` segment. A POST to the same path automatically gets `405 Method Not
   Allowed`.
 
-**Nuance:** before 1.22 you needed a third-party router (chi, gorilla) for this —
+**Key detail:** before 1.22 you needed a third-party router (chi, gorilla) for this —
 now the stdlib mux does method matching, path wildcards, and precedence. The
 wildcard name in the pattern must exactly match the `PathValue` argument.
 

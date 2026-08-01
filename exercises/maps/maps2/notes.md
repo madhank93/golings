@@ -12,7 +12,7 @@ func ages() map[string]int {
   `key: value` pairs: `map[string]int{"John": 30, "Ana": 21}` — declared and
   filled in one expression.
 
-**Nuance:** the literal both allocates and initializes, so (unlike `make`) you
+**Key detail:** the literal both allocates and initializes, so (unlike `make`) you
 get a ready-to-use, non-nil map. Reading a **missing** key never errors — it
 returns the value type's zero value (`0` for `int`).
 

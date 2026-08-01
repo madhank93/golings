@@ -14,7 +14,7 @@ func (c *Config) Load() {
   (from any goroutine) returns without running it again. So across 50 concurrent
   `Load()` calls, `loads` ends at 1.
 
-**Nuance:** `Once` is the concurrency-safe way to do lazy, one-time init
+**Key detail:** `Once` is the concurrency-safe way to do lazy, one-time init
 (singletons, config loading, connection setup) without a mutex-and-flag dance.
 `Do` also **blocks** concurrent callers until the first run finishes, so nobody
 sees a half-initialized value.

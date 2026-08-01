@@ -14,7 +14,7 @@ u, ok := ctx.Value(userKey).(string) // "alice", true
   can read with `ctx.Value(key)`. A missing key returns `nil`, so the comma-ok
   assertion falls back to `"anonymous"`.
 
-**Nuance:** use a **private, custom key type** (`type ctxKey string`) — not a bare
+**Key detail:** use a **private, custom key type** (`type ctxKey string`) — not a bare
 `string` — so your key can't collide with another package's. Reserve context
 values for **request-scoped** data (request IDs, auth user), never for passing
 optional function parameters; those belong in the signature.

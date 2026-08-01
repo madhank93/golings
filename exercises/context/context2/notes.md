@@ -18,7 +18,7 @@ case <-ctx.Done():
   duration. When it fires, `ctx.Done()` closes and `ctx.Err()` reports
   `context.DeadlineExceeded`.
 
-**Nuance:** distinguish the two errors — `DeadlineExceeded` (timeout) vs
+**Key detail:** distinguish the two errors — `DeadlineExceeded` (timeout) vs
 `Canceled` (someone called `cancel`). Still `defer cancel()` even with a timeout,
 to free the timer immediately if the work finishes early. A timeout is just a
 deadline the runtime sets for you.

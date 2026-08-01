@@ -11,7 +11,7 @@ re.MatchString(s)
   `s` matches. The anchors `^`/`$` force the whole string to match, and
   `[^@\s]+` means "one or more non-`@`, non-space characters".
 
-**Nuance:** use `MustCompile` for **static** patterns (it panics on a bad regex at
+**Key detail:** use `MustCompile` for **static** patterns (it panics on a bad regex at
 startup, surfacing typos immediately); use `regexp.Compile` (returns an error) for
 patterns built from user input. Compile **once** and reuse — recompiling inside a
 loop is wasteful. Go uses RE2 syntax (linear-time, no catastrophic backtracking).

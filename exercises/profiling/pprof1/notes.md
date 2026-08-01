@@ -14,7 +14,7 @@ work()
   **flushed** to `w` when you call `StopCPUProfile`. `defer` guarantees the stop
   (and flush) runs, so `w` ends up non-empty.
 
-**Nuance:** forget `StopCPUProfile` and the writer stays empty — the classic
+**Key detail:** forget `StopCPUProfile` and the writer stays empty — the classic
 mistake. Inspect the result with `go tool pprof <file>`. In practice you rarely
 hand-roll this: `go test -cpuprofile cpu.out` and `import _ "net/http/pprof"`
 (see pprof3) are the usual entry points.

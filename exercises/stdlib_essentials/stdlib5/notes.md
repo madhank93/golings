@@ -13,7 +13,7 @@ if err != nil {
   isn't a number (`"nope"`). Propagating that error lets the caller handle bad
   input.
 
-**Nuance:** conversion between strings and numbers is **explicit and fallible** in
+**Key detail:** conversion between strings and numbers is **explicit and fallible** in
 Go — there's no implicit coercion. `Atoi`/`Itoa` cover base-10 ints; use
 `ParseInt`/`ParseFloat`/`FormatInt` for other bases, bit sizes, and floats.
 Contrast with a numeric *type* conversion like `int(f)`, which never errors.

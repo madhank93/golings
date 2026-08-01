@@ -16,7 +16,7 @@ wg.Wait()
   wg.Done(); ... }()` dance. The broken code's bare `go` never called `Add`, so
   `Wait` returned before the work ran.
 
-**Nuance:** this removes the two classic `WaitGroup` bugs — forgetting `Add`
+**Key detail:** this removes the two classic `WaitGroup` bugs — forgetting `Add`
 (Wait returns too early) and forgetting `Done` (Wait blocks forever). Note the
 result uses `atomic.Int64` because many goroutines add concurrently.
 

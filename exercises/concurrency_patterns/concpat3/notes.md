@@ -21,7 +21,7 @@ func double(in <-chan int) <-chan int {
   (`double(generate(...))`) wires them together; closing propagates from stage to
   stage.
 
-**Nuance:** the golden rule of pipelines — **each stage closes its own output**
+**Key detail:** the golden rule of pipelines — **each stage closes its own output**
 when its input is exhausted, so `close` ripples downstream and every `range`
 terminates. Stages run concurrently and stream values as they arrive, rather than
 materializing the whole result at each step.

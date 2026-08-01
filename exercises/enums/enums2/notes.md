@@ -19,7 +19,7 @@ func (c Color) String() string {
 - The constants are just `int`s (0, 1, 2). Adding a `String()` method (satisfying
   `fmt.Stringer`) makes them print as names instead of numbers.
 
-**Nuance:** always include a `default` — an out-of-range `Color(99)` should return
+**Key detail:** always include a `default` — an out-of-range `Color(99)` should return
 `"Unknown"`, not fall through to nothing. For real projects the `stringer` tool
 (`go generate`) writes this method for you from the const block.
 

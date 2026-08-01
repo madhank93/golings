@@ -13,7 +13,7 @@ res := rec.Result()
   `ResponseWriter`. Calling the handler with them exercises it **without a real
   network**; `rec.Result()` returns the response to assert status and body on.
 
-**Nuance:** two flavors — `NewRecorder` tests a handler **in-process** (fastest,
+**Key detail:** two flavors — `NewRecorder` tests a handler **in-process** (fastest,
 used here); `httptest.NewServer` spins up a real localhost server for testing full
 **clients** or middleware chains end-to-end. Remember to `defer res.Body.Close()`.
 

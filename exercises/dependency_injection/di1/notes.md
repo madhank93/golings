@@ -14,7 +14,7 @@ Greet(&buf, "Go") // capture output in a test
   `io.Writer`. In production you pass `os.Stdout`; in a test you pass a
   `bytes.Buffer` and assert on what was written.
 
-**Nuance:** this is **dependency injection** at its simplest — pass a dependency in
+**Key detail:** this is **dependency injection** at its simplest — pass a dependency in
 rather than reaching for a global. Because `io.Writer` is a tiny interface, files,
 buffers, network connections, and stdout all satisfy it, so the same function
 works everywhere and is trivially testable.

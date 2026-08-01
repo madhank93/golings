@@ -9,7 +9,7 @@ const Pi = 3.14
 - `const Pi` with no value is illegal — unlike a `var`, a constant has **no zero
   value** to fall back on. A constant's value must be known at declaration.
 
-**Nuance:** constants are fixed at **compile time**, so they can only be set from
+**Key detail:** constants are fixed at **compile time**, so they can only be set from
 constant expressions (literals, other constants, `iota`) — never from something
 computed at run time like a function call.
 

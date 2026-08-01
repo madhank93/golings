@@ -10,7 +10,7 @@ a := make([]int, 3, 10) // len 3, cap 10
   with **length** 3 (usable elements, all zero) and **capacity** 10 (room before
   a re-allocation is needed).
 
-**Nuance:** length vs capacity — `len` is how many elements exist now, `cap` is
+**Key detail:** length vs capacity — `len` is how many elements exist now, `cap` is
 how many the backing array can hold before `append` must grow it. A slice is a
 lightweight view (pointer + len + cap) over an underlying array.
 

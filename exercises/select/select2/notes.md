@@ -15,7 +15,7 @@ case <-time.After(d):
   against `<-ch` in a `select` means: take the value if it arrives first,
   otherwise give up when the timer fires.
 
-**Nuance:** this is *the* Go timeout pattern. Caveat: `time.After` leaks its timer
+**Key detail:** this is *the* Go timeout pattern. Caveat: `time.After` leaks its timer
 until it fires, so in a hot loop prefer a reusable `time.NewTimer` (with `Stop`).
 For cancellation that propagates across call boundaries, use `context` (next
 topic) instead.

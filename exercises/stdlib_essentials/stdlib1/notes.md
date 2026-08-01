@@ -14,7 +14,7 @@ json.Unmarshal(data, &u)
   exported `Name` field to the `"full_name"` key, so `Unmarshal` fills it from
   that key.
 
-**Nuance:** only **exported** (capitalized) fields are (un)marshaled — `json`
+**Key detail:** only **exported** (capitalized) fields are (un)marshaled — `json`
 can't see unexported ones. Unmarshal takes a **pointer** (`&u`) so it can write
 into your struct. Without a tag, matching is case-insensitive on the field name;
 add `,omitempty` to skip zero values when marshaling.

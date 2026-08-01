@@ -14,7 +14,7 @@ sort.Sort(ByAge(people))
   `Less` defines the ordering (here, ascending age), so `sort.Sort` rearranges the
   slice accordingly.
 
-**Nuance:** the named slice type `ByAge` exists purely to hang the three methods
+**Key detail:** the named slice type `ByAge` exists purely to hang the three methods
 on `[]Person` — swap in a `ByName` type for a different order. For simple cases
 `sort.Slice(people, func(i, j int) bool { ... })` skips the boilerplate, but
 `sort.Interface` is the reusable, composable version.

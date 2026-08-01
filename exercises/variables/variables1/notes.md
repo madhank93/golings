@@ -10,7 +10,7 @@ fmt.Printf("x has the value %d", x)
 - `var = 5` is a syntax error: `var` must bind the value to a **name**. `var x = 5`
   declares `x` and lets Go **infer** its type (`int`) from the initializer.
 
-**Nuance:** with an initializer you don't write the type — `var x = 5` and
+**Key detail:** with an initializer you don't write the type — `var x = 5` and
 `var x int = 5` are equivalent, and idiomatic Go omits the redundant type.
 
 **References**

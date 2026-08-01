@@ -12,7 +12,7 @@ func protect(h http.Handler) http.Handler {
   requests using the browser's `Sec-Fetch-Site` metadata. Wrapping a handler with
   it rejects a cross-site POST — CSRF defense with **no tokens or cookies**.
 
-**Nuance:** it leans on modern browsers sending `Sec-Fetch-*` headers; safe
+**Key detail:** it leans on modern browsers sending `Sec-Fetch-*` headers; safe
 methods (GET/HEAD) and same-origin requests pass through. This is a stdlib answer
 to a problem that historically needed a CSRF-token library. Opt in by wrapping the
 handlers that mutate state.

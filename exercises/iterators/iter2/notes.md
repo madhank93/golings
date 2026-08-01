@@ -18,7 +18,7 @@ func Enumerate(s []int) iter.Seq2[int, int] {
   the two-value analog of `iter.Seq`. `Enumerate` yields `(i, v)`, so ranging it
   gives index first, value second — just like `for i, v := range slice`.
 
-**Nuance:** order matters — `yield(i, v)` not `yield(v, i)`. `Seq2` is what
+**Key detail:** order matters — `yield(i, v)` not `yield(v, i)`. `Seq2` is what
 powers `for k, v := range` over maps and custom pair iterators. The consumer
 writes `for i, v := range Enumerate(s)`, mirroring the built-in slice range.
 

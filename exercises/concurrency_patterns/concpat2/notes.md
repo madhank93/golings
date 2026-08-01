@@ -22,7 +22,7 @@ func merge(chans ...<-chan int) <-chan int {
   separate goroutine waits for **all** of them (`wg.Wait()`) and then closes
   `out` — so the consumer's `range` ends exactly once every input is drained.
 
-**Nuance:** the closer must run in its **own** goroutine — calling `wg.Wait()`
+**Key detail:** the closer must run in its **own** goroutine — calling `wg.Wait()`
 inline would block `merge` from returning. Pass `c` as an argument to the
 goroutine so each captures its own channel, not the loop variable.
 

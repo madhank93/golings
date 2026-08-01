@@ -16,7 +16,7 @@ case "closed":
   wrote `switch { case "open": ... }` — a conditionless switch expects each case
   to be a **boolean**, not a bare string, so `case "open"` was a type error.
 
-**Nuance:** Go cases **do not fall through** by default — the matching case runs
+**Key detail:** Go cases **do not fall through** by default — the matching case runs
 and the switch ends (no `break` needed). Use the `fallthrough` keyword only when
 you explicitly want the next case to run too.
 

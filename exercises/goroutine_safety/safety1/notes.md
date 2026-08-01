@@ -12,7 +12,7 @@ func (c *Counter) Value() int { c.mu.RLock(); defer c.mu.RUnlock(); return c.n }
   all readers to finish. `Inc` writes, so it takes the write lock; `Value` reads,
   so it takes the cheaper read lock.
 
-**Nuance:** `RWMutex` pays off only when reads **greatly** outnumber writes —
+**Key detail:** `RWMutex` pays off only when reads **greatly** outnumber writes —
 otherwise a plain `Mutex` is simpler and often faster (RWMutex has more
 bookkeeping). Either way, every access must be guarded; run with `-race` to prove
 it.

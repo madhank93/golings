@@ -19,7 +19,7 @@ func (g Greeter) Greet(name string) string {
   struct is built (`Greeter{store: store}`). `Greet` delegates to it. The test
   injects a `*memStore` and then asserts the store was actually used.
 
-**Nuance:** this is the struct-level version of di1/di2 — inject collaborators
+**Key detail:** this is the struct-level version of di1/di2 — inject collaborators
 through the constructor/fields so nothing reaches for a global. Depend on the
 **interface** (`Store`), not a concrete type, so production and test
 implementations are interchangeable. This is Go's answer to "DI frameworks":

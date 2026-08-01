@@ -11,7 +11,7 @@ logger.Info(msg)                        // now every line carries service=api
   every record. It does **not** mutate the receiver, so discarding its result
   (the broken code) means the attribute never appears. Assigning it back fixes it.
 
-**Nuance:** this immutable, copy-returning style is deliberate — you build a
+**Key detail:** this immutable, copy-returning style is deliberate — you build a
 base logger, then derive request- or component-scoped loggers with `.With(...)`
 and pass them down, without one derivation affecting another. Same pattern as
 `context.WithValue`.

@@ -12,7 +12,7 @@ errors.Is(err, ErrNotFound)                          // true, through the wrap
 - `%w` in `fmt.Errorf` **wraps** the sentinel while adding context. `errors.Is`
   then walks the wrap chain and finds `ErrNotFound` even under the extra message.
 
-**Nuance:** use `%w` (not `%v`) when you want callers to still match the
+**Key detail:** use `%w` (not `%v`) when you want callers to still match the
 underlying error. A **sentinel** — a package-level `var Err... = errors.New(...)`
 — is the value callers compare against with `errors.Is`, never by string.
 

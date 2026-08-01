@@ -18,7 +18,7 @@ func double(p *int) {
   and stores `42` back into the very same `n` the caller owns — **no `return`
   needed**.
 
-**Nuance:** for a primitive like `*int` you must write the dereference (`*p`)
+**Key detail:** for a primitive like `*int` you must write the dereference (`*p`)
 explicitly every time you touch the value. Forgetting the `*` and writing
 `p = p * 2` is a type error — you can't multiply an address.
 

@@ -18,7 +18,7 @@ func safeRun(fn func()) (err error) {
   a panicking goroutine and returns the panic value. Assigning to the **named
   return** `err` turns the panic into an ordinary error the caller can handle.
 
-**Nuance:** reserve panic/recover for truly exceptional cases (or a package
+**Key detail:** reserve panic/recover for truly exceptional cases (or a package
 boundary that must not crash its caller) — **not** routine error handling, which
 stays value-based. `recover` outside a deferred function returns `nil` and does
 nothing.

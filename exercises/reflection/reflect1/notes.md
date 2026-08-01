@@ -13,7 +13,7 @@ func describe(x any) string {
   it to a category (`int`, `string`, `slice`, `map`, `struct`, ...). So `describe`
   reports what *kind* of thing it was handed at run time.
 
-**Nuance:** **Type vs Kind** — `Type` is the specific type (`main.Celsius`); `Kind`
+**Key detail:** **Type vs Kind** — `Type` is the specific type (`main.Celsius`); `Kind`
 is the underlying category (`float64`). Reflection trades compile-time safety for
 run-time flexibility, so reach for it only when you genuinely can't know types
 ahead of time (serializers, ORMs) — a type switch is clearer when you can.

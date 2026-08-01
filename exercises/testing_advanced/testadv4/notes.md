@@ -16,7 +16,7 @@ func BenchmarkSumSlice(b *testing.B) {
   the right number of times to get a stable timing — setup **before** the loop is
   not counted. Run it with `go test -bench=.`.
 
-**Nuance:** `for b.Loop()` replaces the old `for i := 0; i < b.N; i++` and, crucially,
+**Key detail:** `for b.Loop()` replaces the old `for i := 0; i < b.N; i++` and, crucially,
 keeps the compiler from optimizing the benchmarked call away (a common flaw in
 hand-written benchmarks). Put all setup outside the loop so you time only the code
 under test.
