@@ -8,6 +8,7 @@ they compose into clean data pipelines.
 - **iter1** — `iter.Seq[V]`: a lazy `Filter` built from `yield`
 - **iter2** — `iter.Seq2[K, V]`: yielding `(index, value)` pairs
 - **iter3** — projecting a `Seq2` down to a `Seq` for `slices.Collect`
+- **iter4** — `iter.Pull`: driving a sequence yourself, one value at a time
 
 ## Resources
 

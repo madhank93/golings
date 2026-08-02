@@ -6,6 +6,9 @@ A tour of packages you'll reach for constantly.
 - **stdlib2** — `io.Reader`/`io.Writer` + `io.Copy`
 - **stdlib3** — `slices` (Go 1.21+) generic helpers
 - **stdlib4** — `time`: the reference-layout parse/format scheme
+- **stdlib5** — `strconv`: string ↔ number conversion
+- **stdlib6** — `regexp`: compile once, then match
+- **stdlib7** — `encoding/json`: `omitzero` vs `omitempty` (Go 1.24)
 
 ## Resources
 
