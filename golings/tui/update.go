@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -60,12 +61,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case fileChangedMsg:
 		// re-verify the current exercise on any save; keep listening
 		m.verifying = true
+		m.verifyStart = time.Now()
 		m.notice = ""
 		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case editorClosedMsg:
 		// returned from $EDITOR — re-verify the exercise just edited
 		m.verifying = true
+		m.verifyStart = time.Now()
 		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case tea.MouseMsg:
@@ -94,6 +97,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// The help pop-up owns the keyboard: it scrolls, and every other key closes
+	// it. Anything else would fire an action hidden behind the box.
+	if m.showHelp {
+		switch msg.String() {
+		case "up", "k":
+			m.helpVP.ScrollUp(1)
+		case "down", "j":
+			m.helpVP.ScrollDown(1)
+		case "pgup", "ctrl+u":
+			m.helpVP.HalfPageUp()
+		case "pgdown", "ctrl+d":
+			m.helpVP.HalfPageDown()
+		case "ctrl+c":
+			return m, tea.Quit
+		default:
+			m.showHelp = false
+			// A pop-up rewrites the middle of the frame and nothing else, so the
+			// differential renderer can leave fragments behind when it closes.
+			return m, tea.ClearScreen
+		}
+		return m, nil
+	}
+
 	if m.filtering {
 		return m.handleFilterKey(msg)
 	}
@@ -101,6 +127,11 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
 	case key.Matches(msg, m.keys.Quit):
 		return m, tea.Quit
+
+	case key.Matches(msg, m.keys.Help):
+		m.showHelp = true
+		m.helpVP.GotoTop()
+		return m, tea.ClearScreen
 
 	// A run that has wedged — an infinite loop, a deadlocked test — used to be
 	// unescapable: the only way out was killing the terminal.
@@ -130,6 +161,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case key.Matches(msg, m.keys.Run):
 		m.verifying = true
+		m.verifyStart = time.Now()
 		m.notice = ""
 		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 

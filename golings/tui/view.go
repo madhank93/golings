@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
@@ -64,6 +65,11 @@ func (m *Model) layout() {
 	if leftW < 28 {
 		leftW = 28
 	}
+	// The help pop-up is three quarters of the frame, less border and padding.
+	m.helpVP.Width = max(min(m.width*3/4-6, 72), 24)
+	m.helpVP.Height = max(min(m.height-10, 24), 5)
+	m.helpVP.SetContent(renderMarkdown(helpText, m.helpVP.Width))
+
 	m.leftPaneW = leftW + 4       // border+padding on each side; splits mouse-wheel hit-test
 	rightW := m.width - leftW - 6 // borders + padding
 	if rightW < 20 {
@@ -82,11 +88,32 @@ func (m Model) View() string {
 	if m.phase == phaseWelcome {
 		return m.welcome()
 	}
-	return strings.Join([]string{
+	frame := strings.Join([]string{
 		m.header(),
 		m.body(),
 		m.footer(),
 	}, "\n")
+
+	if box := m.popup(); box != "" {
+		x, y := center(m.width, len(strings.Split(frame, "\n")), lipgloss.Width(box), lipgloss.Height(box))
+		frame = overlay(frame, box, x, y)
+	}
+	return frame
+}
+
+// popup returns the pop-up to composite over the frame, or "" when there is
+// none.
+func (m Model) popup() string {
+	if !m.showHelp {
+		return ""
+	}
+	return modal("help", m.helpVP.View(),
+		keyLine("↑↓", "scroll")+dimStyle.Render(" · ")+keyLine("any key", "close"), m.width*3/4)
+}
+
+// keyLine renders one key/description pair for a pop-up footer.
+func keyLine(k, desc string) string {
+	return lipgloss.NewStyle().Bold(true).Foreground(cTeal).Render(k) + " " + dimStyle.Render(desc)
 }
 
 var (
@@ -223,9 +250,19 @@ func (m Model) rightPane() string {
 	return title + notice + "\n" + m.output.View()
 }
 
+// elapsed formats a run's wall time. Seconds matter here: a test suite that
+// takes twelve seconds and one that has wedged look identical without a clock.
+func elapsed(d time.Duration) string {
+	s := int(d.Seconds())
+	if s < 60 {
+		return fmt.Sprintf("%ds", s)
+	}
+	return fmt.Sprintf("%dm%02ds", s/60, s%60)
+}
+
 func (m Model) badge() string {
 	if m.verifying {
-		return m.spinner.View() + " running"
+		return m.spinner.View() + " running " + dimStyle.Render(elapsed(time.Since(m.verifyStart)))
 	}
 	if !m.hasResult {
 		return dimStyle.Render("not run")
