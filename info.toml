@@ -612,6 +612,17 @@ Go 1.25: wg.Go(f) does Add(1) + go + defer Done() for you. Replace the bare
 """
 
 [[exercises]]
+name = "modern5"
+path = "exercises/modern/modern5/main_test.go"
+mode = "test"
+hint = """
+Per-iteration variables only apply when the LOOP declares the variable. Drop the
+hoisted `var item string` and let the range clause declare it:
+
+for _, item := range items {
+"""
+
+[[exercises]]
 name = "di1"
 path = "exercises/dependency_injection/di1/main_test.go"
 mode = "test"
@@ -919,6 +930,17 @@ return re.MatchString(s)
 """
 
 [[exercises]]
+name = "stdlib7"
+path = "exercises/stdlib_essentials/stdlib7/main_test.go"
+mode = "test"
+hint = """
+omitempty cannot see inside a struct. Go 1.24's omitzero asks the type (here
+time.Time's IsZero method) instead:
+
+At time.Time `json:"at,omitzero"`
+"""
+
+[[exercises]]
 name = "reflect1"
 path = "exercises/reflection/reflect1/main_test.go"
 mode = "test"
@@ -1166,6 +1188,20 @@ hint = """
 Range the pairs and yield only the value, producing an iter.Seq[V]:
 
 for _, v := range seq { if !yield(v) { return } }
+"""
+
+[[exercises]]
+name = "iter4"
+path = "exercises/iterators/iter4/main_test.go"
+mode = "test"
+hint = """
+Pull b once, outside the loop, then take a single value per outer element:
+
+next, stop := iter.Pull(b)
+defer stop()
+...
+y, ok := next()
+if !ok { break }
 """
 
 # ── maps_package ──────────────────────────────────────────────────────────────
