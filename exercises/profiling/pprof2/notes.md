@@ -7,7 +7,7 @@ keep := alloc()
 runtime.GC()
 runtime.ReadMemStats(&after)
 runtime.KeepAlive(keep)
-return after.HeapAlloc - before.HeapAlloc
+return int64(after.HeapAlloc) - int64(before.HeapAlloc)
 ```
 
 **Why it works**
@@ -20,6 +20,17 @@ return after.HeapAlloc - before.HeapAlloc
 collection so only still-live memory is measured. And `runtime.KeepAlive(keep)`
 stops the optimizer from freeing `keep` early — without it the compiler might
 decide the allocation is dead before you measure it.
+
+**uint64 wrap hazard:** `HeapAlloc` is a `uint64`, so `after - before` on a heap
+that *shrank* wraps to a number near 2⁶⁴ instead of going negative. A naive
+`if got < want` check then passes on a measurement that is pure nonsense. Convert
+both sides to `int64` first so a shrinking heap reads as a negative delta.
+
+**Why a tolerance band, not an exact count:** the result is a *net* heap delta.
+The second `runtime.GC()` also frees garbage that was still live at the first
+snapshot, so measured growth lands a few KB under the true allocation size — a
+1 MiB slice typically reports ~1008–1043 KB. Exact-byte assertions on MemStats
+are flaky by construction; assert a range.
 
 **References**
 
