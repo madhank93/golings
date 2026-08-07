@@ -1372,9 +1372,11 @@ name = "pprof2"
 path = "exercises/profiling/pprof2/main_test.go"
 mode = "test"
 hint = """
-Return the heap growth between the two snapshots:
+Return the heap growth between the two snapshots. Convert to int64 first —
+HeapAlloc is uint64, so a plain subtraction wraps to a huge positive number
+when the heap shrinks:
 
-return after.HeapAlloc - before.HeapAlloc
+return int64(after.HeapAlloc) - int64(before.HeapAlloc)
 """
 
 [[exercises]]
