@@ -3,6 +3,7 @@ package exercises
 import (
 	"context"
 	"os/exec"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -14,6 +15,16 @@ var hangFixture = Exercise{
 	Name: "hang1",
 	Path: "../fixtures/hang1/main.go",
 	Mode: "compile",
+}
+
+// pkgFixture spans two files: Greet lives in greet.go, not in main_test.go. A
+// runner that hands `go test` a single-file list fails here with
+// "undefined: Greet", which is exactly the regression package mode prevents.
+var pkgFixture = Exercise{
+	Name: "pkg1",
+	Path: "../fixtures/pkg1/main_test.go",
+	Mode: "test",
+	Pkg:  true,
 }
 
 func TestRunContextHonoursDeadline(t *testing.T) {
@@ -94,5 +105,34 @@ func TestCappedBufferPassesSmallOutputThrough(t *testing.T) {
 	}
 	if got := b.String(); got != "hello" {
 		t.Errorf("got %q, want %q", got, "hello")
+	}
+}
+
+func TestBuildArgsPackageModeTargetsDirectory(t *testing.T) {
+	got := BuildArgs(pkgFixture)
+	want := []string{"test", "-v", "-race", "./../fixtures/pkg1"}
+	if !slices.Equal(got, want) {
+		t.Errorf("BuildArgs = %v, want %v", got, want)
+	}
+}
+
+func TestBuildArgsFileModeTargetsFile(t *testing.T) {
+	got := BuildArgs(hangFixture)
+	want := []string{"run", "./../fixtures/hang1/main.go"}
+	if !slices.Equal(got, want) {
+		t.Errorf("BuildArgs = %v, want %v", got, want)
+	}
+}
+
+func TestRunPackageModeCompilesWholeDirectory(t *testing.T) {
+	if _, err := exec.LookPath("go"); err != nil {
+		t.Skip("go toolchain not on PATH")
+	}
+	res, err := pkgFixture.Run()
+	if err != nil {
+		t.Fatalf("package-mode run failed: %v\nstdout: %s\nstderr: %s", err, res.Out, res.Err)
+	}
+	if !strings.Contains(res.Out, "PASS") {
+		t.Errorf("expected a passing test run, got stdout %q stderr %q", res.Out, res.Err)
 	}
 }

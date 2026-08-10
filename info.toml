@@ -1386,3 +1386,172 @@ The pprof handlers live on http.DefaultServeMux. Forward the prefix:
 
 mux.Handle("/debug/pprof/", http.DefaultServeMux)
 """
+
+[[exercises]]
+name = "logingest1"
+path = "exercises/capstone/logingest1/event.go"
+mode = "test"
+pkg = true
+hint = """
+Wrap the sentinel with %w so errors.Is still matches, and name the field in the
+text so a human can read it:
+
+	return fmt.Errorf("%w: source is empty", ErrInvalidEvent)
+
+Use slices.Contains(Levels, e.Level) for the level check, and e.At.IsZero() for
+the timestamp — comparing time.Time with == also compares the monotonic clock
+reading and the location pointer.
+"""
+
+[[exercises]]
+name = "logingest2"
+path = "exercises/capstone/logingest2/store.go"
+mode = "test"
+pkg = true
+hint = """
+Validate before you take the lock — a rejected event never needs the map:
+
+	if err := e.Validate(); err != nil {
+		return err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+Readers take s.mu.RLock() instead, so several can run at once. BySource must
+return slices.Clone(...) — handing back s.events[source] hands back the store's
+own backing array — and []Event{} rather than nil for an unknown source, so the
+stage-three JSON encoder emits [] instead of null.
+"""
+
+[[exercises]]
+name = "logingest3"
+path = "exercises/capstone/logingest3/server.go"
+mode = "test"
+pkg = true
+hint = """
+Register the routes in NewServer with Go 1.22 method-and-wildcard patterns:
+
+	s.mux.HandleFunc("POST /events", s.handleIngest)
+	s.mux.HandleFunc("GET /events/{source}", s.handleBySource)
+
+The method in the pattern is what makes the mux answer DELETE with 405 on its
+own. In handleIngest, decode with json.NewDecoder(r.Body).Decode(&e), treat a
+decode failure as 400, and use errors.Is(err, ErrInvalidEvent) to turn a
+rejected event into 400 rather than 500; success is w.WriteHeader(201).
+In handleBySource, read the wildcard with r.PathValue("source").
+"""
+
+[[exercises]]
+name = "logingest4"
+path = "exercises/capstone/logingest4/pool.go"
+mode = "test"
+pkg = true
+hint = """
+Start the workers in NewPool and let each one range over the channel — the
+range ends by itself when the channel is closed:
+
+	for range workers {
+		p.wg.Go(func() {
+			for e := range p.events {
+				if err := p.store.Add(e); err != nil {
+					p.rejected.Add(1)
+				}
+			}
+		})
+	}
+
+Submit is p.events <- e. Close must do both halves, in this order:
+close(p.events) so the workers' range loops end, then p.wg.Wait() so Close does
+not return while events are still in flight. Rejected is p.rejected.Load().
+"""
+
+[[exercises]]
+name = "logingest5"
+path = "exercises/capstone/logingest5/shutdown.go"
+mode = "test"
+pkg = true
+hint = """
+Run srv.Serve(ln) in a goroutine reporting to a channel buffered by one, then
+select on that channel and on ctx.Done():
+
+	serveErr := make(chan error, 1)
+	go func() { serveErr <- srv.Serve(ln) }()
+
+	select {
+	case err := <-serveErr:
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
+		}
+		return err
+	case <-ctx.Done():
+		shutCtx, cancel := context.WithTimeout(context.Background(), grace)
+		defer cancel()
+		return srv.Shutdown(shutCtx)
+	}
+
+The shutdown context must derive from context.Background(), not from ctx — ctx
+is already cancelled there, so a context derived from it is born expired and
+Shutdown would cut off the in-flight requests you are trying to protect.
+"""
+
+[[exercises]]
+name = "logingest6"
+path = "exercises/capstone/logingest6/logging.go"
+mode = "test"
+pkg = true
+hint = """
+NewLogger is one line:
+
+	return slog.New(slog.NewJSONHandler(w, &slog.HandlerOptions{Level: level}))
+
+statusRecorder.WriteHeader must do both halves — record the code AND forward it,
+or the status is logged but never sent. WithLogging returns an http.HandlerFunc
+that wraps w:
+
+	rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
+
+Start the recorder at 200, not 0: a handler that writes a body without calling
+WriteHeader still sends 200. Log once, after next.ServeHTTP returns, with
+log.Info("request", "method", ..., "path", ..., "status", ..., "duration", ...).
+"""
+
+[[exercises]]
+name = "logingest7"
+path = "exercises/capstone/logingest7/parse.go"
+mode = "test"
+pkg = true
+hint = """
+Use strings.SplitN, not strings.Split:
+
+	parts := strings.SplitN(line, LineSeparator, 3)
+	if len(parts) != 3 {
+		return Event{}, fmt.Errorf("%w: want 3 fields, got %d", ErrInvalidEvent, len(parts))
+	}
+
+n=3 caps the result at three parts, so separators inside the message survive,
+and the length check is what stops parts[2] from panicking on short input.
+Trim each field with strings.TrimSpace, stamp At from the `at` argument, then
+let e.Validate() decide — returning its error keeps errors.Is working.
+"""
+
+[[exercises]]
+name = "logingest8"
+path = "exercises/capstone/logingest8/profiling.go"
+mode = "test"
+pkg = true
+hint = """
+net/http/pprof registers itself on http.DefaultServeMux in init(), so a mux you
+own needs the handlers registered by hand:
+
+	mux.HandleFunc(PprofPrefix, pprof.Index)
+	mux.HandleFunc(PprofPrefix+"cmdline", pprof.Cmdline)
+	mux.HandleFunc(PprofPrefix+"profile", pprof.Profile)
+	mux.HandleFunc(PprofPrefix+"symbol", pprof.Symbol)
+	mux.HandleFunc(PprofPrefix+"trace", pprof.Trace)
+
+pprof.Index also serves the named profiles (/heap, /goroutine, /allocs), so
+those five cover everything. For NewService, mount the stage-three Server at
+"/" and register the profiles on the same mux — ServeMux prefers the longest
+matching pattern, so /debug/pprof/ beats the catch-all — then wrap the whole
+mux in WithLogging so profile requests get logged too.
+"""

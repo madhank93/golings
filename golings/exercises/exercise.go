@@ -15,6 +15,11 @@ type Exercise struct {
 	Mode string
 	Hint string
 	Desc string
+	// Pkg marks an exercise that spans several files in one directory. Path
+	// still names the primary editable file; the runner compiles the whole
+	// directory instead of that single file. Set with `pkg = true` in
+	// info.toml.
+	Pkg bool
 }
 
 // Notes returns the exercise's teaching walk-through: the contents of a
