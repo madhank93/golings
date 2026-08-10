@@ -1,6 +1,6 @@
 # Golings Curriculum — Beginner → Advanced
 
-112 exercises across 37 topics, ordered as a progressive track. Run them in
+149 exercises across 47 topics, ordered as a progressive track. Run them in
 order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
@@ -48,13 +48,16 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 |---|---|---|
 | anonymous_functions | 3 | closures |
 | defer | 2 | LIFO, guaranteed cleanup |
-| errors | 5 | values, `%w`, `Is`/`As`, custom types, `panic`/`recover`, `Join` |
+| errors | 6 | values, `%w`, `Is`/`As`, custom types, `panic`/`recover`, `Join` |
 
 ### 5. Generics & Modern Go
 | Topic | Exercises | Concepts |
 |---|---|---|
 | generics | 4 | type params, constraints, generic `Stack`, `Reduce` |
-| modern | 3 | `min`/`max`/`clear` (1.21), range-over-int (1.22), range-over-func iterators (1.23) |
+| modern | 5 | `min`/`max`/`clear` (1.21), range-over-int (1.22), range-over-func iterators (1.23), loop variable scoping (1.22) |
+| type_aliases | 3 | alias vs defined type, generic type aliases (1.24) |
+| iterators | 4 | `iter.Seq`, `iter.Seq2`, `iter.Pull` |
+| maps_package | 2 | `maps.Keys`/`Values`, `maps.Collect` |
 
 ### 6. Testable Design
 | Topic | Exercises | Concepts |
@@ -75,26 +78,41 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | sync | 3 | `Mutex`, `Once`, `atomic` |
 | context | 3 | cancellation, deadlines, values |
 | concurrency_patterns | 3 | worker pool, fan-in, pipeline |
+| goroutine_safety | 3 | leak-free goroutines, `errgroup`, cancellation discipline |
+| synctest | 2 | `testing/synctest` fake clock (1.25) |
 
 ### 8. Standard Library & I/O
 | Topic | Exercises | Concepts |
 |---|---|---|
-| stdlib_essentials | 6 | JSON, `io`, `slices`, `time`, `strconv`, `regexp` |
+| stdlib_essentials | 7 | JSON, `io`, `slices`, `time`, `strconv`, `regexp`, `omitzero` (1.24) |
 | reflection | 2 | `reflect.TypeOf`/`ValueOf`, `Kind`, walking struct fields |
 | files | 2 | `os.ReadFile`/`WriteFile`, `bufio.Scanner` |
 | http_client | 1 | `http.Get`, reading responses |
+| structured_logging | 3 | `log/slog`, handlers, attributes |
+| unsafe_pkg | 2 | `unsafe.Pointer`, `unsafe.Slice` — and when not to |
 
 ### 9. Building Applications
 | Topic | Exercises | Concepts |
 |---|---|---|
 | http_server | 4 | `HandlerFunc`, `ServeMux` routing (1.22), JSON, middleware |
+| http_server_advanced | 3 | method patterns, path wildcards, graceful shutdown |
 | cli | 2 | `flag` parsing, `FlagSet`, positional args |
+| profiling | 3 | `runtime/pprof`, `ReadMemStats`, `net/http/pprof` on a custom mux |
 
 ### 10. Testing & Applied
 | Topic | Exercises | Concepts |
 |---|---|---|
 | testing_advanced | 4 | subtests, fuzzing, httptest, benchmarks (`b.Loop`) |
 | applied | 2 | `sort.Interface`, concurrency-safe store (integration) |
+
+### 11. Capstone
+One program built across eight stages — a concurrent HTTP log-ingest service.
+These are the only **package-mode** exercises: each spans several files in a
+directory, and each ships with the earlier stages already solved.
+
+| Topic | Exercises | Concepts |
+|---|---|---|
+| capstone | 8 | sentinel errors, `RWMutex`, method patterns, worker pool, graceful shutdown, `slog` middleware, fuzzing, `net/http/pprof` |
 
 ---
 

@@ -41,6 +41,7 @@ var tiers = []tier{
 	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "maps_package", "structured_logging", "reflection", "unsafe_pkg", "files", "http_client"}},
 	{"Advanced · Building Applications", []string{"http_server", "http_server_advanced", "cli"}},
 	{"Advanced · Testing & Applied", []string{"testing_advanced", "profiling", "applied"}},
+	{"Capstone · Log-Ingest Service", []string{"capstone"}},
 }
 
 // tierColors gives every topic in a tier the same chip color on /catalog.
