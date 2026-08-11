@@ -1,6 +1,6 @@
 // Per-exercise detail (broken source, hint, solution), prerendered as static
 // JSON and fetched by the /catalog modal on open. Keeping it out of
-// catalog.astro stops 138 exercises' worth of code from loading with the
+// catalog.astro stops 149 exercises' worth of code from loading with the
 // table — and keeps spoilers off the page until asked for.
 import type { APIRoute } from 'astro';
 import { CATALOG } from '../../data/catalog';

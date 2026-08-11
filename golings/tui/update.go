@@ -59,10 +59,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case fileChangedMsg:
-		// re-verify the current exercise on any save; keep listening
+		// re-verify the current exercise on any save; keep listening. The notice
+		// survives: reset rewrites the file itself, and clearing here wiped its
+		// own "reset X to original" before the learner could read it.
 		m.verifying = true
 		m.verifyStart = time.Now()
-		m.notice = ""
 		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case editorClosedMsg:
@@ -166,6 +167,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case key.Matches(msg, m.keys.Edit):
+		m.notice = ""
 		cur := m.current()
 		return m, tea.ExecProcess(editorCommand(cur.Path), func(error) tea.Msg {
 			return editorClosedMsg{}
@@ -263,8 +265,10 @@ func (m Model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
-	// ignore stale results for an exercise we've navigated away from
-	if msg.name != m.current().Name {
+	// ignore stale results: a run we've navigated away from, or one that a
+	// newer run has already superseded (saving and leaving the editor both
+	// start one, and the loser reports `cancelled.`)
+	if msg.name != m.current().Name || msg.gen != m.cancel.current() {
 		return m, nil
 	}
 	m.verifying = false

@@ -127,7 +127,7 @@ var (
 // welcome renders the splash screen shown before the main view.
 func (m Model) welcome() string {
 	title := titleStyle.Foreground(cTeal).Render("🐹  golings")
-	tagline := dimStyle.Render("Learn Go the rustlings way — 138 exercises, basics → advanced")
+	tagline := dimStyle.Render("Learn Go the rustlings way — 149 exercises, basics → advanced")
 
 	meta := lipgloss.JoinVertical(lipgloss.Left,
 		labelStyle.Render("Repo")+linkStyle.Render("https://github.com/madhank93/golings"),

@@ -279,6 +279,7 @@ func (m *Model) refreshHeaderCounts() {
 // verifiedMsg carries the result of verifying an exercise.
 type verifiedMsg struct {
 	name   string
+	gen    int // the run that produced this result; stale ones are dropped
 	status exercises.Status
 	result exercises.Result
 }
@@ -287,18 +288,33 @@ type verifiedMsg struct {
 // pointer field on Model so that every copy of the value-typed model — and
 // the goroutine running the verification — share one box.
 type cancelBox struct {
-	mu sync.Mutex
-	fn context.CancelFunc
+	mu  sync.Mutex
+	fn  context.CancelFunc
+	gen int // incremented per run started, so results can be matched to it
 }
 
-// set installs fn, cancelling whatever run it supersedes.
-func (b *cancelBox) set(fn context.CancelFunc) {
+// set installs fn, cancelling whatever run it supersedes, and returns the
+// generation number of the run being started.
+func (b *cancelBox) set(fn context.CancelFunc) int {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if b.fn != nil {
 		b.fn()
 	}
 	b.fn = fn
+	b.gen++
+	return b.gen
+}
+
+// current is the generation of the newest run started. A nil box — the
+// zero value used in tests — reports 0.
+func (b *cancelBox) current() int {
+	if b == nil {
+		return 0
+	}
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.gen
 }
 
 // cancel stops the in-flight run, if any.
@@ -318,11 +334,11 @@ func verifyCmd(box *cancelBox, e exercises.Exercise) tea.Cmd {
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), exercises.DefaultTimeout)
-	box.set(cancel)
+	gen := box.set(cancel)
 	return func() tea.Msg {
 		st, res := e.VerifyContext(ctx)
 		cancel()
-		return verifiedMsg{name: e.Name, status: st, result: res}
+		return verifiedMsg{name: e.Name, gen: gen, status: st, result: res}
 	}
 }
 
