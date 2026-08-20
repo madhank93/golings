@@ -186,6 +186,14 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
+	case key.Matches(msg, m.keys.Chapter):
+		m.showChapter = !m.showChapter
+		m.refreshOutput()
+		if m.showChapter {
+			m.output.SetYOffset(m.chapterTop)
+		}
+		return m, nil
+
 	case key.Matches(msg, m.keys.Reset):
 		cur := m.current()
 		if err := exercises.Reset(cur); err != nil {
@@ -304,6 +312,7 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 func (m *Model) onSelectionChange() {
 	m.showHint = false
 	m.showNotes = false
+	m.showChapter = false
 	m.hasResult = false
 	m.notice = ""
 	m.result = exercises.Result{}
