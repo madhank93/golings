@@ -1,23 +1,42 @@
 ## stdlib5 — strconv
 
 ```go
-n, err := strconv.Atoi(s) // string → int, with an error
-if err != nil {
-    return 0, err
+func parseAndDouble(s string) (int, error) {
+    n, err := strconv.Atoi(s)
+    if err != nil {
+        return 0, err
+    }
+    return n * 2, nil
 }
 ```
 
 **Why it works**
 
-- `strconv.Atoi` parses a string into an `int`, returning an `error` when the text
-  isn't a number (`"nope"`). Propagating that error lets the caller handle bad
-  input.
+- `strconv.Atoi` parses a string as an `int` and returns `(int, error)`. Checking
+  the error is what separates "the user typed nonsense" from "the user typed 0" —
+  both would otherwise look like the zero value.
 
-**Key detail:** conversion between strings and numbers is **explicit and fallible** in
-Go — there's no implicit coercion. `Atoi`/`Itoa` cover base-10 ints; use
-`ParseInt`/`ParseFloat`/`FormatInt` for other bases, bit sizes, and floats.
-Contrast with a numeric *type* conversion like `int(f)`, which never errors.
+**Under the hood**
+
+- The failure is a `*strconv.NumError` carrying the function name, the input, and
+  the underlying cause (`ErrSyntax` or `ErrRange`), so
+  `errors.Is(err, strconv.ErrRange)` distinguishes "not a number" from "too big
+  for an int".
+
+**Common mistake**
+
+- Using `string(65)` to render a number. That is a **rune conversion** producing
+  `"A"`; `strconv.Itoa(65)` gives `"65"`. `go vet` flags the former.
+
+**Key detail:** `strconv.Itoa`/`Atoi` are several times faster than
+`fmt.Sprintf("%d", n)` / `fmt.Sscanf` and say exactly what they do. The package
+also has `ParseFloat`, `ParseBool`, `ParseInt` (with base and bit size), and
+`Quote`.
+
+**See also:** errors1 (returning errors) · primitive_types5 (numeric types) ·
+cli1 (parsing user input) · the [chapter](../README.md)
 
 **References**
 
 - pkg.go.dev — strconv: https://pkg.go.dev/strconv
+- pkg.go.dev — strconv.NumError: https://pkg.go.dev/strconv#NumError

@@ -182,7 +182,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.showNotes = !m.showNotes
 		m.refreshOutput()
 		if m.showNotes {
-			m.output.GotoBottom() // bring the Learn section into view
+			m.output.SetYOffset(m.notesTop) // bring the Learn section into view
 		}
 		return m, nil
 
@@ -286,13 +286,16 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 
 	// Whenever the exercise passes — first time or on a re-run — surface the
 	// teaching walk-through automatically (if the exercise has one).
+	wasShowing := m.showNotes
 	if msg.status == exercises.StatusDone && m.current().Notes() != "" {
 		m.showNotes = true
 	}
 
 	m.refreshOutput()
-	if m.showNotes {
-		m.output.GotoBottom() // put the Learn section on screen after a pass
+	// Only jump on the transition. Re-verifying on every save must not yank a
+	// reader back to the top of a section they have scrolled into.
+	if m.showNotes && !wasShowing {
+		m.output.SetYOffset(m.notesTop)
 	}
 	return m, nil
 }

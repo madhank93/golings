@@ -4,22 +4,38 @@
 status := "open"
 switch status {
 case "open":
-    ...
+    fmt.Println("status is open")
 case "closed":
-    ...
+    fmt.Println("status is closed")
 }
 ```
 
 **Why it works**
 
-- A `switch status` compares `status` against each `case` value. The broken code
-  wrote `switch { case "open": ... }` — a conditionless switch expects each case
-  to be a **boolean**, not a bare string, so `case "open"` was a type error.
+- Naming the value after `switch` makes each case a value to compare it with.
+  The broken version omitted `status`, which turns it into a conditionless
+  switch — and `"open"` is not a boolean, so it cannot compile.
 
-**Key detail:** Go cases **do not fall through** by default — the matching case runs
-and the switch ends (no `break` needed). Use the `fallthrough` keyword only when
-you explicitly want the next case to run too.
+**Under the hood**
+
+- A conditionless `switch` is `switch true`: every case must be a boolean
+  expression. With an expression present, cases are compared using `==` in
+  source order and the first match wins — so any comparable type works, strings
+  and structs included.
+
+**Common mistake**
+
+- Adding `break` at the end of each case out of C habit. Go cases never fall
+  through; the `break` does nothing, and inside a loop it breaks the *switch*
+  rather than the loop.
+
+**Key detail:** one case can list several values — `case "closed", "archived":` —
+and a `switch` with no matching case and no `default` simply does nothing.
+
+**See also:** switch2 (the conditionless form) · switch3 (mapping values) ·
+if2 · the [chapter](../README.md)
 
 **References**
 
+- Go spec — Expression switches: https://go.dev/ref/spec#Expression_switches
 - Go by Example — Switch: https://gobyexample.com/switch

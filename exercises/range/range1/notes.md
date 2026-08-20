@@ -1,4 +1,4 @@
-## range1 — iterate a slice with range
+## range1 — range a slice
 
 ```go
 for _, v := range evenNumbers {
@@ -8,13 +8,25 @@ for _, v := range evenNumbers {
 
 **Why it works**
 
-- `range` over a slice yields two values each step: the **index** and a **copy of
-  the element**. Here the index is unused, so `_` discards it and `v` is the
-  value.
+- Ranging a slice yields two values per iteration — the index and a copy of the
+  element. This loop only needs the element, so the index is discarded with the
+  blank identifier `_`.
 
-**Key detail:** `v` is a **copy** — assigning to it doesn't change the slice. To
-mutate elements in place, index through them: `for i := range s { s[i] = ... }`.
+**Common mistake**
+
+- Writing `for v := range nums` when you wanted the values. With one variable
+  you get the **index**, not the element — a silent logic bug on `[]int`, where
+  both are ints and nothing fails to compile.
+
+**Key detail:** all four forms are legal, and each says something different:
+`for i, v := range s` (both), `for i := range s` (index), `for _, v := range s`
+(value), and `for range s` (neither — just repeat `len(s)` times). Since Go 1.22
+`for i := range 5` ranges an integer, no slice required.
+
+**See also:** range2 (maps) · range3 (filtering) · slices4 (indexing by hand) ·
+the [chapter](../README.md)
 
 **References**
 
-- Go by Example — Range: https://gobyexample.com/range
+- Go spec — For statements with range clause: https://go.dev/ref/spec#For_range
+- Go by Example — Range over Built-in Types: https://gobyexample.com/range-over-built-in-types

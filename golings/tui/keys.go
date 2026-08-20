@@ -41,7 +41,7 @@ func defaultKeys() keyMap {
 		),
 		Explain: key.NewBinding(
 			key.WithKeys("x"),
-			key.WithHelp("x", "explain"),
+			key.WithHelp("x", "explain + chapter"),
 		),
 		Reset: key.NewBinding(
 			key.WithKeys("r"),

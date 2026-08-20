@@ -1,27 +1,42 @@
-## di2 — inject behaviour through an interface
+## di2 — inject a Clock
 
 ```go
-type Clock interface{ Now() time.Time }
-
 func Greeting(c Clock) string {
-    if c.Now().Hour() < 12 { return "Good morning" }
+    if c.Now().Hour() < 12 {
+        return "Good morning"
+    }
     return "Good evening"
 }
-type fixedClock struct{ t time.Time }
-func (f fixedClock) Now() time.Time { return f.t }
 ```
 
 **Why it works**
 
-- Calling `time.Now()` directly makes `Greeting` untestable — its result depends on
-  the wall clock. Injecting a `Clock` interface lets the test pass a `fixedClock`
-  that returns any moment, so both the morning and evening branches are reachable.
+- The function reads the time from the injected `Clock` rather than calling
+  `time.Now()` itself, so the test can supply `fixedClock{t: …}` and pin the
+  hour. Production passes a clock that delegates to `time.Now`.
 
-**Key detail:** wrap **non-deterministic** dependencies (time, randomness, network,
-filesystem) behind a small interface so tests can substitute a predictable fake.
-Define the interface with only the method you actually use (`Now`), not the whole
-`time` API.
+**Under the hood**
+
+- `Clock` has one method, and the test double is three lines with a **value**
+  receiver — nothing to record, so no pointer needed. The production
+  implementation is equally small: `type realClock struct{}` with
+  `func (realClock) Now() time.Time { return time.Now() }`.
+
+**Common mistake**
+
+- Calling `time.Now()` inside business logic and testing around it — a suite
+  that passes all morning and fails after lunch, or one that computes the
+  expected value with the same call it is testing and therefore asserts nothing.
+
+**Key detail:** the same wrapper trick covers every non-deterministic dependency:
+`rand`, UUIDs, `os.Getenv`, the filesystem. For *concurrent* time-dependent code
+there is now a better tool — `testing/synctest` (synctest1) runs the real `time`
+package against a fake clock, no injection required.
+
+**See also:** di1 · di3 · synctest2 (virtual time) · mock2 (canned results) ·
+the [chapter](../README.md)
 
 **References**
 
+- pkg.go.dev — time.Time: https://pkg.go.dev/time#Time
 - Learn Go with Tests — Dependency Injection: https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/dependency-injection

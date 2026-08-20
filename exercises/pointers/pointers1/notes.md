@@ -1,28 +1,39 @@
-## pointers1 — read & write through a `*int`
-
-The solution is one line:
+## pointers1 — write through a pointer
 
 ```go
 func double(p *int) {
     *p = *p * 2
 }
+
+n := 21
+double(&n) // n is now 42
 ```
 
 **Why it works**
 
-- `p` has type `*int` — it holds the **address** of the caller's `n`, not a
-  copy of the value. The test calls `double(&n)`, and `&` is the operator that
-  takes that address.
-- `*p` is the **dereference**. On the **right** of `=` it *reads* the value at
-  the address; on the **left** it *writes* to it. So `*p = *p * 2` reads `21`
-  and stores `42` back into the very same `n` the caller owns — **no `return`
-  needed**.
+- `&n` passes `n`'s **address**. Inside, `*p` on the right reads the value at
+  that address and `*p` on the left writes to it — so the caller's variable
+  changes.
 
-**Key detail:** for a primitive like `*int` you must write the dereference (`*p`)
-explicitly every time you touch the value. Forgetting the `*` and writing
-`p = p * 2` is a type error — you can't multiply an address.
+**Under the hood**
+
+- Go passes everything by value, pointers included: `double` gets a copy of the
+  *address*, which is enough, because both copies name the same memory. That is
+  the whole mechanism — there is no pass-by-reference in the language.
+
+**Common mistake**
+
+- Assigning to `p` instead of `*p`. `p = &other` rebinds the local copy of the
+  pointer and the caller sees nothing. The dereference is what reaches through.
+
+**Key detail:** the zero value of a pointer is `nil`, and dereferencing it panics
+with `invalid memory address or nil pointer dereference`. There is no pointer
+arithmetic — `p+1` does not compile, which removes a whole class of memory bugs.
+
+**See also:** pointers2 (structs) · pointers3 (value vs pointer parameters) ·
+unsafe1 (where arithmetic does exist) · the [chapter](../README.md)
 
 **References**
 
-- A Tour of Go — Pointers: https://go.dev/tour/moretypes/1
-- Go by Example — Pointers: https://gobyexample.com/pointers
+- Go spec — Address operators: https://go.dev/ref/spec#Address_operators
+- Go FAQ — pass by value: https://go.dev/doc/faq#pass_by_value

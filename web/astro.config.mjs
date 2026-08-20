@@ -10,7 +10,7 @@ import curriculumRedirects from './src/data/curriculum-redirects.json' with { ty
 const SITE = 'https://golings.madhan.app';
 const BASE = '/';
 const DESCRIPTION =
-	'Learn Go the rustlings way — 138 hands-on exercises you fix one at a time, from variables to concurrency, current through Go 1.26.';
+	'Learn Go the rustlings way — 149 hands-on exercises you fix one at a time, from variables to concurrency, current through Go 1.26.';
 
 export default defineConfig({
 	site: SITE,

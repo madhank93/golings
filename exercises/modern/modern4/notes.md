@@ -11,15 +11,30 @@ wg.Wait()
 
 **Why it works**
 
-- Go 1.25's `wg.Go(f)` launches `f` in its own goroutine and handles the `Add(1)`
-  and `Done()` for you — replacing the error-prone `wg.Add(1); go func(){ defer
-  wg.Done(); ... }()` dance. The broken code's bare `go` never called `Add`, so
-  `Wait` returned before the work ran.
+- `wg.Go(f)` (Go 1.25) does the `Add(1)`, starts the goroutine, and defers
+  `Done()` — the three-line dance in one call. The broken version uses a bare
+  `go` with no `Add`, so the counter never rises, `Wait` returns immediately, and
+  `total` is read before the goroutines have run.
 
-**Key detail:** this removes the two classic `WaitGroup` bugs — forgetting `Add`
-(Wait returns too early) and forgetting `Done` (Wait blocks forever). Note the
-result uses `atomic.Int64` because many goroutines add concurrently.
+**Under the hood**
+
+- The two classic failure modes it removes are exactly those: **no `Add` at all**
+  (Wait returns early, as here), and **`Add` inside the goroutine**, which races
+  with `Wait` — the counter may still be 0 when `Wait` checks it.
+
+**Common mistake**
+
+- Thinking `wg.Go` replaces the wait too. It does not: `wg.Wait()` is still what
+  blocks until the count returns to zero.
+
+**Key detail:** the accumulator is an `atomic.Int64` for a reason — several
+goroutines add to it concurrently, and a plain `int64` would be a data race that
+`go test -race` reports. `wg.Go` handles the counting, not the sharing.
+
+**See also:** concurrent1 (the long form) · sync3 (atomics) · safety1 ·
+the [chapter](../README.md)
 
 **References**
 
 - pkg.go.dev — sync.WaitGroup.Go: https://pkg.go.dev/sync#WaitGroup.Go
+- Go 1.25 release notes: https://go.dev/doc/go1.25

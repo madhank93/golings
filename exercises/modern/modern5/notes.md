@@ -1,38 +1,42 @@
-## modern5 — per-iteration loop variables
-
-The fix is to let the loop declare the variable:
+## modern5 — the loop must declare the variable
 
 ```go
-func labelers(items []string) []func() string {
-	var fns []func() string
-	for _, item := range items {
-		fns = append(fns, func() string { return item })
-	}
-	return fns
+for _, item := range items { // := lets the loop declare it
+    fns = append(fns, func() string { return item })
 }
 ```
 
 **Why it works**
 
-- Before Go 1.22 a `for ... range` loop created **one** variable and overwrote it
-  each pass. Every closure captured that same variable, so after the loop they
-  all read whatever it held last — `gamma`, three times.
-- Go 1.22 changed the spec: a loop variable declared **by the loop** (`:=` in
-  the `range` clause or the `for i := 0; ...` init) is a **new variable each
-  iteration**. Each closure now captures its own, so the three functions report
-  `alpha`, `beta`, `gamma`.
-- The broken version dodged the fix by declaring `item` **outside** the loop and
-  assigning to it with `=`. That variable belongs to the enclosing scope, not to
-  the loop, so the old sharing behaviour is exactly what you get. The semantics
-  follow the **declaration**, not the loop.
+- Since Go 1.22 each iteration of a `for` loop declares **new** loop variables, so
+  every closure captures its own `item`. The broken version hoists `item` above
+  the loop and merely assigns it with `=` — one variable shared by every closure,
+  all reporting the last value.
 
-**Key detail:** this change is gated on the `go` line in your `go.mod`, not on
-the toolchain. A module that still says `go 1.21` keeps the old per-loop
-behaviour even when built with a current compiler — which is why the same source
-can behave differently in two repositories.
+**Under the hood**
+
+- The 1.22 change applies to variables the **loop declares**, not to any variable
+  the loop touches. Assigning to an outer variable is still assignment, so the
+  old pre-1.22 behaviour is still reachable — which is what this exercise
+  demonstrates on purpose.
+
+**Common mistake**
+
+- Adding `item := item` at the top of the body out of habit. It was the standard
+  workaround before 1.22 and is now redundant; linters flag the copy. Recognise
+  it in older code rather than writing it.
+
+**Key detail:** the same rule governs pointers, not just closures.
+`&item` inside a pre-1.22-shaped loop yields the same address every iteration —
+so a slice of pointers ends up with every element aimed at one variable.
+
+**Note on modules:** the semantics are gated by the `go` line in `go.mod`. A
+module declaring `go 1.21` keeps the old behaviour even on a new toolchain.
+
+**See also:** anonymous_functions3 (closures capture variables) ·
+concurrent1 (goroutines in a loop) · range3 · the [chapter](../README.md)
 
 **References**
 
-- Go blog — Fixing For Loops in Go 1.22: https://go.dev/blog/loopvar-preview
-- Go Wiki — LoopvarExperiment: https://go.dev/wiki/LoopvarExperiment
-- Go 1.22 release notes — language: https://go.dev/doc/go1.22#language
+- Go blog — Fixing for loops in Go 1.22: https://go.dev/blog/loopvar-preview
+- Go 1.22 release notes: https://go.dev/doc/go1.22#language

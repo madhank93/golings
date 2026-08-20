@@ -57,6 +57,7 @@ type Model struct {
 	hasResult bool
 	showHint  bool
 	showNotes bool // teaching walk-through: auto on pass, toggled with the Explain key
+	notesTop  int  // viewport line the Learn section starts on, so it can be scrolled to
 
 	keys     keyMap
 	help     help.Model
