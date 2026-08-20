@@ -70,8 +70,8 @@ variable, even if the outer scope already has that name — the inner one
 
 ```mermaid
 flowchart TB
-  A["func main()<br/>x := \"TEN\"  (string)"] --> B["if true {<br/>x := 1  (new int x)<br/>}"]
-  B --> C["after the block:<br/>x is still \"TEN\""]
+  A["func main()<br/>x := #quot;TEN#quot;  (string)"] --> B["if true {<br/>x := 1  (new int x)<br/>}"]
+  B --> C["after the block:<br/>x is still #quot;TEN#quot;"]
 ```
 
 ```ascii
