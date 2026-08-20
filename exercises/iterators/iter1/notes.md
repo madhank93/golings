@@ -1,14 +1,14 @@
-## iter1 — Filter an iter.Seq
+## iter1 — a lazy Filter
 
 ```go
 func Filter[V any](seq iter.Seq[V], keep func(V) bool) iter.Seq[V] {
     return func(yield func(V) bool) {
         for v := range seq {
             if !keep(v) {
-                continue // drop values that fail the predicate
+                continue // drop it
             }
             if !yield(v) {
-                return
+                return // consumer stopped
             }
         }
     }
@@ -17,16 +17,30 @@ func Filter[V any](seq iter.Seq[V], keep func(V) bool) iter.Seq[V] {
 
 **Why it works**
 
-- `Filter` wraps a source sequence and returns a **new** `iter.Seq` that only
-  re-yields values where `keep(v)` is true. Ranging the source and guarding the
-  `yield` with the predicate is the whole trick.
+- `Filter` takes an iterator and returns one, ranging the source and re-yielding
+  only the values that pass. The broken version yields every element, so nothing
+  is filtered.
 
-**Key detail:** iterators **compose** — `Filter` takes a `Seq` and returns a `Seq`, so
-you can chain `Map`, `Filter`, `Take`, etc. Nothing runs until something ranges
-the final sequence (lazy), and no intermediate slices are allocated. Propagate
-`yield`'s `false` return so early `break`s stop the source too.
+**Under the hood**
+
+- Nothing is materialised. `Filter` computes a value only when the consumer asks
+  for the next one, so `Filter(hugeSeq, …)` costs nothing until it is ranged —
+  and a `break` in the consumer stops the source mid-flight.
+
+**Common mistake**
+
+- Guarding only the predicate and forgetting `yield`'s result. Both checks are
+  required: `keep` decides what to forward, `yield`'s `false` decides whether to
+  keep producing at all.
+
+**Key detail:** `slices.Values(s)` turns a slice into a `Seq` and
+`slices.Collect(seq)` drains one back into a slice — the two ends of the
+pipeline this exercise sits in the middle of.
+
+**See also:** iter2 (`Seq2`) · iter3 (projection) · modern3 (writing the
+protocol) · generics4 (the eager equivalent) · the [chapter](../README.md)
 
 **References**
 
-- pkg.go.dev — iter: https://pkg.go.dev/iter
-- The Go Blog — Range Over Function Types: https://go.dev/blog/range-functions
+- pkg.go.dev — iter.Seq: https://pkg.go.dev/iter#Seq
+- Go blog — Range Over Function Types: https://go.dev/blog/range-functions

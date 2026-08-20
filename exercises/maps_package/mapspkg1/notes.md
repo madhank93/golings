@@ -1,22 +1,40 @@
 ## mapspkg1 — maps.Clone
 
 ```go
-cp := maps.Clone(settings) // independent shallow copy
-cp["theme"] = "dark"       // does NOT touch the caller's map
+func withDefault(settings map[string]string) map[string]string {
+    cp := maps.Clone(settings)
+    cp["theme"] = "dark"
+    return cp
+}
 ```
 
 **Why it works**
 
-- `cp := settings` does **not** copy a map — both names refer to the *same*
-  underlying map, so a write through `cp` is visible through `settings`.
-  `maps.Clone` (Go 1.21+) returns a genuinely separate map, so mutating `cp`
-  leaves the original untouched.
+- `cp := settings` copies a **pointer to the same hash table**, so writing
+  through `cp` mutates the caller's map. `maps.Clone` allocates a new table and
+  copies the entries, giving a genuinely independent map.
 
-**Key detail:** maps (like slices and pointers) are **reference types** — assigning
-one shares it. `maps.Clone` is **shallow**: it copies the entries, but if the
-values were themselves maps/slices/pointers, those are still shared. For "don't
-leak my changes to the caller," clone at the boundary.
+**Under the hood**
+
+- A map value is a pointer to a runtime structure, which is why a map parameter
+  is a shared handle rather than a snapshot. Unlike a slice — where at least an
+  `append` cannot reach the caller — every write to a map parameter is visible
+  outside.
+
+**Common mistake**
+
+- Assuming `Clone` is deep. It is **shallow**: clone a `map[string][]int` and
+  both maps point at the same slices, so appending through one is visible through
+  the other. Nested copying is yours to do.
+
+**Key detail:** `maps.Clone(nil)` returns `nil`, which reads fine and panics on
+write. If the input may be nil and the result must be writable, `make` when the
+clone comes back nil.
+
+**See also:** mapspkg2 (`DeleteFunc`) · maps1 (map basics) · slices3 (the same
+sharing, one level down) · the [chapter](../README.md)
 
 **References**
 
 - pkg.go.dev — maps.Clone: https://pkg.go.dev/maps#Clone
+- Go blog — Go maps in action: https://go.dev/blog/maps

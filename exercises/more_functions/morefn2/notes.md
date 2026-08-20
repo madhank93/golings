@@ -1,4 +1,4 @@
-## morefn2 — variadic parameters
+## morefn2 — variadic parameters and the spread
 
 ```go
 func sum(nums ...int) int {
@@ -8,17 +8,38 @@ func sum(nums ...int) int {
     }
     return total
 }
+
+sum(1, 2, 3)   // 6
+sum(nums...)   // spread an existing slice
 ```
 
 **Why it works**
 
-- `nums ...int` lets `sum` accept any number of ints. Inside the function `nums`
-  is just an `[]int`, so you `range` over it.
+- Inside the function `nums` is an ordinary `[]int`, so `range` sums it. At the
+  call site the compiler collects the arguments into that slice — and `sum()`
+  passes a `nil` slice, which ranges zero times and gives 0 with no special
+  case.
 
-**Key detail:** call it with individual args (`sum(1, 2, 3)`) **or** spread an
-existing slice with `...` (`sum(nums...)`). The variadic parameter must be the
-**last** one, and calling with none yields an empty (not nil-panicking) slice.
+**Under the hood**
+
+- `slice...` at a call site passes the existing slice **without copying**: the
+  function receives a header pointing at the same backing array, so writing to
+  `nums[0]` mutates the caller's data. Copy with `slices.Clone` if the function
+  keeps or modifies it.
+
+**Common mistake**
+
+- `sum(nums)` instead of `sum(nums...)` — passing one `[]int` where `int`s are
+  expected. The compiler catches this one; the aliasing above it does not.
+
+**Key detail:** the variadic parameter must be **last** and there can be only one.
+This is how `fmt.Printf(format string, a ...any)` and `append(s, vals...)` are
+declared — the mechanism is in the first line of Go anyone writes.
+
+**See also:** morefn1 (recursion) · slices4 (`append` and backing arrays) ·
+functions3 (exact arity otherwise) · the [chapter](../README.md)
 
 **References**
 
-- Go by Example — Variadic Functions: https://gobyexample.com/variadic-functions
+- Go spec — Passing arguments to ... parameters: https://go.dev/ref/spec#Passing_arguments_to_..._parameters
+- pkg.go.dev — slices.Clone: https://pkg.go.dev/slices#Clone

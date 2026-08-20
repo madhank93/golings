@@ -14,16 +14,33 @@ func safeRun(fn func()) (err error) {
 
 **Why it works**
 
-- `recover()` only does something inside a **deferred** function; there it stops
-  a panicking goroutine and returns the panic value. Assigning to the **named
-  return** `err` turns the panic into an ordinary error the caller can handle.
+- A panic unwinds the stack running deferred calls. `recover()` inside one of
+  them stops the unwinding and returns the panic value; assigning to the **named
+  result** `err` makes `safeRun` return an error instead of dying.
 
-**Key detail:** reserve panic/recover for truly exceptional cases (or a package
-boundary that must not crash its caller) — **not** routine error handling, which
-stays value-based. `recover` outside a deferred function returns `nil` and does
-nothing.
+**Under the hood**
+
+- Three requirements, all load-bearing: `recover()` must be called **directly by
+  a deferred function** (nested one level deeper it returns `nil`); the result
+  must be **named**, or the closure has nothing to assign to; and `return x`
+  assigns the result *before* defers run, which is what lets the closure
+  overwrite it.
+
+**Common mistake**
+
+- Using panic/recover as control flow. It is for **programmer error** — broken
+  invariants, impossible states — not for a missing file or a bad request.
+  Returning an error is cheaper, visible in the signature, and checkable.
+
+**Key detail:** the panic value is an `any`, so format it (`%v`) rather than
+treating it as an error. And a panic in **any** goroutine kills the process — a
+`recover` in `main` cannot save you from one in a worker, so each goroutine that
+needs protection needs its own.
+
+**See also:** defer1 (named results) · defer2 · errors1 · safety3 (panics from
+misused channels) · the [chapter](../README.md)
 
 **References**
 
-- Go by Example — Recover: https://gobyexample.com/recover
-- Effective Go — Recover: https://go.dev/doc/effective_go#recover
+- Go blog — Defer, Panic, and Recover: https://go.dev/blog/defer-panic-and-recover
+- Go spec — Handling panics: https://go.dev/ref/spec#Handling_panics

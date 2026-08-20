@@ -17,11 +17,13 @@ import (
 )
 
 const (
-	infoFile   = "info.toml"
-	legacyDir  = "web/src/content/docs/curriculum" // retired pages, absorbed by /catalog — removed if present
-	dataDir    = "web/src/data"                    // catalog.ts + redirects for /catalog
-	detailsDir = "web/src/data/lesson-details"     // per-exercise detail markdown
-	exerciseR  = "exercises"
+	infoFile    = "info.toml"
+	legacyDir   = "web/src/content/docs/curriculum" // retired pages, absorbed by /catalog — removed if present
+	dataDir     = "web/src/data"                    // catalog.ts + redirects for /catalog
+	detailsDir  = "web/src/data/lesson-details"     // per-exercise detail markdown
+	seriesDir   = "web/src/content/docs/series"     // retired chapter pages — removed if present
+	chaptersDir = "web/src/data/chapters"           // per-topic chapter markdown for the catalog
+	exerciseR   = "exercises"
 )
 
 // tier groups topics into a beginner→advanced section (mirrors CURRICULUM.md).
@@ -83,8 +85,70 @@ func run() error {
 	if err := writeCatalog(byTopic); err != nil {
 		return err
 	}
+	if err := writeChapters(); err != nil {
+		return err
+	}
 	return writeRedirects()
 }
+
+// writeChapters renders each topic README as chapter markdown for the catalog
+// modal. The README stays the single source: the TUI and GitHub read it
+// directly, the site reads this rendering of it.
+func writeChapters() error {
+	// /series/* pages were folded into the catalog — drop them from stale
+	// checkouts so they don't build.
+	if err := os.RemoveAll(seriesDir); err != nil {
+		return err
+	}
+	if err := os.RemoveAll(chaptersDir); err != nil {
+		return err
+	}
+	if err := os.MkdirAll(chaptersDir, 0o755); err != nil {
+		return err
+	}
+
+	for _, ti := range tiers {
+		for _, topic := range ti.topics {
+			body := readme(topic)
+			if body == "" {
+				continue
+			}
+			var b strings.Builder
+			fmt.Fprintf(&b, "---\ntitle: %s\n---\n\n", pretty(topic))
+			fmt.Fprintf(&b, "%s\n", chapterHTML(exercises.StripFences(body, "ascii")))
+			if err := os.WriteFile(filepath.Join(chaptersDir, topic+".md"), []byte(b.String()), 0o644); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// chapterHTML prepares a chapter for the catalog modal: neighbour links become
+// catalog deep links, and mermaid fences become the <pre class="mermaid"> the
+// modal's lazy mermaid pass renders (a fence would stay a code block, since the
+// modal injects its HTML after the page has loaded).
+func chapterHTML(md string) string {
+	md = topicLink.ReplaceAllString(md, "](/catalog/?chapter=$1)")
+	return mermaidFence.ReplaceAllStringFunc(md, func(block string) string {
+		src := mermaidFence.FindStringSubmatch(block)[1]
+		return "<pre class=\"mermaid\">" + escapeHTML(strings.TrimRight(src, "\n")) + "</pre>"
+	})
+}
+
+// escapeHTML escapes the three characters that would otherwise end the <pre>
+// early or be read as markup. Mermaid parses the element's text content, so it
+// sees the original characters back.
+func escapeHTML(s string) string {
+	return strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;").Replace(s)
+}
+
+// Link rewrites applied to chapters and notes on their way to the catalog.
+var (
+	topicLink    = regexp.MustCompile(`\]\(\.\./([a-z_]+)/\)`)
+	readmeLink   = regexp.MustCompile(`\]\(\.\./README\.md\)`)
+	mermaidFence = regexp.MustCompile("(?s)```mermaid\n(.*?)```")
+)
 
 // writeRedirects maps the retired curriculum URLs onto the catalog so old
 // links keep working: topic pages deep-link into the topic filter.
@@ -182,37 +246,52 @@ func writeDetail(e exercises.Exercise) error {
 	var b strings.Builder
 	fmt.Fprintf(&b, "---\ntitle: %s\n---\n\n", e.Name)
 
+	// One accordion per part, in the order a learner meets them: the broken
+	// source is open, everything that gives the answer away starts closed.
+	var src strings.Builder
 	for _, f := range files {
-		src, err := os.ReadFile(f)
+		data, err := os.ReadFile(f)
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(&b, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(string(src), "\n"))
+		fmt.Fprintf(&src, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(string(data), "\n"))
 	}
+	b.WriteString(section("What you start with", src.String(), true))
 
 	if h := strings.TrimSpace(e.Hint); h != "" {
-		b.WriteString("<details>\n<summary>Show hint (spoiler)</summary>\n\n```text\n" + h + "\n```\n\n</details>\n\n")
+		b.WriteString(section("Hint", "```text\n"+h+"\n```\n", false))
 	}
 
 	var sol strings.Builder
 	for _, f := range files {
-		src, ok := solutionFile(f)
+		data, ok := solutionFile(f)
 		if !ok {
 			continue
 		}
-		fmt.Fprintf(&sol, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(src, "\n"))
+		fmt.Fprintf(&sol, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(data, "\n"))
 	}
 	if sol.Len() > 0 {
-		b.WriteString("<details>\n<summary>Show solution (spoiler)</summary>\n\n" + sol.String() + "</details>\n\n")
+		b.WriteString(section("Solution", sol.String(), false))
 	}
 
-	// Teaching notes: annotated walk-through + key details + references. Behind a
-	// spoiler like the solution, since it contains the answer.
+	// Teaching notes: annotated walk-through, gotchas and references. Closed by
+	// default like the solution, since they contain the answer.
 	if n := strings.TrimSpace(e.Notes()); n != "" {
-		b.WriteString("<details>\n<summary>Show notes (explanation & references)</summary>\n\n" + n + "\n\n</details>\n")
+		n = readmeLink.ReplaceAllString(n, "](/catalog/?chapter="+topicOf(e.Path)+")")
+		b.WriteString(section("Explanation", exercises.StripFences(n, "ascii"), false))
 	}
 
 	return os.WriteFile(filepath.Join(detailsDir, e.Name+".md"), []byte(b.String()), 0o644)
+}
+
+// section wraps one part of an exercise in a <details> the catalog styles as an
+// accordion card. Spoilers (hint, solution, explanation) stay closed.
+func section(title, body string, open bool) string {
+	attr := ""
+	if open {
+		attr = " open"
+	}
+	return fmt.Sprintf("<details%s>\n<summary>%s</summary>\n\n%s\n</details>\n\n", attr, title, strings.TrimRight(body, "\n")+"\n")
 }
 
 // solutionRef is the first git ref that resolves to the solution branch, or
@@ -247,24 +326,29 @@ func js(s string) string {
 
 var mdLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]+\)`)
 
-// learnText returns the topic README as popover-ready plain text: the whole
-// intro (the catalog popover is its only home on the site now), headings
-// dropped, links unwrapped, paragraphs kept as blank-line breaks.
+// learnText returns the topic's opening prose as popover-ready plain text:
+// links unwrapped, paragraphs kept as blank-line breaks. Only the intro — the
+// rest of the chapter has its own page at /series/<topic>.
 func learnText(topic string) string {
-	intro := readme(topic)
-	if intro == "" {
-		return ""
-	}
 	var paras []string
-	for _, para := range strings.Split(intro, "\n\n") {
+	for _, para := range strings.Split(intro(readme(topic)), "\n\n") {
 		para = strings.TrimSpace(para)
-		if para == "" || strings.HasPrefix(para, "#") {
+		if para == "" {
 			continue
 		}
 		para = strings.ReplaceAll(para, "\n", " ")
 		paras = append(paras, mdLink.ReplaceAllString(para, "$1"))
 	}
 	return strings.Join(paras, "\n\n")
+}
+
+// intro returns a chapter's opening prose: everything before its first section
+// heading. It has to stand on its own — the catalog popover shows only this.
+func intro(body string) string {
+	if i := strings.Index(body, "\n## "); i >= 0 {
+		body = body[:i]
+	}
+	return strings.TrimSpace(body)
 }
 
 // readme returns the topic README with its leading H1 stripped (the popover

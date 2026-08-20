@@ -1,35 +1,40 @@
-## stdlib7 — `omitzero` vs `omitempty`
-
-One tag option changes:
+## stdlib7 — omitzero vs omitempty
 
 ```go
 type Event struct {
-	Name string    `json:"name"`
-	At   time.Time `json:"at,omitzero"`
+    Name string    `json:"name"`
+    At   time.Time `json:"at,omitzero"` // was omitempty
 }
 ```
 
 **Why it works**
 
-- `omitempty` has a fixed, pre-generics definition of "empty": `false`, `0`, a
-  nil pointer, a nil interface, and any array, slice, map, or string of length
-  zero. A **struct** is not on that list, so a zero `time.Time` was encoded in
-  full: `"at":"0001-01-01T00:00:00Z"`.
-- `omitzero` (Go 1.24) asks the **type** instead. If it has an `IsZero() bool`
-  method that answer wins; otherwise the field is compared against its type's
-  zero value. `time.Time` has `IsZero`, so an unset timestamp disappears and a
-  real one still marshals.
+- `omitempty` cannot drop a struct — it has no notion of an "empty" struct — so a
+  zero `time.Time` marshals as `"0001-01-01T00:00:00Z"`. `omitzero` (Go 1.24)
+  asks the type whether it is the zero value, and a zero time disappears.
 
-**Key detail:** the two options mean different things for scalars, and the
-difference bites in the other direction too. `omitempty` on an `int` drops a
-legitimate `0`, and on a `bool` drops a legitimate `false` — so a field that is
-genuinely set to zero silently vanishes from the payload. The standard library
-docs now recommend migrating `omitempty` to `omitzero` on bools, ints, uints,
-floats, pointers, and interfaces for exactly that reason. Specifying both omits
-the field when the value is empty **or** zero.
+**Under the hood**
+
+- `omitempty` predates most of Go's type system: it drops `""`, `0`, `false`, and
+  nil/empty maps, slices and pointers — a fixed list. `omitzero` compares against
+  the type's zero value, using the type's own `IsZero() bool` method when it has
+  one (`time.Time` does).
+
+**Common mistake**
+
+- Reaching for `*time.Time` to get the same effect. A pointer does work with
+  `omitempty`, at the cost of a nil check at every use site — `omitzero` gets
+  there without changing the field's type.
+
+**Key detail:** they answer different questions. `omitempty` is right for "drop
+the empty slice"; `omitzero` for "drop the unset value". An empty-but-non-nil
+slice is *empty* but not *zero*, so the two can disagree — use the one that
+matches your intent.
+
+**See also:** stdlib1 (tags) · variables3 (zero values) · logingest1 (event
+model with tags) · the [chapter](../README.md)
 
 **References**
 
-- pkg.go.dev — encoding/json Marshal: https://pkg.go.dev/encoding/json#Marshal
-- Go 1.24 release notes: https://go.dev/doc/go1.24
-- Go by Example — JSON: https://gobyexample.com/json
+- Go 1.24 release notes — encoding/json: https://go.dev/doc/go1.24#encoding-json
+- pkg.go.dev — encoding/json: https://pkg.go.dev/encoding/json

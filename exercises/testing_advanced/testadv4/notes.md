@@ -1,27 +1,44 @@
-## testadv4 — benchmarks
+## testadv4 — benchmarks and b.Loop
 
 ```go
-func BenchmarkSumSlice(b *testing.B) {
-    data := make([]int, 1000)
-    for i := range data { data[i] = i }
-    for b.Loop() { // Go 1.24+: runs the body b.N times, timed
-        sumSlice(data)
+func sumSlice(nums []int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
     }
+    return total
 }
 ```
 
 **Why it works**
 
-- A `Benchmark` function measures performance. `b.Loop()` (Go 1.24+) runs the body
-  the right number of times to get a stable timing — setup **before** the loop is
-  not counted. Run it with `go test -bench=.`.
+- The benchmark measures whatever the function does; the exercise is implementing
+  it so the correctness test passes. A plain `go test` runs the `Test`, not the
+  `Benchmark` — benchmarks need `go test -bench=.`.
 
-**Key detail:** `for b.Loop()` replaces the old `for i := 0; i < b.N; i++` and, crucially,
-keeps the compiler from optimizing the benchmarked call away (a common flaw in
-hand-written benchmarks). Put all setup outside the loop so you time only the code
-under test.
+**Under the hood**
+
+- `for b.Loop()` (Go 1.24) replaced `for i := 0; i < b.N; i++` and fixes two
+  long-standing problems: setup before the loop is **excluded from the timing
+  automatically**, so `b.ResetTimer()` is unnecessary, and the compiler cannot
+  optimise the call away, so the old "assign to a package-level sink" trick is
+  too.
+
+**Common mistake**
+
+- Reading a single benchmark run as a measurement. Numbers move with CPU
+  frequency, other load, and alignment — compare runs with `benchstat`, and use
+  `-benchmem` to see B/op and allocs/op, which are usually more stable and more
+  actionable than ns/op.
+
+**Key detail:** benchmark first, then profile (`pprof1`) to find out **why**, then
+change one thing and re-measure. Optimising without that loop is a change of
+unknown sign.
+
+**See also:** testadv1 · pprof1 (CPU profiles) · pprof2 (allocation) ·
+slices1 (`make` with capacity) · the [chapter](../README.md)
 
 **References**
 
 - pkg.go.dev — testing.B.Loop: https://pkg.go.dev/testing#B.Loop
-- The Go Blog — Using subtests and sub-benchmarks: https://go.dev/blog/subtests
+- benchstat: https://pkg.go.dev/golang.org/x/perf/cmd/benchstat

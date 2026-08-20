@@ -1,4 +1,4 @@
-## stdlib2 — io.Reader / io.Writer
+## stdlib2 — io.Copy
 
 ```go
 func readAll(r io.Reader) (string, error) {
@@ -12,16 +12,31 @@ func readAll(r io.Reader) (string, error) {
 
 **Why it works**
 
-- `io.Copy(dst, src)` streams bytes from **any** `io.Reader` to **any**
-  `io.Writer`. A `strings.Reader` and a `bytes.Buffer` both satisfy those
-  one-method interfaces, so `readAll` works without caring about the concrete
-  types.
+- `io.Copy(dst, src)` streams from any `io.Reader` to any `io.Writer` until the
+  reader is exhausted. `bytes.Buffer` is both, so it can receive the copy and
+  hand back a string.
 
-**Key detail:** `io.Reader`/`io.Writer` are the two most important interfaces in Go —
-files, network sockets, HTTP bodies, buffers, and compressors all implement them,
-so code written against them composes universally. Streaming with `io.Copy` also
-avoids loading everything into memory at once.
+**Under the hood**
+
+- `Copy` uses a fixed 32 KB buffer, so memory stays flat no matter how large the
+  source is — the difference between this and `io.ReadAll`, which holds the whole
+  input. It also checks for `WriterTo`/`ReaderFrom` and lets those take over,
+  which is how a file-to-socket copy becomes a kernel `sendfile`.
+
+**Common mistake**
+
+- Treating `io.EOF` as a failure. It is how a stream ends, and `Copy` already
+  handles it — a non-nil error from `Copy` is a *real* problem.
+
+**Key detail:** `io.Reader` and `io.Writer` are one method each, and everything
+speaks them: files, sockets, buffers, compressors, hashers, HTTP bodies. Take
+those interfaces in your own functions and they work with all of it — plus a
+`strings.NewReader` in the test.
+
+**See also:** files2 (streaming lines) · di1 (`io.Writer` as a dependency) ·
+http1 (reading a response body) · the [chapter](../README.md)
 
 **References**
 
-- pkg.go.dev — io: https://pkg.go.dev/io
+- pkg.go.dev — io.Copy: https://pkg.go.dev/io#Copy
+- pkg.go.dev — io.Reader: https://pkg.go.dev/io#Reader

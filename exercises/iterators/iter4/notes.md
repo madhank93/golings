@@ -1,42 +1,49 @@
-## iter4 — drive a sequence yourself with `iter.Pull`
+## iter4 — drive a sequence with iter.Pull
 
 ```go
 func zip(a, b iter.Seq[string]) []string {
-	var out []string
-	next, stop := iter.Pull(b)
-	defer stop()
-	for x := range a {
-		y, ok := next()
-		if !ok {
-			break
-		}
-		out = append(out, x+y)
-	}
-	return out
+    next, stop := iter.Pull(b)
+    defer stop()
+
+    var out []string
+    for x := range a {
+        y, ok := next()
+        if !ok {
+            break // b is exhausted
+        }
+        out = append(out, x+y)
+    }
+    return out
 }
 ```
 
 **Why it works**
 
-- `iter.Pull(seq)` returns `next func() (V, bool)` and `stop func()`. It runs the
-  push iterator on a separate goroutine and hands you a **cursor**: each `next()`
-  call resumes the sequence, takes one value, and pauses it again.
-- That inverts control. A `range` loop is driven *by* the iterator; `next()` is
-  driven *by you* — which is the only way to advance two sequences in lockstep.
-- `ok` reports whether a value came out. When `b` is exhausted `next()` returns
-  the zero value and `false`, so `break` ends the pairing at the shorter
-  sequence — `["a","b","c"]` and `["1","2"]` give `["a1","b2"]`.
-- The broken version nested `range b` inside `range a`. Ranging a push iterator
-  always starts it **from the beginning**, so every outer pass paired with `"1"`
-  and nothing ever detected that `b` had run out.
+- `iter.Pull` converts a push iterator (`iter.Seq`) into a `next`/`stop` pair you
+  call yourself. That is what lockstep work needs: one value from `b` per element
+  of `a`, with `ok == false` telling you when `b` ran out.
 
-**Key detail:** `defer stop()` is not optional bookkeeping. If you abandon a
-pulled sequence without calling `stop`, the goroutine parked inside the iterator
-stays blocked forever — a leak. Calling `stop` more than once, or `next` after
-the end, is safe by design, so the `defer` is always the right shape.
+**Under the hood**
+
+- A `range` loop drives an iterator start to finish — you cannot pause it. The
+  broken version ranges `b` **inside** the loop over `a`, restarting it each
+  pass, so every pair uses `b`'s first element and nothing notices the end.
+  `Pull` runs the producer as a coroutine and resumes it one value at a time.
+
+**Common mistake**
+
+- Skipping `defer stop()`. The paused producer stays alive until it is stopped or
+  collected, so leaving it out leaks the coroutine. After `stop`, `next` returns
+  `false` forever.
+
+**Key detail:** `iter.Pull2` does the same for `Seq2`. Reach for `Pull` when the
+consumer needs control — zipping, merging sorted sequences, lookahead — and stay
+with `range` everywhere else, because it is simpler and cannot leak.
+
+**See also:** iter1 · iter3 · modern3 (the push side) · select1 (the channel
+version of merging) · the [chapter](../README.md)
 
 **References**
 
-- iter package — Pull: https://pkg.go.dev/iter#Pull
+- pkg.go.dev — iter.Pull: https://pkg.go.dev/iter#Pull
 - Go blog — Range Over Function Types: https://go.dev/blog/range-functions
-- slices.Values: https://pkg.go.dev/slices#Values

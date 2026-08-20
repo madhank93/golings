@@ -1,33 +1,39 @@
-## pointers3 — value copy vs. pointer
-
-The two functions differ only in the parameter type:
+## pointers3 — value copies, pointer reaches
 
 ```go
-func incValue(c Counter)   { c.N++ } // c is a COPY
-func incPointer(c *Counter) { c.N++ } // c is the address of the original
+func incValue(c Counter)   { c.N++ } // mutates the copy — caller unaffected
+func incPointer(c *Counter) { c.N++ } // mutates the caller's Counter
 ```
 
-**Why the test proves the point**
+**Why it works**
 
-- `incValue(c)` passes the `Counter` **by value** — Go copies the whole struct
-  into the parameter, so `c.N++` bumps the copy and the caller's `c.N` stays
-  `0`.
-- `incPointer(&c)` passes the **address**, so `c.N++` writes through to the
-  caller's struct and `c.N` becomes `1`.
+- Go passes everything by value. `incValue` receives a copy of the struct, so its
+  increment dies with the call. `incPointer` receives an address, so its
+  increment lands on the caller's memory. The test asserts both outcomes.
 
-**Key detail — Go is *always* pass-by-value.** Even the pointer case is
-pass-by-value: Go copies the **pointer** (the address), and both copies point at
-the same struct. There is no pass-by-reference in Go. As Dave Cheney puts it:
+**Under the hood**
 
-> Go does not have reference variables, so Go does not have pass-by-reference
-> function call semantics.
+- Slices, maps and channels appear to break this rule — a function can change
+  their contents without a pointer. They do not: what is copied is a small
+  header pointing at shared data. The header is a copy, the data is shared,
+  which is exactly why `append` inside a function does not extend the caller's
+  slice (it changes the copy's length).
 
-To mutate the caller's data, pass a pointer explicitly; to guarantee you
-**can't**, pass by value. Copying a large struct every call is also wasteful —
-another reason methods on big structs often take a pointer receiver.
+**Common mistake**
+
+- Assuming a method with a value receiver can "just" mutate. It cannot, for the
+  same reason — and a `*T` method called on a map entry
+  (`m["k"].Scale(2)`) does not compile at all, because a map entry has no
+  address.
+
+**Key detail:** the rule of thumb — pointer to **mutate**, pointer for **large**
+structs, pointer when the value must not be copied (anything holding a
+`sync.Mutex`). Value otherwise.
+
+**See also:** pointers2 · methods1 (receivers) · slices3 (`append` and headers) ·
+sync1 (never copy a mutex) · the [chapter](../README.md)
 
 **References**
 
-- Dave Cheney — There is no pass-by-reference in Go:
-  https://dave.cheney.net/2017/04/29/there-is-no-pass-by-reference-in-go
+- Go FAQ — When are function parameters passed by value?: https://go.dev/doc/faq#pass_by_value
 - Effective Go — Pointers vs. Values: https://go.dev/doc/effective_go#pointers_vs_values

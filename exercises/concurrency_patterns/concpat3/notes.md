@@ -16,16 +16,36 @@ func double(in <-chan int) <-chan int {
 
 **Why it works**
 
-- Each stage takes an input channel, launches a goroutine that transforms values
-  onto a new output channel, and returns it. Chaining stages
-  (`double(generate(...))`) wires them together; closing propagates from stage to
-  stage.
+- Each stage owns exactly one channel — the one it created — and closes it when
+  its input runs dry. So the shutdown cascades: the generator closes, `double`'s
+  `range` ends, `double` closes, and the consumer's loop ends. No coordination
+  code anywhere.
 
-**Key detail:** the golden rule of pipelines — **each stage closes its own output**
-when its input is exhausted, so `close` ripples downstream and every `range`
-terminates. Stages run concurrently and stream values as they arrive, rather than
-materializing the whole result at each step.
+**Under the hood**
+
+- The channels are unbuffered, so each stage runs only as fast as the next stage
+  consumes: a send parks until the downstream receive arrives. That is
+  backpressure for free — the generator cannot race ahead and build an unbounded
+  queue in memory.
+
+**Common mistake**
+
+- Leaving the pipeline early. `for v := range double(...) { if v > 4 { break } }`
+  leaves the stage goroutine parked on a send nobody will ever receive — the
+  classic Go goroutine leak: silent, permanent, invisible to tests. Give every
+  stage a `ctx` and select on `ctx.Done()` alongside the send.
+
+**Key detail:** `defer close(out)` as the first line inside the goroutine is
+sturdier than closing at the end — it survives an early `return` from a stage
+that hits an error. Stages compose by nesting (`filter(double(generate(…)))`)
+precisely because each takes and returns `<-chan T`.
+
+**See also:** context1 (the cancellation that fixes the leak) · concpat2
+(fan-in) · channels2 (direction) · safety3 (ownership) · the
+[patterns chapter](../README.md)
 
 **References**
 
-- The Go Blog — Pipelines and cancellation: https://go.dev/blog/pipelines
+- Go blog — Pipelines and cancellation: https://go.dev/blog/pipelines
+- Go blog — Go Concurrency Patterns: https://go.dev/talks/2012/concurrency.slide
+- pkg.go.dev — context: https://pkg.go.dev/context

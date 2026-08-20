@@ -143,7 +143,7 @@ func (m Model) welcome() string {
 		"  • Press n to move to the next exercise",
 	)
 
-	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · esc cancel · e edit · h hint · x explain · r reset · n next · q quit")
+	keys := dimStyle.Render("Keys   ↑↓/jk move · ⏎ run · esc cancel · e edit · h hint · x explain+chapter · r reset · n next · q quit")
 	cta := markStyle.Render("press any key to start →")
 
 	content := lipgloss.JoinVertical(lipgloss.Left,
@@ -346,9 +346,21 @@ func (m *Model) refreshOutput() {
 		w = 80
 	}
 	body := lipgloss.NewStyle().Width(w).Render(m.detail())
+
+	// The Learn section is long enough (note, then the whole topic chapter) that
+	// the viewport is scrolled to its start rather than to the bottom.
+	m.notesTop = strings.Count(body, "\n") + 2
+
+	// Mermaid diagrams are for the docs site; the terminal reads the ascii twin
+	// carried alongside them in the same markdown.
 	if m.showNotes {
 		if md := m.current().Notes(); md != "" {
-			body += "\n\n" + secLearnStyle.Render("Learn:") + "\n" + renderMarkdown(md, w)
+			body += "\n\n" + secLearnStyle.Render("Learn:") + "\n" +
+				renderMarkdown(exercises.StripFences(md, "mermaid"), w)
+		}
+		if md := m.current().Chapter(); md != "" {
+			body += "\n\n" + secLearnStyle.Render("Chapter:") + "\n" +
+				renderMarkdown(exercises.StripFences(md, "mermaid"), w)
 		}
 	}
 	m.output.SetContent(body)
