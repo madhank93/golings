@@ -125,13 +125,15 @@ for (const [slug, t] of Object.entries(TOPICS)) {
                 <td>
                   <span class="slug">{e.slug}</span>
                   {e.play && (
-                    <a class="playlink"
+                    <a class={`playlink${e.playWasm ? ' pl-wasm' : ''}`}
                        href={e.playWasm ? `https://goplay.tools/snippet/${e.play}` : `https://go.dev/play/p/${e.play}`}
                        target="_blank" rel="noopener noreferrer"
                        aria-label={`Open ${e.slug} in the Go Playground`}
                        title={e.playWasm
                          ? 'Open in goplay.tools — pick the browser (WebAssembly) runtime to run its tests'
-                         : 'Open in the Go Playground'}>▶ Play</a>
+                         : 'Open in the Go Playground'}>
+                      <span class="pl-ico">{e.playWasm ? '⚡' : '▶'}</span>Play
+                    </a>
                   )}
                 </td>
                 <td class="dsc"><span class="txt">{e.description}</span><span class="exp">▸</span></td>
@@ -329,14 +331,23 @@ for (const [slug, t] of Object.entries(TOPICS)) {
 
     .tchip { display: inline-block; font-size: 0.66rem; font-weight: 700; padding: 0.12rem 0.4rem; border-radius: 0.3rem; color: #fff; }
     .slug { font-family: var(--sl-font-mono, monospace); font-size: 0.78rem; color: var(--sl-color-gray-1); }
-    .playlink { display: inline-block; margin-left: 0.5rem; padding: 0.05rem 0.4rem; border-radius: 0.35rem;
-      border: 1px solid var(--sl-color-gray-5); font-size: 0.68rem; line-height: 1.5; white-space: nowrap;
-      color: var(--sl-color-gray-3); text-decoration: none; opacity: 0; transition: opacity 0.12s ease; }
-    /* Revealed on hover/focus so 141 buttons don't compete with the table text,
-       but never hidden from keyboards or touch (no hover there). */
-    .ex-row:hover .playlink, .ex-row:focus-within .playlink, .playlink:focus-visible { opacity: 1; }
+    /* The playground chips carry their own palette rather than the theme's:
+       Go cyan for the official playground, violet for the WebAssembly runtime,
+       so the two destinations are told apart at a glance in either theme. */
+    .playlink { --pl: #00add8; --pl-ink: #04222a;
+      display: inline-flex; align-items: center; gap: 0.25rem; margin-left: 0.5rem;
+      padding: 0.1rem 0.45rem 0.1rem 0.35rem; border-radius: 999px; border: 1px solid transparent;
+      background: var(--pl); color: var(--pl-ink); font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.6; white-space: nowrap; text-decoration: none;
+      opacity: 0.72; transition: opacity 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease; }
+    .playlink.pl-wasm { --pl: #8b5cf6; --pl-ink: #fdfdff; }
+    .pl-ico { font-size: 0.62rem; line-height: 1; }
+    /* Full strength on the hovered row, so a table of 149 chips still reads as
+       a table; never dimmed for keyboards or touch, which have no hover. */
+    .ex-row:hover .playlink, .ex-row:focus-within .playlink { opacity: 1; }
     @media (hover: none) { .playlink { opacity: 1; } }
-    .playlink:hover, .playlink:focus-visible { color: var(--sl-color-accent-high); border-color: var(--sl-color-accent); }
+    .playlink:hover, .playlink:focus-visible { opacity: 1; transform: translateY(-1px);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--pl) 35%, transparent); }
 
     .badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.12rem 0.5rem; border-radius: 999px; }
     .b-compile { background: color-mix(in oklab, var(--sl-color-accent) 22%, transparent); color: var(--sl-color-accent-high); }
@@ -381,11 +392,28 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .cat-modal .m-run-steps { margin: 0.35rem 0 0; font-size: 0.82rem; color: var(--sl-color-gray-1); line-height: 1.55; }
     .cat-modal .m-run code { font-size: 0.76rem; color: var(--sl-color-white);
       background: var(--sl-color-black); padding: 0.06rem 0.35rem; border-radius: 0.25rem; }
-    .cat-modal .m-links { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.82rem; margin-bottom: 0.4rem; }
-    /* Sits next to the GitHub anchor in the same row, so it has to read as a link. */
-    .cat-modal .m-links :global(button) { background: none; border: 0; padding: 0; cursor: pointer;
-      font: inherit; font-size: 0.82rem; color: var(--sl-color-text-accent); text-decoration: underline; }
-    .cat-modal .m-links :global(button:hover) { color: var(--sl-color-white); }
+    .cat-modal .m-links { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.4rem; }
+    /* Every link in this row is a pill, so the button and the anchors read as
+       one set of actions instead of a mixed row of underlines. */
+    .cat-modal .m-links :global(a),
+    .cat-modal .m-links :global(button) { display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.7rem; border-radius: 999px; border: 1px solid var(--sl-color-gray-5);
+      background: none; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 600;
+      color: var(--sl-color-gray-2); text-decoration: none; transition: border-color 0.12s ease,
+      color 0.12s ease, background 0.12s ease, transform 0.12s ease; }
+    .cat-modal .m-links :global(a:hover), .cat-modal .m-links :global(button:hover),
+    .cat-modal .m-links :global(a:focus-visible), .cat-modal .m-links :global(button:focus-visible) {
+      transform: translateY(-1px); color: var(--sl-color-white); border-color: var(--sl-color-gray-4); }
+    /* The two run-it-now actions are filled, in the same two colors the table
+       chips use; the reference links stay outlined. */
+    .cat-modal .m-links :global(a.mlink-play) { background: #00add8; border-color: #00add8; color: #04222a; }
+    .cat-modal .m-links :global(a.mlink-wasm) { background: #8b5cf6; border-color: #8b5cf6; color: #fdfdff; }
+    .cat-modal .m-links :global(a.mlink-play:hover), .cat-modal .m-links :global(a.mlink-wasm:hover),
+    .cat-modal .m-links :global(a.mlink-play:focus-visible), .cat-modal .m-links :global(a.mlink-wasm:focus-visible) {
+      color: inherit; box-shadow: 0 0 0 2px color-mix(in oklab, currentColor 20%, transparent); }
+    .cat-modal .m-links :global(a.mlink-wasm-alt) { color: #a78bfa; border-color: color-mix(in oklab, #8b5cf6 45%, transparent); }
+    .cat-modal .m-links :global(button.mlink-chapter) { color: var(--sl-color-text-accent);
+      border-color: color-mix(in oklab, var(--sl-color-accent) 45%, transparent); }
     .cat-modal .m-section { margin-top: 1.4rem; border-top: 1px solid var(--sl-color-gray-6); padding-top: 1rem; }
     .cat-modal .m-section h3 { margin: 0 0 0.6rem; font-size: 0.78rem; text-transform: uppercase;
       letter-spacing: 0.06em; color: var(--sl-color-gray-3); }
@@ -564,9 +592,10 @@ for (const [slug, t] of Object.entries(TOPICS)) {
 
     const visibleRows = () => exRows.filter((r) => !r.hidden);
 
-    function playAnchor(href: string, text: string) {
+    function playAnchor(href: string, text: string, cls: string) {
       const a = document.createElement('a');
       a.href = href;
+      a.className = cls;
       a.target = '_blank'; a.rel = 'noopener noreferrer';
       a.textContent = text;
       return a;
@@ -702,7 +731,8 @@ for (const [slug, t] of Object.entries(TOPICS)) {
         const a = document.createElement('a');
         a.href = `${REPO_BLOB}/${d.path}`;
         a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = '↗ View the source on GitHub';
+        a.className = 'mlink-src';
+        a.textContent = '↗ Source on GitHub';
         mLinks.append(a);
       }
       // Two playgrounds, one snippet store: the same share id opens at either.
@@ -710,15 +740,16 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       // runtime, which is the only one that tests a multi-file snippet.
       mPlayNote.hidden = !d.playWasm;
       if (d.play && !d.playWasm) {
-        mLinks.append(playAnchor(`https://go.dev/play/p/${d.play}`, '▶ Solve it in the Go Playground'));
-        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, 'Same exercise on goplay.tools →'));
+        mLinks.append(playAnchor(`https://go.dev/play/p/${d.play}`, '▶ Solve it in the Go Playground', 'mlink-play'));
+        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '⚡ goplay.tools', 'mlink-wasm-alt'));
       } else if (d.play) {
-        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '▶ Solve it on goplay.tools'));
+        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '⚡ Solve it on goplay.tools', 'mlink-wasm'));
       }
       // The chapter is one topic-wide document: linked, not inlined, so that
       // stepping through a topic's exercises doesn't repeat it every time.
       const chapterLink = document.createElement('button');
-      chapterLink.textContent = `Read the ${topicLabel} chapter →`;
+      chapterLink.className = 'mlink-chapter';
+      chapterLink.textContent = `📖 Read the ${topicLabel} chapter`;
       chapterLink.addEventListener('click', () => openChapter(d.topic!, topicLabel, topicColor));
       mLinks.append(chapterLink);
 
