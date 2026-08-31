@@ -43,6 +43,21 @@ to fix, never the answer. Add an extra line or two below it only if the learner
 needs more direction. The `// <name>`, `// Make me compile!`, and
 `// I AM NOT DONE` lines are ignored.
 
+### Refresh its playground snippet
+
+The catalog links every exercise to a Go Playground snippet, so a learner can
+try it in the browser. The share ids live in `web/src/data/playground.json`,
+keyed by a hash of the source, and sharing needs the network — which the site
+build does not have. So after adding or editing an exercise:
+
+```sh
+mise run playground-links   # shares what changed
+mise run gen-site           # picks the new ids up
+```
+
+Skip it and nothing breaks: an exercise whose hash no longer matches simply
+loses its ▶ Play link, and `gen-site` prints which ones.
+
 ## Running the test suite
 
 ```sh
