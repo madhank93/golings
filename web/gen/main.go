@@ -251,9 +251,10 @@ func writeCatalog(byTopic map[string][]exercises.Exercise) error {
 }
 
 // playFields renders the optional playground properties of a catalog entry.
-// playWasm marks the multi-file snippets only goplay.tools can run.
+// playWasm marks the multi-file snippets only goplay.tools can run. A blocked
+// link renders nothing: the snippet exists but the playground cannot run it.
 func playFields(l play.Link, linked bool) string {
-	if !linked {
+	if !linked || l.Blocked {
 		return ""
 	}
 	out := ", play: " + js(l.ID)
