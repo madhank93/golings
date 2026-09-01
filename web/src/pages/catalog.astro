@@ -119,6 +119,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
               <tr class="ex-row" data-i={i} data-slug={e.slug} data-mode={e.mode} data-topic={e.topic}
                   data-search={search} data-desc={e.description} data-path={e.path}
                   data-play={e.play ?? ''} data-play-wasm={e.playWasm ? '1' : ''}
+                  data-race={e.race ? '1' : ''}
                   tabindex="0" role="button">
                 <td><span class={`badge b-${e.mode}`}>{MODE_LABEL[e.mode]}</span></td>
                 <td class="c-topic"><span class="tchip" style={`background:${t.color}`}>{t.label}</span></td>
@@ -129,9 +130,11 @@ for (const [slug, t] of Object.entries(TOPICS)) {
                        href={e.playWasm ? `https://goplay.tools/snippet/${e.play}` : `https://go.dev/play/p/${e.play}`}
                        target="_blank" rel="noopener noreferrer"
                        aria-label={`Open ${e.slug} in the Go Playground`}
-                       title={e.playWasm
+                       title={`${e.playWasm
                          ? 'Open in goplay.tools — pick the browser (WebAssembly) runtime to run its tests'
-                         : 'Open in the Go Playground'}>
+                         : 'Open in the Go Playground'}${e.race
+                         ? ' — no race detector there, so a pass is not proof this one is correct'
+                         : ''}`}>
                       <span class="pl-ico">{e.playWasm ? '⚡' : '▶'}</span>Play
                     </a>
                   )}
@@ -175,6 +178,10 @@ for (const [slug, t] of Object.entries(TOPICS)) {
             <p class="m-run-steps">From the repo root: <code id="mRunCmd"></code> — or <code>mise run watch</code> to work through everything in order with instant feedback.</p>
           </div>
         </div>
+        <p class="m-race-note" id="mRaceNote" hidden><span class="ico" aria-hidden="true">⚠</span><span>The
+          playground has no race detector, so it reports a pass for code that races. A green run there is not proof
+          this one is correct — <code>mise run watch</code> runs it under <code>-race</code>, which is the check that
+          matters here.</span></p>
         <div class="m-links" id="mLinks"></div>
         <p class="m-play-note" id="mPlayNote" hidden>This one spans several files, which the Go Playground cannot
           test. Open it on goplay.tools and pick <b>Run in browser</b> from the runtime selector, top right.</p>
@@ -218,6 +225,14 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .cat-legend b.mt { color: #e3b341; }
     .cat-legend b.mp { color: var(--sl-color-accent-high); }
     .m-play-note { margin: 0.5rem 0 0; font-size: 0.8rem; color: var(--sl-color-gray-3); }
+    /* A warning, not an aside: the playground actively reports a pass for code
+       the race detector rejects. `hidden` needs restating — it loses to flex. */
+    .m-race-note { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.6rem 0 0;
+      padding: 0.55rem 0.7rem; font-size: 0.8rem; color: var(--sl-color-gray-2);
+      background: color-mix(in srgb, #e3b341 8%, transparent);
+      border-left: 3px solid #e3b341; border-radius: 0 4px 4px 0; }
+    .m-race-note[hidden] { display: none; }
+    .m-race-note .ico { flex: none; color: #e3b341; }
 
     /* Sticky offsets are measured at runtime into --cat-filter-h; a hardcoded
        guess is what parks the header mid-table. line-height:1 collapses
@@ -574,6 +589,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     const mRunCmd = document.getElementById('mRunCmd')!;
     const mLinks = document.getElementById('mLinks')!;
     const mPlayNote = document.getElementById('mPlayNote')!;
+    const mRaceNote = document.getElementById('mRaceNote')!;
     const mDetailWrap = document.getElementById('mDetailWrap')!;
     const mChapterWrap = document.getElementById('mChapterWrap')!;
     const mChapterH = document.getElementById('mChapterH')!;
@@ -739,6 +755,8 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       // go.dev is the default; goplay.tools adds file tabs and the WebAssembly
       // runtime, which is the only one that tests a multi-file snippet.
       mPlayNote.hidden = !d.playWasm;
+      // Only worth saying when there is a play link to mislead the reader.
+      mRaceNote.hidden = !(d.race && d.play);
       if (d.play && !d.playWasm) {
         mLinks.append(playAnchor(`https://go.dev/play/p/${d.play}`, '▶ Solve it in the Go Playground', 'mlink-play'));
         mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '⚡ goplay.tools', 'mlink-wasm-alt'));
