@@ -606,6 +606,7 @@ for i := 1; i <= n; i++ { if !yield(i) { return } }
 name = "modern4"
 path = "exercises/modern/modern4/main_test.go"
 mode = "test"
+race = true
 hint = """
 Go 1.25: wg.Go(f) does Add(1) + go + defer Done() for you. Replace the bare
 `go func(){...}()` with wg.Go(func() { total.Add(int64(n)) }).
@@ -672,6 +673,7 @@ return "Welcome, " + name + "!\""""
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"
+race = true
 hint = """
 We have multiple printers (though these may also be non-functional).
 
@@ -682,6 +684,7 @@ Our goal is to print something, but what exactly should be printed?
 name = "concurrent2"
 path = "exercises/concurrent/concurrent2/main_test.go"
 mode = "test"
+race = true
 hint = """
 Updating a variable from multiple goroutines can lead to a data race. A data race occurs when multiple goroutines read and write the same variable simultaneously without proper synchronization.
 
@@ -694,6 +697,7 @@ Learn more about mutexes to handle this issue: https://pkg.go.dev/sync#Mutex.
 name = "concurrent3"
 path = "exercises/concurrent/concurrent3/main_test.go"
 mode = "test"
+race = true
 hint = """
 Writing messages to closed channels will cause a panic.
 
@@ -765,6 +769,7 @@ default: return 0, false
 name = "sync1"
 path = "exercises/sync/sync1/main_test.go"
 mode = "test"
+race = true
 hint = """
 Guard the critical section:
 
@@ -777,6 +782,7 @@ c.n++
 name = "sync2"
 path = "exercises/sync/sync2/main_test.go"
 mode = "test"
+race = true
 hint = """
 sync.Once.Do runs its function only the first time it is called:
 
@@ -787,6 +793,7 @@ c.once.Do(func() { c.loads++ })
 name = "sync3"
 path = "exercises/sync/sync3/main_test.go"
 mode = "test"
+race = true
 hint = """
 Increment without a lock using an atomic operation:
 
@@ -1124,6 +1131,7 @@ func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 name = "applied2"
 path = "exercises/applied/applied2/main_test.go"
 mode = "test"
+race = true
 hint = """
 Guard the write like the read does:
 
@@ -1262,6 +1270,7 @@ return nil
 name = "safety1"
 path = "exercises/goroutine_safety/safety1/main_test.go"
 mode = "test"
+race = true
 hint = """
 Add a sync.RWMutex field. Lock/Unlock around the write in Inc; RLock/RUnlock
 around the read in Value.
@@ -1271,6 +1280,7 @@ around the read in Value.
 name = "safety2"
 path = "exercises/goroutine_safety/safety2/main_test.go"
 mode = "test"
+race = true
 hint = """
 Replace the map field with a sync.Map. Set uses m.Store(name, id); Get uses
 v, ok := m.Load(name) then a v.(int) type assertion.

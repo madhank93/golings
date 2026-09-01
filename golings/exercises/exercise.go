@@ -20,6 +20,12 @@ type Exercise struct {
 	// directory instead of that single file. Set with `pkg = true` in
 	// info.toml.
 	Pkg bool
+	// Race marks an exercise the race detector is load-bearing for: it passes
+	// a plain `go test` and only fails under `-race`. The runner always passes
+	// -race, so this changes nothing locally — it is what lets the web catalog
+	// warn that the playground, which has no detector, will show it green.
+	// Set with `race = true` in info.toml.
+	Race bool
 }
 
 // Notes returns the exercise's teaching walk-through: the contents of a
