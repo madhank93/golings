@@ -45,6 +45,12 @@ type Link struct {
 	Hash string `json:"hash"`
 	ID   string `json:"id"`
 	Wasm bool   `json:"wasm,omitempty"`
+	// Blocked marks a snippet the playground refuses to run: a build or run
+	// timeout, which is how the sandbox reports an attempted network call. The
+	// catalog drops the link rather than pointing a learner at a button that
+	// only ever times out. A compile error is not blocked — the exercises ship
+	// broken on purpose, and that failure is the lesson.
+	Blocked bool `json:"blocked,omitempty"`
 }
 
 // Snippet is an exercise rendered for a playground.
