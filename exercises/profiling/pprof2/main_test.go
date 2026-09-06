@@ -12,7 +12,7 @@ import (
 )
 
 // retainedBytes reports how many heap bytes alloc()'s result keeps alive.
-func retainedBytes(alloc func() any) uint64 {
+func retainedBytes(alloc func() any) int64 {
 	var before, after runtime.MemStats
 	runtime.GC()
 	runtime.ReadMemStats(&before)
@@ -23,14 +23,24 @@ func retainedBytes(alloc func() any) uint64 {
 	runtime.ReadMemStats(&after)
 	runtime.KeepAlive(keep)
 
-	// FIXME: return the heap growth: after.HeapAlloc - before.HeapAlloc. Right
-	// now it returns 0, so the test sees no allocation.
+	// FIXME: return the signed heap growth: int64(after.HeapAlloc) - int64(before.HeapAlloc).
+	// Both fields are uint64, so subtracting them directly can wrap around to a huge
+	// positive number. Right now it returns 0, so the test sees no allocation.
 	return 0
 }
 
 func TestRetainedBytes(t *testing.T) {
 	got := retainedBytes(func() any { return make([]byte, 1<<20) }) // 1 MiB
-	if got < 1<<20 {
-		t.Errorf("want at least 1 MiB retained, got %d bytes", got)
+
+	const (
+		want  = int64(1) << 20
+		lower = want * 9 / 10
+		upper = want * 2
+	)
+	// the delta is approximate because background garbage shifts the baseline
+	// between the two snapshots, so an exact byte count would be flaky; the upper
+	// bound also catches a delta that wrapped negative.
+	if got < lower || got > upper {
+		t.Errorf("got %d bytes, want in range [%d, %d]", got, lower, upper)
 	}
 }
