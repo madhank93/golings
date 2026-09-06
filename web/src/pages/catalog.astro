@@ -53,6 +53,8 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     <span><b class="mc">🔨 Compile</b> — the exercise passes once it builds (and the linter is happy).</span>
     <span><b class="mt">🧪 Test</b> — a test file drives it; make the failing tests pass.</span>
     <span>Every exercise ships broken on purpose — remove the <code>I AM NOT DONE</code> marker once it's fixed.</span>
+    <span><b class="mp">▶ Play</b> — solve it in the browser. Most exercises open on the Go Playground; the
+      multi-file capstone stages open on goplay.tools, where the browser (WebAssembly) runtime runs their tests.</span>
   </div>
 
   <div class="cat-filters" role="search" aria-label="Filter catalog">
@@ -106,6 +108,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
                     {t.label}
                     <span class="ttier">{t.tier}</span>
                     <span class="tcount">{countFor(e.topic)} exercise{countFor(e.topic) === 1 ? '' : 's'}</span>
+                    <span class="tchapter" role="button" tabindex="0">Read the chapter →</span>
                     <span class="texp">▸</span>
                   </td>
                 </tr>
@@ -115,10 +118,27 @@ for (const [slug, t] of Object.entries(TOPICS)) {
             rows.push(
               <tr class="ex-row" data-i={i} data-slug={e.slug} data-mode={e.mode} data-topic={e.topic}
                   data-search={search} data-desc={e.description} data-path={e.path}
+                  data-play={e.play ?? ''} data-play-wasm={e.playWasm ? '1' : ''}
+                  data-race={e.race ? '1' : ''}
                   tabindex="0" role="button">
                 <td><span class={`badge b-${e.mode}`}>{MODE_LABEL[e.mode]}</span></td>
                 <td class="c-topic"><span class="tchip" style={`background:${t.color}`}>{t.label}</span></td>
-                <td><span class="slug">{e.slug}</span></td>
+                <td>
+                  <span class="slug">{e.slug}</span>
+                  {e.play && (
+                    <a class={`playlink${e.playWasm ? ' pl-wasm' : ''}`}
+                       href={e.playWasm ? `https://goplay.tools/snippet/${e.play}` : `https://go.dev/play/p/${e.play}`}
+                       target="_blank" rel="noopener noreferrer"
+                       aria-label={`Open ${e.slug} in the Go Playground`}
+                       title={`${e.playWasm
+                         ? 'Open in goplay.tools — pick the browser (WebAssembly) runtime to run its tests'
+                         : 'Open in the Go Playground'}${e.race
+                         ? ' — no race detector there, so a pass is not proof this one is correct'
+                         : ''}`}>
+                      <span class="pl-ico">{e.playWasm ? '⚡' : '▶'}</span>Play
+                    </a>
+                  )}
+                </td>
                 <td class="dsc"><span class="txt">{e.description}</span><span class="exp">▸</span></td>
               </tr>
             );
@@ -137,6 +157,7 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     <button class="topic-pop-x" id="topicPopX" aria-label="Close">✕</button>
     <h3 id="topicPopTitle"></h3>
     <p id="topicPopLearn"></p>
+    <button class="topic-pop-more" id="topicPopChapter">Read the chapter →</button>
   </div>
 
   <dialog id="catModal" class="cat-modal" aria-labelledby="mTitle">
@@ -157,10 +178,20 @@ for (const [slug, t] of Object.entries(TOPICS)) {
             <p class="m-run-steps">From the repo root: <code id="mRunCmd"></code> — or <code>mise run watch</code> to work through everything in order with instant feedback.</p>
           </div>
         </div>
+        <p class="m-race-note" id="mRaceNote" hidden><span class="ico" aria-hidden="true">⚠</span><span>The
+          playground has no race detector, so it reports a pass for code that races. A green run there is not proof
+          this one is correct — <code>mise run watch</code> runs it under <code>-race</code>, which is the check that
+          matters here.</span></p>
         <div class="m-links" id="mLinks"></div>
+        <p class="m-play-note" id="mPlayNote" hidden>This one spans several files, which the Go Playground cannot
+          test. Open it on goplay.tools and pick <b>Run in browser</b> from the runtime selector, top right.</p>
         <div class="m-section" id="mDetailWrap" hidden>
           <h3>The exercise</h3>
           <div class="sl-markdown-content m-md" id="mDetail"></div>
+        </div>
+        <div class="m-section" id="mChapterWrap" hidden>
+          <h3 id="mChapterH">The chapter</h3>
+          <div class="sl-markdown-content m-md" id="mChapter"></div>
         </div>
         <p class="m-loading" id="mLoading" hidden>Loading the exercise…</p>
       </div>
@@ -192,6 +223,16 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       padding: 0.6rem 0 0.6rem 0.9rem; margin: 1rem 0 1.5rem; }
     .cat-legend b.mc { color: var(--sl-color-accent-high); }
     .cat-legend b.mt { color: #e3b341; }
+    .cat-legend b.mp { color: var(--sl-color-accent-high); }
+    .m-play-note { margin: 0.5rem 0 0; font-size: 0.8rem; color: var(--sl-color-gray-3); }
+    /* A warning, not an aside: the playground actively reports a pass for code
+       the race detector rejects. `hidden` needs restating — it loses to flex. */
+    .m-race-note { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.6rem 0 0;
+      padding: 0.55rem 0.7rem; font-size: 0.8rem; color: var(--sl-color-gray-2);
+      background: color-mix(in srgb, #e3b341 8%, transparent);
+      border-left: 3px solid #e3b341; border-radius: 0 4px 4px 0; }
+    .m-race-note[hidden] { display: none; }
+    .m-race-note .ico { flex: none; color: #e3b341; }
 
     /* Sticky offsets are measured at runtime into --cat-filter-h; a hardcoded
        guess is what parks the header mid-table. line-height:1 collapses
@@ -255,6 +296,9 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .tdot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; }
     .ttier { margin-left: 0.6rem; font-weight: 400; color: var(--sl-color-gray-3); text-transform: none; letter-spacing: 0; }
     .tcount { margin-left: 0.6rem; font-weight: 400; color: var(--sl-color-gray-3); text-transform: none; letter-spacing: 0; }
+    .tchapter { margin-left: 0.6rem; font-weight: 400; text-transform: none; letter-spacing: 0;
+      color: var(--sl-color-accent-high); cursor: pointer; }
+    .tchapter:hover, .tchapter:focus-visible { text-decoration: underline; }
     .texp { float: right; color: var(--sl-color-gray-3); transition: transform 0.12s; }
     .topic-row[aria-expanded="true"] .texp { transform: rotate(90deg); color: var(--sl-color-accent-high); }
 
@@ -271,9 +315,54 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .topic-pop-x { position: absolute; top: 0.5rem; right: 0.6rem; background: none; border: 0;
       color: var(--sl-color-gray-3); font-size: 0.9rem; cursor: pointer; line-height: 1; padding: 0.2rem; }
     .topic-pop-x:hover { color: var(--sl-color-white); }
+    .topic-pop-more { margin-top: 0.7rem; background: none; border: 0; padding: 0; cursor: pointer;
+      font-size: 0.84rem; font-weight: 600; color: var(--sl-color-accent-high); }
+    .topic-pop-more:hover { text-decoration: underline; }
+    .cat-modal article.chapter-only .m-run,
+    .cat-modal article.chapter-only .m-links,
+    .cat-modal article.chapter-only .m-desc,
+    .cat-modal article.chapter-only .badge,
+    .cat-modal article.chapter-only footer { display: none; }
+    /* In chapter mode the card is the chapter: no section rule, no repeated heading. */
+    .cat-modal article.chapter-only #mChapterH { display: none; }
+    .cat-modal article.chapter-only .m-section { margin-top: 0; border-top: 0; padding-top: 0; }
+    .cat-modal article.chapter-only h2 { font-family: inherit; }
+    .cat-modal article.chapter-only .m-body { padding-top: 0.5rem; }
+    .cat-modal .m-md > :first-child { margin-top: 0; }
+
+    /* One card per part of an exercise: source, hint, solution, explanation. */
+    .cat-modal .m-md > details { border: 1px solid var(--sl-color-gray-5); border-radius: 0.5rem;
+      margin: 0.6rem 0; background: var(--sl-color-black); overflow: hidden; }
+    .cat-modal .m-md > details > summary { list-style: none; cursor: pointer; padding: 0.55rem 0.85rem;
+      font-size: 0.85rem; font-weight: 600; color: var(--sl-color-gray-1);
+      display: flex; align-items: center; gap: 0.5rem; }
+    .cat-modal .m-md > details > summary::-webkit-details-marker { display: none; }
+    .cat-modal .m-md > details > summary::before { content: '▸'; color: var(--sl-color-gray-3); font-size: 0.8em; }
+    .cat-modal .m-md > details[open] > summary::before { content: '▾'; }
+    .cat-modal .m-md > details[open] > summary { border-bottom: 1px solid var(--sl-color-gray-5);
+      color: var(--sl-color-white); }
+    .cat-modal .m-md > details > :not(summary) { margin-left: 0.85rem; margin-right: 0.85rem; }
+    .cat-modal .m-md > details > :last-child { margin-bottom: 0.85rem; }
 
     .tchip { display: inline-block; font-size: 0.66rem; font-weight: 700; padding: 0.12rem 0.4rem; border-radius: 0.3rem; color: #fff; }
     .slug { font-family: var(--sl-font-mono, monospace); font-size: 0.78rem; color: var(--sl-color-gray-1); }
+    /* The playground chips carry their own palette rather than the theme's:
+       Go cyan for the official playground, violet for the WebAssembly runtime,
+       so the two destinations are told apart at a glance in either theme. */
+    .playlink { --pl: #00add8; --pl-ink: #04222a;
+      display: inline-flex; align-items: center; gap: 0.25rem; margin-left: 0.5rem;
+      padding: 0.1rem 0.45rem 0.1rem 0.35rem; border-radius: 999px; border: 1px solid transparent;
+      background: var(--pl); color: var(--pl-ink); font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.6; white-space: nowrap; text-decoration: none;
+      opacity: 0.72; transition: opacity 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease; }
+    .playlink.pl-wasm { --pl: #8b5cf6; --pl-ink: #fdfdff; }
+    .pl-ico { font-size: 0.62rem; line-height: 1; }
+    /* Full strength on the hovered row, so a table of 149 chips still reads as
+       a table; never dimmed for keyboards or touch, which have no hover. */
+    .ex-row:hover .playlink, .ex-row:focus-within .playlink { opacity: 1; }
+    @media (hover: none) { .playlink { opacity: 1; } }
+    .playlink:hover, .playlink:focus-visible { opacity: 1; transform: translateY(-1px);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--pl) 35%, transparent); }
 
     .badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 0.12rem 0.5rem; border-radius: 999px; }
     .b-compile { background: color-mix(in oklab, var(--sl-color-accent) 22%, transparent); color: var(--sl-color-accent-high); }
@@ -318,7 +407,28 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     .cat-modal .m-run-steps { margin: 0.35rem 0 0; font-size: 0.82rem; color: var(--sl-color-gray-1); line-height: 1.55; }
     .cat-modal .m-run code { font-size: 0.76rem; color: var(--sl-color-white);
       background: var(--sl-color-black); padding: 0.06rem 0.35rem; border-radius: 0.25rem; }
-    .cat-modal .m-links { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 0.82rem; margin-bottom: 0.4rem; }
+    .cat-modal .m-links { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.4rem; }
+    /* Every link in this row is a pill, so the button and the anchors read as
+       one set of actions instead of a mixed row of underlines. */
+    .cat-modal .m-links :global(a),
+    .cat-modal .m-links :global(button) { display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.7rem; border-radius: 999px; border: 1px solid var(--sl-color-gray-5);
+      background: none; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 600;
+      color: var(--sl-color-gray-2); text-decoration: none; transition: border-color 0.12s ease,
+      color 0.12s ease, background 0.12s ease, transform 0.12s ease; }
+    .cat-modal .m-links :global(a:hover), .cat-modal .m-links :global(button:hover),
+    .cat-modal .m-links :global(a:focus-visible), .cat-modal .m-links :global(button:focus-visible) {
+      transform: translateY(-1px); color: var(--sl-color-white); border-color: var(--sl-color-gray-4); }
+    /* The two run-it-now actions are filled, in the same two colors the table
+       chips use; the reference links stay outlined. */
+    .cat-modal .m-links :global(a.mlink-play) { background: #00add8; border-color: #00add8; color: #04222a; }
+    .cat-modal .m-links :global(a.mlink-wasm) { background: #8b5cf6; border-color: #8b5cf6; color: #fdfdff; }
+    .cat-modal .m-links :global(a.mlink-play:hover), .cat-modal .m-links :global(a.mlink-wasm:hover),
+    .cat-modal .m-links :global(a.mlink-play:focus-visible), .cat-modal .m-links :global(a.mlink-wasm:focus-visible) {
+      color: inherit; box-shadow: 0 0 0 2px color-mix(in oklab, currentColor 20%, transparent); }
+    .cat-modal .m-links :global(a.mlink-wasm-alt) { color: #a78bfa; border-color: color-mix(in oklab, #8b5cf6 45%, transparent); }
+    .cat-modal .m-links :global(button.mlink-chapter) { color: var(--sl-color-text-accent);
+      border-color: color-mix(in oklab, var(--sl-color-accent) 45%, transparent); }
     .cat-modal .m-section { margin-top: 1.4rem; border-top: 1px solid var(--sl-color-gray-6); padding-top: 1rem; }
     .cat-modal .m-section h3 { margin: 0 0 0.6rem; font-size: 0.78rem; text-transform: uppercase;
       letter-spacing: 0.06em; color: var(--sl-color-gray-3); }
@@ -434,12 +544,28 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       topicPopOwner = tr;
       tr.setAttribute('aria-expanded', 'true');
     }
+    function openChapterFor(tr: HTMLElement) {
+      const color = (tr.querySelector('.tdot') as HTMLElement)?.style.background || '';
+      const topic = tr.dataset.topic!;
+      closeTopicPop();
+      openChapter(topic, tr.dataset.label || topic, color);
+    }
     topicRows.forEach((tr) => {
       const toggle = () => (topicPopOwner === tr ? closeTopicPop() : openTopicPop(tr));
+      const cue = tr.querySelector<HTMLElement>('.tchapter');
+      // Pull mermaid in on intent, not on open: the parse alone is ~150ms.
+      cue?.addEventListener('pointerenter', () => { mermaidLib(); }, { once: true });
+      cue?.addEventListener('click', (e) => { e.stopPropagation(); openChapterFor(tr); });
+      cue?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); openChapterFor(tr); }
+      });
       tr.addEventListener('click', toggle);
       tr.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
       });
+    });
+    document.getElementById('topicPopChapter')!.addEventListener('click', () => {
+      if (topicPopOwner) openChapterFor(topicPopOwner);
     });
     document.getElementById('topicPopX')!.addEventListener('click', closeTopicPop);
     // Reposition while pinned; dismiss on outside click / Escape.
@@ -462,7 +588,12 @@ for (const [slug, t] of Object.entries(TOPICS)) {
     const mDesc = document.getElementById('mDesc')!;
     const mRunCmd = document.getElementById('mRunCmd')!;
     const mLinks = document.getElementById('mLinks')!;
+    const mPlayNote = document.getElementById('mPlayNote')!;
+    const mRaceNote = document.getElementById('mRaceNote')!;
     const mDetailWrap = document.getElementById('mDetailWrap')!;
+    const mChapterWrap = document.getElementById('mChapterWrap')!;
+    const mChapterH = document.getElementById('mChapterH')!;
+    const mChapter = document.getElementById('mChapter')!;
     const mDetail = document.getElementById('mDetail')!;
     const mLoading = document.getElementById('mLoading')!;
     const mPrev = document.getElementById('mPrev') as HTMLButtonElement;
@@ -477,6 +608,15 @@ for (const [slug, t] of Object.entries(TOPICS)) {
 
     const visibleRows = () => exRows.filter((r) => !r.hidden);
 
+    function playAnchor(href: string, text: string, cls: string) {
+      const a = document.createElement('a');
+      a.href = href;
+      a.className = cls;
+      a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = text;
+      return a;
+    }
+
     async function loadDetail(slug: string) {
       if (cache.has(slug)) return cache.get(slug);
       const res = await fetch(`/catalog-details/${slug}.json`);
@@ -486,7 +626,107 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       return data;
     }
 
+    const chapterCache = new Map<string, any>();
+
+    async function loadChapter(topic: string) {
+      if (chapterCache.has(topic)) return chapterCache.get(topic);
+      const res = await fetch(`/catalog-chapters/${topic}.json`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = await res.json();
+      chapterCache.set(topic, data);
+      return data;
+    }
+
+    // Chapter HTML is injected after page load, so mermaid has to be told to
+    // draw it. The library is ~1MB, so it is imported only once a diagram is
+    // actually on screen.
+    let mermaidReady: Promise<any> | null = null;
+    function mermaidLib() {
+      if (!mermaidReady) {
+        const dark = document.documentElement.dataset.theme === 'dark'
+          || (!document.documentElement.dataset.theme
+              && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        mermaidReady = import('mermaid').then(({ default: mermaid }) => {
+          mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' });
+          return mermaid;
+        });
+      }
+      return mermaidReady;
+    }
+
+    // mermaid renders synchronously and one diagram can hold the main thread for
+    // most of a second, so they are drawn one per idle callback rather than in a
+    // single blocking pass: the chapter text stays scrollable while the diagrams
+    // fill in. onDone hands back the finished markup for caching, which is what
+    // makes reopening a chapter free. (An IntersectionObserver would be the
+    // natural fit, but it never fires for elements in a modal dialog's top layer.)
+    const nextIdle = (fn: () => void) =>
+      'requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(fn, { timeout: 400 })
+        : setTimeout(fn, 0);
+
+    function drawDiagrams(root: HTMLElement, onDone?: () => void) {
+      const queue = [...root.querySelectorAll<HTMLElement>('pre.mermaid')]
+        .filter((n) => !n.dataset.drawn);
+      if (queue.length === 0) { onDone?.(); return; }
+      const step = async () => {
+        const n = queue.shift();
+        if (!n) { onDone?.(); return; }
+        n.dataset.drawn = '1';
+        try {
+          const mermaid = await mermaidLib();
+          await mermaid.run({ nodes: [n] });
+        } catch {
+          delete n.dataset.drawn; // leave the source visible
+        }
+        nextIdle(step);
+      };
+      nextIdle(step);
+    }
+
+    // Chapter mode reuses the modal with the exercise-specific chrome hidden.
+    // A class, not the hidden attribute: these parts set their own display.
+    const mCard = modal.querySelector('article')!;
+    function setChapterMode(on: boolean) {
+      mCard.classList.toggle('chapter-only', on);
+    }
+
+    async function openChapter(topic: string, label: string, color: string, push = true) {
+      current = null;
+      setChapterMode(true);
+      mTopic.textContent = 'Chapter';
+      mTopic.setAttribute('style', `background:${color}`);
+      mTitle.textContent = label;
+      mDetailWrap.hidden = true;
+      mDetail.innerHTML = '';
+      mChapterWrap.hidden = true;
+      mChapter.innerHTML = '';
+      mChapterH.textContent = 'The chapter';
+      mLoading.hidden = false;
+      mLoading.textContent = 'Loading the chapter…';
+      mBody.scrollTop = 0;
+      if (!modal.open) modal.showModal();
+      if (push) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('exercise');
+        url.searchParams.set('chapter', topic);
+        history.pushState({ chapter: topic }, '', url);
+      }
+      try {
+        const data = await loadChapter(topic);
+        mLoading.hidden = true;
+        if (data.chapter) {
+          mChapter.innerHTML = data.chapter;
+          mChapterWrap.hidden = false;
+          drawDiagrams(mChapter, () => chapterCache.set(topic, { chapter: mChapter.innerHTML }));
+        }
+      } catch {
+        mLoading.textContent = 'Could not load this chapter.';
+      }
+    }
+
     async function openRow(row: HTMLTableRowElement, push = true) {
+      setChapterMode(false);
       current = row;
       const d = row.dataset;
       const slug = d.slug!;
@@ -500,17 +740,41 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       mDesc.textContent = d.desc || '';
       mRunCmd.textContent = `golings run ${slug}`;
 
+      const topicLabel = (document.querySelector(`tr.topic-row[data-topic="${d.topic}"]`) as HTMLElement)?.dataset.label || d.topic!;
+
       mLinks.innerHTML = '';
       if (d.path) {
         const a = document.createElement('a');
         a.href = `${REPO_BLOB}/${d.path}`;
         a.target = '_blank'; a.rel = 'noopener noreferrer';
-        a.textContent = '↗ View the source on GitHub';
+        a.className = 'mlink-src';
+        a.textContent = '↗ Source on GitHub';
         mLinks.append(a);
       }
+      // Two playgrounds, one snippet store: the same share id opens at either.
+      // go.dev is the default; goplay.tools adds file tabs and the WebAssembly
+      // runtime, which is the only one that tests a multi-file snippet.
+      mPlayNote.hidden = !d.playWasm;
+      // Only worth saying when there is a play link to mislead the reader.
+      mRaceNote.hidden = !(d.race && d.play);
+      if (d.play && !d.playWasm) {
+        mLinks.append(playAnchor(`https://go.dev/play/p/${d.play}`, '▶ Solve it in the Go Playground', 'mlink-play'));
+        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '⚡ goplay.tools', 'mlink-wasm-alt'));
+      } else if (d.play) {
+        mLinks.append(playAnchor(`https://goplay.tools/snippet/${d.play}`, '⚡ Solve it on goplay.tools', 'mlink-wasm'));
+      }
+      // The chapter is one topic-wide document: linked, not inlined, so that
+      // stepping through a topic's exercises doesn't repeat it every time.
+      const chapterLink = document.createElement('button');
+      chapterLink.className = 'mlink-chapter';
+      chapterLink.textContent = `📖 Read the ${topicLabel} chapter`;
+      chapterLink.addEventListener('click', () => openChapter(d.topic!, topicLabel, topicColor));
+      mLinks.append(chapterLink);
 
       mDetailWrap.hidden = true;
       mDetail.innerHTML = '';
+      mChapterWrap.hidden = true;
+      mChapter.innerHTML = '';
       mLoading.hidden = false;
       mLoading.textContent = 'Loading the exercise…';
       mBody.scrollTop = 0;
@@ -551,9 +815,14 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       if (modal.open) modal.close();
     }
 
+    // The ▶ Play link lives inside a row that is itself a button, so both the
+    // pointer and the keyboard path have to let it through untouched.
+    const onPlaylink = (e: Event) => !!(e.target as HTMLElement).closest('.playlink');
+
     exRows.forEach((row) => {
-      row.addEventListener('click', () => openRow(row));
+      row.addEventListener('click', (e) => { if (!onPlaylink(e)) openRow(row); });
       row.addEventListener('keydown', (e) => {
+        if (onPlaylink(e)) return;
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openRow(row); }
       });
     });
@@ -569,8 +838,9 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       if (current) current.focus();
       current = null;
       const url = new URL(window.location.href);
-      if (url.searchParams.has('exercise')) {
+      if (url.searchParams.has('exercise') || url.searchParams.has('chapter')) {
         url.searchParams.delete('exercise');
+        url.searchParams.delete('chapter');
         history.pushState({}, '', url.pathname + url.search);
       }
     });
@@ -598,6 +868,13 @@ for (const [slug, t] of Object.entries(TOPICS)) {
       if (topic && [...topicSel.options].some((o) => o.value === topic)) {
         topicSel.value = topic;
         apply();
+      }
+      const chapter = params.get('chapter');
+      if (chapter) {
+        const tr = document.querySelector<HTMLElement>(`tr.topic-row[data-topic="${chapter}"]`);
+        const color = (tr?.querySelector('.tdot') as HTMLElement)?.style.background || '';
+        openChapter(chapter, tr?.dataset.label || chapter, color, push);
+        return;
       }
       const want = params.get('exercise');
       if (!want) { closeModal(); return; }

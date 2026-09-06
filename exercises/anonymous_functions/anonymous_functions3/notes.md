@@ -1,9 +1,10 @@
-## anonymous_functions3 — a closure that remembers state
+## anonymous_functions3 — a closure remembers
 
 ```go
 func updateStatus() func() string {
-    index := 1
+    var index int
     orderStatus := map[int]string{1: "TO DO", 2: "DOING", 3: "DONE"}
+
     return func() string {
         index++
         return orderStatus[index]
@@ -13,15 +14,31 @@ func updateStatus() func() string {
 
 **Why it works**
 
-- The returned function **closes over** `index` and `orderStatus`. Each call
-  increments the *same* `index`, so successive calls return "DOING" then "DONE".
+- The returned literal references `index` and `orderStatus` from the enclosing
+  function, so both stay alive after `updateStatus` returns. Each call advances
+  `index` and returns the next status.
 
-**Key detail:** the captured variables live on **past** `updateStatus`'s return —
-they're promoted to the heap and shared by every call to the returned closure.
-That persistent, private state is exactly what makes closures useful (counters,
-generators, memoization).
+**Under the hood**
+
+- A closure captures **variables, not values** — it holds a reference. Escape
+  analysis moves `index` to the heap because its address outlives the call
+  (`go build -gcflags='-m'` prints `moved to heap: index`). Every call to
+  `updateStatus` creates a *fresh* `index`, so two closures from two calls are
+  independent; two names for the same closure share one.
+
+**Common mistake**
+
+- Sharing a captured variable across goroutines without synchronisation. It is
+  one variable, so concurrent writes are a data race — `go test -race` flags it.
+
+**Key detail:** this pattern is how Go does stateful callbacks: iterators,
+rate limiters, memoisers, and the functional-options pattern
+(`...func(*Server)`) are all closures over their configuration.
+
+**See also:** anonymous_functions2 · concurrent1 (closures in goroutines) ·
+iter1 (closures as iterators) · the [chapter](../README.md)
 
 **References**
 
+- Go spec — Function literals: https://go.dev/ref/spec#Function_literals
 - A Tour of Go — Closures: https://go.dev/tour/moretypes/25
-- Go by Example — Closures: https://gobyexample.com/closures

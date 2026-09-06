@@ -15,6 +15,17 @@ type Exercise struct {
 	Mode string
 	Hint string
 	Desc string
+	// Pkg marks an exercise that spans several files in one directory. Path
+	// still names the primary editable file; the runner compiles the whole
+	// directory instead of that single file. Set with `pkg = true` in
+	// info.toml.
+	Pkg bool
+	// Race marks an exercise the race detector is load-bearing for: it passes
+	// a plain `go test` and only fails under `-race`. The runner always passes
+	// -race, so this changes nothing locally — it is what lets the web catalog
+	// warn that the playground, which has no detector, will show it green.
+	// Set with `race = true` in info.toml.
+	Race bool
 }
 
 // Notes returns the exercise's teaching walk-through: the contents of a
@@ -23,6 +34,17 @@ type Exercise struct {
 // language details the exercise exercised.
 func (e Exercise) Notes() string {
 	data, err := os.ReadFile(filepath.Join(filepath.Dir(e.Path), "notes.md"))
+	if err != nil {
+		return ""
+	}
+	return strings.TrimRight(string(data), "\n")
+}
+
+// Chapter returns the topic's long-form walk-through — the README.md of the
+// directory holding the exercise — or "" when absent. Notes explain one
+// exercise; the chapter explains the mechanism behind the whole topic.
+func (e Exercise) Chapter() string {
+	data, err := os.ReadFile(filepath.Join(filepath.Dir(filepath.Dir(e.Path)), "README.md"))
 	if err != nil {
 		return ""
 	}

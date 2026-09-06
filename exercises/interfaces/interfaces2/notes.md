@@ -4,21 +4,38 @@
 func (p Point) String() string {
     return fmt.Sprintf("(%d, %d)", p.X, p.Y)
 }
-var _ fmt.Stringer = Point{} // compile-time proof Point satisfies Stringer
+
+var _ fmt.Stringer = Point{} // compile-time satisfaction check
 ```
 
 **Why it works**
 
-- `fmt` looks for a `String() string` method; implementing it makes `%v`/`Println`
-  print `(3, 4)` instead of the default `{3 4}`.
+- `fmt.Stringer` is `interface{ String() string }`. Once `Point` has that method,
+  every `fmt` verb that prints a value — `%v`, `Print`, `Sprintf` — routes
+  through it, so the type controls its own presentation.
 
-**Key detail:** the line `var _ fmt.Stringer = Point{}` is a common idiom — a
-throwaway assignment that makes the **compiler verify** `Point` satisfies
-`Stringer`. If the method is missing or has the wrong signature, the build fails
-at that line with a clear message, instead of silently falling back to default
-formatting.
+**Under the hood**
+
+- `fmt` type-asserts each argument against `Stringer` (and `error`, and
+  `Formatter`) at run time and calls whichever it finds. Nothing is registered
+  in advance; the check is on the interface's type word.
+
+**Common mistake**
+
+- Formatting the receiver itself inside `String()`. `fmt.Sprintf("%v", p)` calls
+  `String()` again and recurses until the stack dies. Format the **fields**, as
+  here, or convert to the underlying type first.
+
+**Key detail:** `var _ fmt.Stringer = Point{}` costs nothing at run time and turns
+a future refactor into a compile error. Note the receiver form matters: with
+`func (p *Point) String()`, the assertion needs `&Point{}` and
+`fmt.Println(p)` on a *value* would not use it.
+
+**See also:** interfaces1 · typealias2 (the same method on a named float) ·
+enums2 (`String()` for constants) · methods1 (method sets) ·
+the [chapter](../README.md)
 
 **References**
 
-- fmt.Stringer: https://pkg.go.dev/fmt#Stringer
-- Go by Example — Interfaces: https://gobyexample.com/interfaces
+- pkg.go.dev — fmt.Stringer: https://pkg.go.dev/fmt#Stringer
+- Go spec — Interface types: https://go.dev/ref/spec#Interface_types

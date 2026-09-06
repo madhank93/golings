@@ -4,21 +4,36 @@
 func Greet(w io.Writer, name string) {
     fmt.Fprintf(w, "Hello, %s!", name)
 }
-var buf bytes.Buffer
-Greet(&buf, "Go") // capture output in a test
 ```
 
 **Why it works**
 
-- Instead of hardcoding `fmt.Println` (which writes to stdout), `Greet` takes an
-  `io.Writer`. In production you pass `os.Stdout`; in a test you pass a
-  `bytes.Buffer` and assert on what was written.
+- `fmt.Fprintf` writes formatted text to any `io.Writer`. Taking the destination
+  as a parameter means production can pass `os.Stdout` while the test passes a
+  `*bytes.Buffer` and reads back what was written.
 
-**Key detail:** this is **dependency injection** at its simplest — pass a dependency in
-rather than reaching for a global. Because `io.Writer` is a tiny interface, files,
-buffers, network connections, and stdout all satisfy it, so the same function
-works everywhere and is trivially testable.
+**Under the hood**
+
+- `io.Writer` is one method — `Write([]byte) (int, error)` — and files, buffers,
+  network connections, gzip wrappers and `httptest` recorders all satisfy it.
+  Depending on the smallest possible interface is what makes the substitution
+  free.
+
+**Common mistake**
+
+- Reaching for `fmt.Printf` and then trying to capture stdout in the test by
+  swapping `os.Stdout`. It works, it is racy under parallel tests, and it is
+  unnecessary — the parameter is one word longer and removes the problem.
+
+**Key detail:** note the `Fprintf` / `Printf` / `Sprintf` family: `F` writes to a
+writer, no prefix writes to stdout, `S` returns a string. Choosing `F` is the
+whole of dependency injection here.
+
+**See also:** di2 (injecting a clock) · di3 (constructor injection) ·
+mock1 (asserting on the double) · the [chapter](../README.md)
 
 **References**
 
-- Learn Go with Tests — Dependency Injection: https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/dependency-injection
+- pkg.go.dev — io.Writer: https://pkg.go.dev/io#Writer ·
+  fmt.Fprintf: https://pkg.go.dev/fmt#Fprintf
+- Go Code Review Comments — interfaces: https://go.dev/wiki/CodeReviewComments#interfaces

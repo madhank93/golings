@@ -15,10 +15,29 @@ default:
   never blocks. `tryReceive` reports `(value, true)` if a value is waiting, else
   `(0, false)`.
 
-**Key detail:** `default` turns a blocking channel op into a **poll**. Handy for "take
-it if it's there," but beware busy-looping — a `for { select { ... default: } }`
-with no pause spins the CPU. Use it for a single try, not a tight loop.
+**Under the hood**
+
+- `default` makes `selectgo` run only its first pass — poll the cases in random
+  order, and if none can proceed, take the default instead of enqueuing and
+  parking. That is why it is cheap for a single attempt and disastrous in a tight
+  loop: each iteration is a full poll, and the goroutine never yields the CPU.
+
+**Common mistake**
+
+- `for { select { case v := <-ch: …; default: } }` — a spin loop that pegs a core
+  asking "anything yet?" millions of times a second. If you want to wait, delete
+  the `default` and let the runtime park the goroutine.
+
+**Key detail:** `default` also works on the send side — the standard way to drop
+work rather than block when a buffer is full (metrics, best-effort
+notifications). Either way the answer is a **sample**: it is stale the instant it
+returns, so never build logic on repeated polling.
+
+**See also:** select1 (blocking choice) · channels1 (what "full" means) ·
+safety1 (state you poll usually wants a lock instead) · the
+[select chapter](../README.md)
 
 **References**
 
+- Go spec — Select statements: https://go.dev/ref/spec#Select_statements
 - Go by Example — Non-Blocking Channel Operations: https://gobyexample.com/non-blocking-channel-operations

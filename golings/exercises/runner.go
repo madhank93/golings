@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"path"
+	"path/filepath"
 	"syscall"
 	"time"
 )
@@ -97,6 +99,11 @@ func (c *cappedBuffer) String() string {
 	return c.buf.String()
 }
 
+// BuildArgs builds the `go` invocation for e.
+//
+// A normal exercise is passed to the toolchain as a single-file list. A
+// package-mode exercise is passed as its directory, because a file list only
+// compiles the files named in it and the rest of the package would be missing.
 func BuildArgs(e Exercise) []string {
 	args := []string{}
 	if e.Mode == "compile" {
@@ -105,6 +112,16 @@ func BuildArgs(e Exercise) []string {
 		args = append(args, "test", "-v", "-race")
 	}
 
-	args = append(args, fmt.Sprintf("./%s", e.Path))
-	return args
+	return append(args, "./"+Target(e))
+}
+
+// Target is the path the toolchain is pointed at: the exercise's directory in
+// package mode, otherwise the exercise file itself. Always slash-separated, so
+// the argument is identical on Windows.
+func Target(e Exercise) string {
+	slash := filepath.ToSlash(e.Path)
+	if e.Pkg {
+		return path.Dir(slash)
+	}
+	return slash
 }

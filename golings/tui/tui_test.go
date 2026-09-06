@@ -130,3 +130,30 @@ func TestViewAndNavigationNoPanic(t *testing.T) {
 		t.Error("header missing from view")
 	}
 }
+
+func TestVerifiedIgnoresSupersededRun(t *testing.T) {
+	m := testModel(t)
+	nm, _ := m.Update(tea.WindowSizeMsg{Width: 100, Height: 30})
+	m = nm.(Model)
+	m.cancel = &cancelBox{}
+
+	name := m.current().Name
+	stale := m.cancel.set(func() {}) // run 1, superseded below
+	m.cancel.set(func() {})          // run 2 is the live one
+
+	nm, _ = m.Update(verifiedMsg{name: name, gen: stale, status: exercises.StatusFailing,
+		result: exercises.Result{Err: "cancelled."}})
+	m = nm.(Model)
+
+	if m.hasResult {
+		t.Error("expected the superseded run's result to be dropped")
+	}
+
+	nm, _ = m.Update(verifiedMsg{name: name, gen: m.cancel.current(), status: exercises.StatusDone,
+		result: exercises.Result{Out: "ok"}})
+	m = nm.(Model)
+
+	if !m.hasResult || m.status != exercises.StatusDone {
+		t.Errorf("expected the live run's result to be shown, got status %v", m.status)
+	}
+}

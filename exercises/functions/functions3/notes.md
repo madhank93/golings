@@ -1,22 +1,34 @@
-## functions3 — pass the argument the function expects
+## functions3 — pass the argument the signature declares
 
 ```go
 func main() {
-    call_me(10)
+    call_me(5)
 }
 
-func call_me(num int) { ... }
+func call_me(num int) { … }
 ```
 
 **Why it works**
 
-- `call_me` requires one `int`, but was called as `call_me()`. Passing `call_me(10)`
-  supplies the missing argument.
+- `call_me` takes one `int`, so calling it with none is
+  `not enough arguments in call to call_me`. Supplying a value satisfies the
+  signature.
 
-**Key detail:** Go checks argument **count and type** at compile time — too few, too
-many, or a wrong-typed argument all fail to build. There are no default
-parameter values in Go; every declared parameter must be supplied.
+**Common mistake**
+
+- Looking for a default value — `func call_me(num int = 10)`. Go has no default
+  parameters, no optional arguments, and no overloading: one name, one
+  signature, exact arity.
+
+**Key detail:** when a function genuinely needs optional configuration, Go uses a
+config struct or the functional-options pattern (`func(*Server)`) rather than
+growing the parameter list. The one built-in flexibility is a variadic
+parameter (`nums ...int`), which accepts zero or more values — morefn2.
+
+**See also:** functions2 (parameter types) · morefn2 (variadic) ·
+di1 (passing collaborators in) · the [chapter](../README.md)
 
 **References**
 
+- Go spec — Calls: https://go.dev/ref/spec#Calls
 - Go by Example — Functions: https://gobyexample.com/functions

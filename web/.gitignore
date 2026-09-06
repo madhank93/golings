@@ -6,6 +6,7 @@ dist/
 src/content/docs/curriculum/
 src/data/catalog.ts
 src/data/lesson-details/
+src/data/chapters/
 src/data/curriculum-redirects.json
 
 # dependencies

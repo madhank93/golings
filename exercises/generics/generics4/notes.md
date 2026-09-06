@@ -1,10 +1,10 @@
-## generics4 — a generic Reduce
+## generics4 — two type parameters
 
 ```go
 func Reduce[A, B any](items []A, init B, f func(B, A) B) B {
     acc := init
-    for _, item := range items {
-        acc = f(acc, item)
+    for _, v := range items {
+        acc = f(acc, v)
     }
     return acc
 }
@@ -12,16 +12,34 @@ func Reduce[A, B any](items []A, init B, f func(B, A) B) B {
 
 **Why it works**
 
-- Two type parameters: `A` (element type) and `B` (accumulator type). `Reduce`
-  folds `[]A` into a single `B` by repeatedly applying `f`. Summing ints uses
-  `A=int, B=int`; concatenating strings uses `A=string, B=string` — both inferred.
+- `A` is the element type and `B` the accumulator, and they are **independent** —
+  which is what lets one function fold a `[]int` into an `int` and a `[]string`
+  into a `string`. The fold itself is a plain loop over `f`.
 
-**Key detail:** separating `A` and `B` lets the result type differ from the element
-type — e.g. reduce `[]string` into an `int` length. This is the generic version
-of fold/reduce; higher-order functions plus type parameters give you reusable,
-type-safe building blocks.
+**Under the hood**
+
+- Both parameters are inferred from the call: `A` from the slice, `B` from
+  `init`. That is also why the accumulator's type is pinned by the *initial
+  value* — `Reduce(nums, 0, …)` folds into an `int`, `Reduce(nums, 0.0, …)`
+  into a `float64`.
+
+**Common mistake**
+
+- Getting `f`'s parameter order backwards. The signature is
+  `func(B, A) B` — accumulator first, element second — matching the order the
+  loop applies them. A swapped literal fails to compile, which is the type system
+  earning its keep.
+
+**Key detail:** this is the shape most generic code takes in practice: a function
+that takes a function. It is also the shape to be careful with — Go's advice is
+to write the concrete version first and generalise only when you have written it
+three times.
+
+**See also:** generics2 (constraints) · generics3 (generic types) ·
+anonymous_functions2 (function types) · iter1 (the lazy equivalent) ·
+the [chapter](../README.md)
 
 **References**
 
-- The Go Blog — An Introduction to Generics: https://go.dev/blog/intro-generics
-- Go by Example — Generics: https://gobyexample.com/generics
+- Go blog — When To Use Generics: https://go.dev/blog/when-generics
+- Go spec — Type inference: https://go.dev/ref/spec#Type_inference

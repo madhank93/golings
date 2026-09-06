@@ -10,15 +10,31 @@
 
 **Why it works**
 
-- `ReverseProxy` forwards requests to a backend. The modern `Rewrite` hook
-  (replacing the deprecated `Director`) receives a `*ProxyRequest`; `pr.SetURL(target)`
-  retargets the outbound request at the backend while preserving the inbound path.
+- `Rewrite` runs for every proxied request and is where the outbound request gets
+  its destination. Without `SetURL` the outbound URL is never retargeted, so the
+  proxy forwards nowhere.
 
-**Key detail:** `Rewrite` supersedes `Director` because it exposes **both** the inbound
-(`pr.In`) and outbound (`pr.Out`) requests, and `SetURL` correctly sets the
-`X-Forwarded-*` headers — things easy to get wrong by hand. A reverse proxy in ~10
-lines of stdlib.
+**Under the hood**
+
+- `Rewrite` (Go 1.20) replaced the deprecated `Director` for a security reason:
+  `Director` mutated the request in place, so inbound hop-by-hop and
+  `X-Forwarded-*` headers could leak through to the backend — a client could
+  forge `X-Forwarded-For`. `ProxyRequest` separates `In` from `Out`, and `SetURL`
+  strips those inbound headers and sets forwarding headers itself.
+
+**Common mistake**
+
+- Expecting the inbound `Host` to be preserved. It is not, deliberately — set
+  `pr.Out.Host = pr.In.Host` when the backend does virtual hosting.
+
+**Key detail:** `SetURL` **joins paths**: with a target of `http://backend/api`, a
+request for `/users` is forwarded to `/api/users`. And a proxy needs timeouts on
+both sides, or one slow backend pins your goroutines.
+
+**See also:** httpadv1 (header trust) · http1 (client timeouts) · httpsrv4 ·
+the [chapter](../README.md)
 
 **References**
 
-- pkg.go.dev — httputil.ReverseProxy: https://pkg.go.dev/net/http/httputil#ReverseProxy
+- pkg.go.dev — httputil.ReverseProxy: https://pkg.go.dev/net/http/httputil#ReverseProxy ·
+  ProxyRequest.SetURL: https://pkg.go.dev/net/http/httputil#ProxyRequest.SetURL

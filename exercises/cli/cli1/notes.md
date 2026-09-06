@@ -1,25 +1,42 @@
-## cli1 — parse flags
+## cli1 — parse flags with a FlagSet
 
 ```go
 fs := flag.NewFlagSet("greet", flag.ContinueOnError)
-name := fs.String("name", "world", "")
-count := fs.Int("count", 1, "")
-fs.Parse(args)
-// use *name, *count
+name := fs.String("name", "world", "who to greet")
+count := fs.Int("count", 1, "how many times")
+if err := fs.Parse(args); err != nil {
+    return "", 0
+}
+return *name, *count
 ```
 
 **Why it works**
 
-- Each `fs.String`/`fs.Int` registers a flag with a **default** and returns a
-  **pointer**; `fs.Parse(args)` fills those pointers from the arguments. Missing
-  flags keep their defaults (`world`, `1`).
+- A `FlagSet` parses an **explicit slice**, so the function can be called from a
+  test with any arguments. The definers return pointers because the values do not
+  exist until `Parse` runs.
 
-**Key detail:** the flag values are pointers, so you dereference (`*name`) after
-`Parse`. Using a `flag.NewFlagSet` (instead of the global `flag.CommandLine`) makes
-parsing testable — you feed it an explicit `args` slice. `ContinueOnError` returns
-an error instead of calling `os.Exit` on a bad flag.
+**Under the hood**
+
+- The package-level `flag.String`/`flag.Parse` register on `flag.CommandLine`, a
+  global reading `os.Args`. That global cannot be given test input, and
+  registering the same flag name twice **panics** — so a helper using it cannot
+  be called from two tests.
+
+**Common mistake**
+
+- Choosing `flag.ExitOnError` (the default for `flag.CommandLine`). A bad-input
+  test then calls `os.Exit(2)` and kills the test binary. `ContinueOnError`
+  returns the error instead, which is what makes this testable.
+
+**Key detail:** `fs.StringVar(&cfg.Name, "name", ...)` binds into a struct field
+instead of returning a pointer — usually tidier for a real tool. Custom types
+implement `flag.Value` (`String`/`Set`) and register with `fs.Var`.
+
+**See also:** cli2 (positional args) · di1 (injecting output) · errors1 ·
+the [chapter](../README.md)
 
 **References**
 
-- pkg.go.dev — flag: https://pkg.go.dev/flag
+- pkg.go.dev — flag.FlagSet: https://pkg.go.dev/flag#FlagSet
 - Go by Example — Command-Line Flags: https://gobyexample.com/command-line-flags

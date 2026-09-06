@@ -7,7 +7,7 @@
 
 > rustlings, but for Go.
 
-Learn Go the [rustlings](https://github.com/rust-lang/rustlings) way: **138 small,
+Learn Go the [rustlings](https://github.com/rust-lang/rustlings) way: **149 small,
 broken-on-purpose exercises** you fix one at a time, from variables to
 concurrency, current through Go 1.26. An interactive terminal UI re-runs each
 exercise the moment you save and only lets you advance when the tests pass **and**
@@ -18,7 +18,7 @@ exercise the moment you save and only lets you advance when the tests pass **and
 > This is a maintained fork of the original
 > [golings by mauricioabreu](https://github.com/mauricioabreu/golings), rebuilt
 > around a [mise](https://mise.jdx.dev/) toolchain, a Bubble Tea TUI, an expanded
-> 46-topic curriculum, and a docs site.
+> 47-topic curriculum, and a docs site.
 
 ## Quick start
 

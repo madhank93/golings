@@ -59,10 +59,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case fileChangedMsg:
-		// re-verify the current exercise on any save; keep listening
+		// re-verify the current exercise on any save; keep listening. The notice
+		// survives: reset rewrites the file itself, and clearing here wiped its
+		// own "reset X to original" before the learner could read it.
 		m.verifying = true
 		m.verifyStart = time.Now()
-		m.notice = ""
 		return m, tea.Batch(waitForChange(m.watchCh), verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case editorClosedMsg:
@@ -166,6 +167,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(verifyCmd(m.cancel, m.current()), m.spinner.Tick)
 
 	case key.Matches(msg, m.keys.Edit):
+		m.notice = ""
 		cur := m.current()
 		return m, tea.ExecProcess(editorCommand(cur.Path), func(error) tea.Msg {
 			return editorClosedMsg{}
@@ -180,7 +182,15 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.showNotes = !m.showNotes
 		m.refreshOutput()
 		if m.showNotes {
-			m.output.GotoBottom() // bring the Learn section into view
+			m.output.SetYOffset(m.notesTop) // bring the Learn section into view
+		}
+		return m, nil
+
+	case key.Matches(msg, m.keys.Chapter):
+		m.showChapter = !m.showChapter
+		m.refreshOutput()
+		if m.showChapter {
+			m.output.SetYOffset(m.chapterTop)
 		}
 		return m, nil
 
@@ -263,8 +273,10 @@ func (m Model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
-	// ignore stale results for an exercise we've navigated away from
-	if msg.name != m.current().Name {
+	// ignore stale results: a run we've navigated away from, or one that a
+	// newer run has already superseded (saving and leaving the editor both
+	// start one, and the loser reports `cancelled.`)
+	if msg.name != m.current().Name || msg.gen != m.cancel.current() {
 		return m, nil
 	}
 	m.verifying = false
@@ -282,13 +294,16 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 
 	// Whenever the exercise passes — first time or on a re-run — surface the
 	// teaching walk-through automatically (if the exercise has one).
+	wasShowing := m.showNotes
 	if msg.status == exercises.StatusDone && m.current().Notes() != "" {
 		m.showNotes = true
 	}
 
 	m.refreshOutput()
-	if m.showNotes {
-		m.output.GotoBottom() // put the Learn section on screen after a pass
+	// Only jump on the transition. Re-verifying on every save must not yank a
+	// reader back to the top of a section they have scrolled into.
+	if m.showNotes && !wasShowing {
+		m.output.SetYOffset(m.notesTop)
 	}
 	return m, nil
 }
@@ -297,6 +312,7 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 func (m *Model) onSelectionChange() {
 	m.showHint = false
 	m.showNotes = false
+	m.showChapter = false
 	m.hasResult = false
 	m.notice = ""
 	m.result = exercises.Result{}

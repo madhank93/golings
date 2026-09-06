@@ -7,15 +7,32 @@ var n2 float64 = 0.99
 
 **Why it works**
 
-- `integer` and `float` are not Go types. The real names are `int` (and sized
-  variants `int8/16/32/64`) and `float64` (or `float32`).
+- `integer` and `float` are not Go types. The real names are `int` (with sized
+  variants `int8/16/32/64`), the unsigned `uint…` family, and `float32` /
+  `float64`.
 
-**Key detail:** `int` is not a fixed width — it's platform-sized (32- or 64-bit).
-When you need an exact width use the sized names. And Go never converts between
-numeric types implicitly: mixing an `int` and a `float64` in arithmetic is a
-compile error until you convert one explicitly.
+**Under the hood**
+
+- `int` is platform-sized (64-bit on modern targets) and is a **distinct type**
+  from `int64` even where the widths match — passing one where the other is
+  expected still needs a conversion. Go never converts numeric types
+  implicitly, and `T(v)` conversions truncate silently: `byte(300)` is 44.
+
+**Common mistake**
+
+- Reaching for sized types everywhere. `int` is right for loop counters,
+  lengths, and IDs; the sized names are for wire formats, file layouts, and
+  places where the width is part of the contract.
+
+**Key detail:** untyped constants are the exception that makes the strictness
+bearable — `var f float64 = 3` works because `3` has no type yet. Once a value
+lives in a variable its type is fixed and conversions become explicit.
+
+**See also:** primitive_types4 (`byte`/`rune`) · typealias1 (defined types vs
+aliases) · the [chapter](../README.md)
 
 **References**
 
-- A Tour of Go — Basic types: https://go.dev/tour/basics/11
-- Go spec — Numeric types: https://go.dev/ref/spec#Numeric_types
+- Go spec — Numeric types: https://go.dev/ref/spec#Numeric_types ·
+  Conversions: https://go.dev/ref/spec#Conversions
+- Go blog — Constants: https://go.dev/blog/constants

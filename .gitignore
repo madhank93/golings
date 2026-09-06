@@ -15,4 +15,3 @@ coverage.out
 .idea/
 # local LinkedIn/demo exports (not committed)
 golings-demo*
-.aider*
