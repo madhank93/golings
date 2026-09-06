@@ -1,6 +1,6 @@
 # Golings Curriculum — Beginner → Advanced
 
-149 exercises across 47 topics, ordered as a progressive track. Run them in
+161 exercises across 50 topics, ordered as a progressive track. Run them in
 order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
@@ -116,12 +116,34 @@ directory, and each ships with the earlier stages already solved.
 
 ---
 
+---
+
+## 🟤 On-ramp
+
+### 12. Systems & the byox on-ramp
+Three chapters past the language roadmap, and the reason they are here: the
+stdlib a systems project needs on day one. Skippable if you only want Go;
+required if the next thing you build is a server, a parser or a shell.
+
+| Topic | Exercises | Concepts |
+|---|---|---|
+| net_tcp | 4 | `net.Listen`/`Accept`, stream framing, accept loop + `net.ErrClosed`, goroutine per connection |
+| binary_encoding | 4 | big-endian fixed headers, bitfields, length-prefixed frames, `io.ReaderAt` paging |
+| process_control | 4 | `os/exec` capture, stdin pipes, exit status vs start failure, `os/signal` |
+
+---
+
 ## Coverage notes
 
 - **A Tour of Go** — fully covered.
 - **Go by Example** — all core language + common stdlib topics covered. Deliberately
   omitted as out-of-scope for a language roadmap: XML, base64, SHA256, text/templates,
   TCP, spawning/exec processes, signals, URL parsing.
+- **The on-ramp (§12)** — deliberately *not* language teaching. TCP, binary
+  formats, `os/exec` and signals are out of scope for a Go roadmap and are the
+  three gaps between finishing golings and starting a project like
+  [byox](https://github.com/madhank93/build-your-own-x). Terminal raw mode
+  (`golang.org/x/term`) stays out: it needs a dependency and a real terminal.
 - **Go releases** — language syntax current through 1.26. 1.24–1.26 niche features
   (generic type aliases, `testing/synctest`, `new(expr)`, self-referential constraints)
   are intentionally not drilled.
