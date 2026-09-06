@@ -141,7 +141,11 @@ merely passing once.
 - [pkg.go.dev: Server.Shutdown](https://pkg.go.dev/net/http#Server.Shutdown)
 - [Go: Fuzzing tutorial](https://go.dev/doc/tutorial/fuzz)
 
-**End of the curriculum.** The service you finish with is small, but nothing in
-it is a toy: the same shapes — validate at the edge, bound your concurrency,
-log structurally, shut down cleanly, profile deliberately — are what production
-Go services are made of.
+**End of the language curriculum.** The service you finish with is small, but
+nothing in it is a toy: the same shapes — validate at the edge, bound your
+concurrency, log structurally, shut down cleanly, profile deliberately — are
+what production Go services are made of.
+
+**Next: [net_tcp](../net_tcp/) →** — the on-ramp: three chapters of stdlib a
+language roadmap has no reason to cover and a systems project cannot start
+without.

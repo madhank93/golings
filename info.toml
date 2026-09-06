@@ -1565,3 +1565,195 @@ those five cover everything. For NewService, mount the stage-three Server at
 matching pattern, so /debug/pprof/ beats the catch-all — then wrap the whole
 mux in WithLogging so profile requests get logged too.
 """
+
+[[exercises]]
+name = "tcp1"
+path = "exercises/net_tcp/tcp1/main_test.go"
+mode = "test"
+hint = """
+net.Conn is an io.ReadWriteCloser, so the usual readers work on it:
+
+	line, err := bufio.NewReader(conn).ReadString('\\n')
+
+Compare line against "PING\\n" — ReadString keeps the delimiter — then
+conn.Write([]byte("PONG\\n")). The deferred Close is what the client sees as
+EOF; without it the test waits for its deadline instead."""
+
+[[exercises]]
+name = "tcp2"
+path = "exercises/net_tcp/tcp2/main_test.go"
+mode = "test"
+hint = """
+Wrap the read in a loop and keep the same bufio.Reader across iterations — that
+is what reassembles a command split over two writes:
+
+	r := bufio.NewReader(conn)
+	for {
+		line, err := r.ReadString('\\n')
+		if err != nil {
+			return nil // the client closed: not a failure
+		}
+		cmd := strings.TrimSuffix(line, "\\n")
+		if cmd == "QUIT" {
+			return nil
+		}
+		fmt.Fprintf(conn, "%s\\n", strings.ToUpper(cmd))
+	}
+
+A new bufio.Reader per iteration would throw away the buffered leftovers."""
+
+[[exercises]]
+name = "tcp3"
+path = "exercises/net_tcp/tcp3/main_test.go"
+mode = "test"
+hint = """
+for { conn, err := ln.Accept(); ... } — and the interesting part is the error:
+
+	if err != nil {
+		if errors.Is(err, net.ErrClosed) {
+			return nil // ln.Close() happened; this is the shutdown
+		}
+		return err
+	}
+
+Anything else is a real failure. Do not compare err.Error() against a string."""
+
+[[exercises]]
+name = "tcp4"
+path = "exercises/net_tcp/tcp4/main_test.go"
+mode = "test"
+race = true
+hint = """
+Move the handler into a goroutine and keep the WaitGroup honest:
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		defer conn.Close()
+		...
+	}()
+
+Add before starting, Done inside. The deferred wg.Wait() at the top of Serve
+then keeps it from returning while a handler is still writing. Counter.Next is
+already locked — leave it that way, the race detector is watching."""
+
+[[exercises]]
+name = "binary1"
+path = "exercises/binary_encoding/binary1/main_test.go"
+mode = "test"
+hint = """
+io.ReadFull(r, buf[:]) fills the whole header or fails — that is what turns a
+truncated stream into io.ErrUnexpectedEOF. Then each field is two bytes:
+
+	ID:        binary.BigEndian.Uint16(buf[0:2]),
+	Flags:     binary.BigEndian.Uint16(buf[2:4]),
+	Questions: binary.BigEndian.Uint16(buf[4:6]),
+	...
+
+Encoding is the mirror image with PutUint16 at the same offsets."""
+
+[[exercises]]
+name = "binary2"
+path = "exercises/binary_encoding/binary2/main_test.go"
+mode = "test"
+hint = """
+Every field is a shift and a width. Reading: shift down to bit 0, then mask.
+
+	Opcode:      uint8(w >> 11 & 0xf),   // 4 bits starting at bit 11
+	Authorative: w>>10&1 == 1,
+
+Writing is the reverse, and the mask goes on before the shift:
+
+	w |= uint16(f.Opcode&0xf) << 11
+
+Skipping that mask is what lets an over-wide Opcode corrupt QR."""
+
+[[exercises]]
+name = "binary3"
+path = "exercises/binary_encoding/binary3/main_test.go"
+mode = "test"
+hint = """
+Read the prefix, check it, then read exactly that much:
+
+	var lenBuf [4]byte
+	if _, err := io.ReadFull(r, lenBuf[:]); err != nil {
+		return nil, err
+	}
+	n := binary.BigEndian.Uint32(lenBuf[:])
+	if n > MaxFrame {
+		return nil, fmt.Errorf("%w: %d bytes", ErrFrameTooLarge, n)
+	}
+	payload := make([]byte, n)
+	_, err := io.ReadFull(r, payload)
+
+The order matters: allocating before the check is the denial of service."""
+
+[[exercises]]
+name = "binary4"
+path = "exercises/binary_encoding/binary4/main_test.go"
+mode = "test"
+hint = """
+Pages are 1-based, so page n starts at (n-1)*pageSize — except page 1, whose
+content starts at fileHeaderSize and is that much shorter:
+
+	offset, size := int64(n-1)*int64(pageSize), pageSize
+	if n == 1 {
+		offset, size = fileHeaderSize, pageSize-fileHeaderSize
+	}
+
+Read it with io.ReadFull over io.NewSectionReader(ra, offset, int64(size)), and
+turn io.EOF / io.ErrUnexpectedEOF into ErrNoSuchPage — that is the page being
+past the end of the file."""
+
+[[exercises]]
+name = "process1"
+path = "exercises/process_control/process1/main_test.go"
+mode = "test"
+hint = """
+	out, err := exec.Command(name, args...).Output()
+
+Output runs the command, collects stdout only, and waits for it — no pipes, no
+Wait of your own. CombinedOutput is the one that folds stderr in, which this
+function promises not to do. Trim with strings.TrimRight(string(out), "\\n")."""
+
+[[exercises]]
+name = "process2"
+path = "exercises/process_control/process2/main_test.go"
+mode = "test"
+hint = """
+	cmd.Stdin = strings.NewReader(input)
+
+That is the whole fix. os/exec copies the reader into the pipe and closes the
+pipe when it is exhausted, which is the EOF the child's scanner is waiting for.
+StdinPipe would work too, and only if you close it yourself. Trim the trailing
+newline off the output as process1 does."""
+
+[[exercises]]
+name = "process3"
+path = "exercises/process_control/process3/main_test.go"
+mode = "test"
+hint = """
+	var ee *exec.ExitError
+	if errors.As(err, &ee) {
+		return ee.ExitCode(), nil
+	}
+	return -1, err
+
+*exec.ExitError means the child ran and exited non-zero — a result, not an
+error. Everything else means it never started. errors.As rather than a type
+assertion, because the error may be wrapped."""
+
+[[exercises]]
+name = "process4"
+path = "exercises/process_control/process4/main_test.go"
+mode = "test"
+hint = """
+The whole function is one call:
+
+	return signal.NotifyContext(parent, syscall.SIGINT, syscall.SIGTERM)
+
+It buffers the channel, cancels the context on the first signal, follows the
+parent, and its stop function unregisters the handler. Building it by hand is
+worth doing once: buffered channel, signal.Notify, a goroutine that selects on
+the channel and parent.Done() and cancels, and a stop that calls signal.Stop as
+well as cancel."""

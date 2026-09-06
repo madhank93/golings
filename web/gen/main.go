@@ -45,6 +45,7 @@ var tiers = []tier{
 	{"Advanced · Building Applications", []string{"http_server", "http_server_advanced", "cli"}},
 	{"Advanced · Testing & Applied", []string{"testing_advanced", "profiling", "applied"}},
 	{"Capstone · Log-Ingest Service", []string{"capstone"}},
+	{"Systems · The byox On-Ramp", []string{"net_tcp", "binary_encoding", "process_control"}},
 }
 
 // tierColors gives every topic in a tier the same chip color on /catalog.
