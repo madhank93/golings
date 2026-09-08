@@ -1,14 +1,14 @@
 ---
 title: golings
-description: Learn Go the rustlings way — 149 exercises, basics to advanced, each runnable in the browser.
+description: Learn Go by fixing real code — broken-on-purpose exercises that pass only when the tests and the linter agree. No prior Go needed, and every exercise runs in the browser.
 template: splash
 hero:
-  tagline: Learn Go the rustlings way — 149 small exercises, fixed one at a time, from basics to advanced. Try any of them in the browser before you install anything.
+  tagline: Learn Go by fixing real code, not by watching videos. Every exercise is broken on purpose and passes only when the tests and the linter agree. No prior Go needed — run any of them in the browser before you install anything.
   image:
     alt: The Go gopher
     file: ../../assets/golang.png
   actions:
-    - text: Get started
+    - text: Start learning
       link: /getting-started/
       icon: right-arrow
     - text: Browse the catalog
@@ -25,36 +25,81 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import AsciinemaPlayer from '../../components/AsciinemaPlayer.astro';
+import { CATALOG, TOPICS } from '../../data/catalog';
+
+export const exerciseCount = CATALOG.length;
+export const topicCount = Object.keys(TOPICS).length;
+
+export const STAGE_BLURBS = {
+  Beginner: 'Syntax you cannot skip: values, control flow, and the built-in collections.',
+  Intermediate: 'The type system Go programs are actually shaped from, plus errors and generics.',
+  Advanced: 'Goroutines, channels, and the stdlib corners real services live in.',
+  Capstone: 'One concurrent log-ingest service, built from everything above it.',
+};
+
+export const stageOf = (topic) => TOPICS[topic].tier.split('·')[0].trim();
+export const groupOf = (topic) => TOPICS[topic].tier.split('·')[1].trim();
+
+export const stages = Object.keys(STAGE_BLURBS).map((stage) => {
+  const topics = Object.keys(TOPICS).filter((t) => stageOf(t) === stage);
+  return {
+    stage,
+    groups: [...new Set(topics.map(groupOf))],
+    topicCount: topics.length,
+    exercises: CATALOG.filter((e) => stageOf(e.topic) === stage).length,
+  };
+});
 
 <AsciinemaPlayer />
 
 ## What is golings?
 
-golings is a set of small, broken-on-purpose Go exercises you fix one at a time —
-[rustlings](https://rustlings.rust-lang.org/) for Go. An interactive terminal UI
-runs each exercise as you save and walks you from variables to concurrency.
+golings is [rustlings](https://rustlings.rust-lang.org/) for Go — the same idea,
+a different language. If you learn a language by debugging it rather than by
+reading about it, this is the whole course: open the next exercise, make it
+compile, make it pass, move on.
 
 <CardGrid>
-  <Card title="149 exercises" icon="puzzle">
-    47 topics across a beginner → advanced track, current through Go 1.26.
+  <Card title={`${exerciseCount} exercises`} icon="puzzle">
+    {topicCount} topics, ordered so each one only needs what came before it.
   </Card>
   <Card title="Nothing to install" icon="external">
-    Every exercise opens in the Go Playground straight from the
-    [catalog](/catalog/) — read it, run it, watch it fail, before you clone
-    anything.
+    Every exercise opens in the Go Playground from the [catalog](/catalog/) —
+    read it, run it, watch it fail, before you clone anything.
   </Card>
   <Card title="Instant feedback" icon="rocket">
-    A Bubble Tea TUI re-runs the exercise on save; tests **and** golangci-lint
-    must pass before it advances.
+    A terminal UI re-runs the exercise the moment you save, and nothing advances
+    until the tests pass and golangci-lint is clean.
   </Card>
-  <Card title="Covers the essentials" icon="open-book">
-    Mirrors A Tour of Go and Go by Example — plus errors, generics, the full
-    concurrency stack, stdlib, and testing.
-  </Card>
-  <Card title="Learn by doing" icon="seti:go">
-    No videos, no slides. Read the failing test, fix the code, repeat.
+  <Card title="Full language coverage" icon="open-book">
+    Errors, generics, the concurrency stack, stdlib and testing — current
+    through Go 1.26.
   </Card>
 </CardGrid>
+
+## The path, stage by stage
+
+Four stages, in order. You start at `var x int` and finish with a concurrent
+log-ingest service you wrote yourself.
+
+<table>
+  <thead>
+    <tr><th>Stage</th><th>What you get</th><th>Covers</th><th>Topics</th><th>Exercises</th></tr>
+  </thead>
+  <tbody>
+    {stages.map((s) => (
+      <tr>
+        <td><strong>{s.stage}</strong></td>
+        <td>{STAGE_BLURBS[s.stage]}</td>
+        <td>{s.groups.join(', ')}</td>
+        <td>{s.topicCount}</td>
+        <td>{s.exercises}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+[Browse every exercise, each one runnable in the browser →](/catalog/)
 
 ## Start in two commands
 
