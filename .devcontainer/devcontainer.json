@@ -2,9 +2,6 @@
 	"name": "golings",
 	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
 	"postCreateCommand": "curl -fsSL https://mise.run | sh && echo 'eval \"$(~/.local/bin/mise activate bash)\"' >> ~/.bashrc && ~/.local/bin/mise trust && ~/.local/bin/mise install && ~/.local/bin/mise run build",
-	"remoteEnv": {
-		"PATH": "${containerEnv:HOME}/.local/bin:${containerEnv:PATH}"
-	},
 	"customizations": {
 		"vscode": {
 			"extensions": ["golang.go"]

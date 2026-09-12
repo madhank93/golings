@@ -28,5 +28,9 @@
 		"editor.codeActionsOnSave": {
 			"source.organizeImports": "explicit"
 		}
-	}
+	},
+	"debug.javascript.defaultRuntimeExecutable": {
+		"pwa-node": "~/.local/share/mise/shims/node"
+	},
+	"python.defaultInterpreterPath": "~/.local/share/mise/installs/python/3.13.7/bin/python"
 }
