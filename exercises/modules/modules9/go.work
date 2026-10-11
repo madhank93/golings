@@ -1,0 +1,10 @@
+// modules9
+// app depends on example.com/greet v1.0.0, but you are changing greet at the
+// same time and want app to build against your local copy in ./greet. A
+// go.work file lists the modules developed together; add greet to it.
+
+// I AM NOT DONE
+
+go 1.26.0
+
+use ./app

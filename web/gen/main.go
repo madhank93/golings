@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -39,6 +40,7 @@ var tiers = []tier{
 	{"Intermediate · Types & Methods", []string{"structs", "pointers", "methods", "interfaces", "enums", "type_aliases"}},
 	{"Intermediate · Functions & Errors", []string{"anonymous_functions", "defer", "errors"}},
 	{"Intermediate · Generics & Modern Go", []string{"generics", "modern", "iterators"}},
+	{"Intermediate · Packages & Modules", []string{"modules"}},
 	{"Intermediate · Testable Design", []string{"dependency_injection", "mocking"}},
 	{"Advanced · Concurrency", []string{"concurrent", "channels", "select", "sync", "context", "concurrency_patterns", "goroutine_safety", "synctest"}},
 	{"Advanced · Standard Library & I/O", []string{"stdlib_essentials", "maps_package", "structured_logging", "reflection", "unsafe_pkg", "files", "http_client"}},
@@ -232,7 +234,7 @@ func writeCatalog(byTopic map[string][]exercises.Exercise) error {
 		for _, topic := range ti.topics {
 			for _, e := range byTopic[topic] {
 				link, linked := play.LinkFor(links, e)
-				if !linked {
+				if !linked && e.ModuleDir() == "" {
 					unlinked = append(unlinked, e.Name)
 				}
 				fmt.Fprintf(&b, "  { topic: %s, slug: %s, mode: %s, description: %s, path: %s%s%s },\n",
@@ -281,11 +283,10 @@ func playFields(l play.Link, linked bool) string {
 // spoil anything. All of it is generated here — nothing is maintained by hand
 // in the frontend.
 func writeDetail(e exercises.Exercise) error {
-	files, err := filepath.Glob(filepath.Join(filepath.Dir(e.Path), "*.go"))
+	files, err := sourceFiles(e)
 	if err != nil {
 		return err
 	}
-	sort.Strings(files)
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "---\ntitle: %s\n---\n\n", e.Name)
@@ -298,7 +299,7 @@ func writeDetail(e exercises.Exercise) error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(&src, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(string(data), "\n"))
+		fmt.Fprintf(&src, "```%s title=%q\n%s\n```\n\n", fence(f), title(e, f), strings.TrimRight(string(data), "\n"))
 	}
 	b.WriteString(section("What you start with", src.String(), true))
 
@@ -312,7 +313,7 @@ func writeDetail(e exercises.Exercise) error {
 		if !ok {
 			continue
 		}
-		fmt.Fprintf(&sol, "```go title=%q\n%s\n```\n\n", filepath.Base(f), strings.TrimRight(data, "\n"))
+		fmt.Fprintf(&sol, "```%s title=%q\n%s\n```\n\n", fence(f), title(e, f), strings.TrimRight(data, "\n"))
 	}
 	if sol.Len() > 0 {
 		b.WriteString(section("Solution", sol.String(), false))
@@ -326,6 +327,50 @@ func writeDetail(e exercises.Exercise) error {
 	}
 
 	return os.WriteFile(filepath.Join(detailsDir, e.Name+".md"), []byte(b.String()), 0o644)
+}
+
+// sourceFiles lists what the modal shows: the exercise directory's Go files,
+// or for a module exercise every Go, go.mod and go.work file in its tree,
+// since the lesson is in the layout as much as in the code.
+func sourceFiles(e exercises.Exercise) ([]string, error) {
+	dir := filepath.Dir(e.Path)
+	if e.ModuleDir() == "" {
+		files, err := filepath.Glob(filepath.Join(dir, "*.go"))
+		sort.Strings(files)
+		return files, err
+	}
+	var files []string
+	err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() && d.Name() == "vendor" {
+			return filepath.SkipDir
+		}
+		switch filepath.Ext(p) {
+		case ".go", ".mod", ".work":
+			files = append(files, p)
+		}
+		return nil
+	})
+	return files, err
+}
+
+// title names a file relative to its exercise, so ledger/ledger.go and
+// go.mod read as the tree a learner sees.
+func title(e exercises.Exercise, f string) string {
+	rel, err := filepath.Rel(filepath.Dir(e.Path), f)
+	if err != nil {
+		return filepath.Base(f)
+	}
+	return filepath.ToSlash(rel)
+}
+
+func fence(f string) string {
+	if filepath.Ext(f) == ".go" {
+		return "go"
+	}
+	return "text"
 }
 
 // section wraps one part of an exercise in a <details> the catalog styles as an

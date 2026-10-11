@@ -624,6 +624,121 @@ for _, item := range items {
 """
 
 [[exercises]]
+name = "modules1"
+path = "exercises/modules/modules1/go.mod"
+mode = "test"
+hint = """
+A go.mod starts with a module directive naming the module path:
+
+	module example.com/hello
+
+In a fresh directory, `go mod init example.com/hello` writes it for you."""
+
+[[exercises]]
+name = "modules2"
+path = "exercises/modules/modules2/shop.go"
+mode = "test"
+hint = """
+Import path = module path + directory. The module is example.com/shop and the
+package lives in ./cart, so the import is "example.com/shop/cart"."""
+
+[[exercises]]
+name = "modules3"
+path = "exercises/modules/modules3/temp.go"
+mode = "test"
+hint = """
+Capitalise the names the tests use: the field celsius → Celsius and the
+function fahrenheit → Fahrenheit. Update every use inside the package too."""
+
+[[exercises]]
+name = "modules4"
+path = "exercises/modules/modules4/report.go"
+mode = "test"
+hint = """
+Import "example.com/bank/ledger" instead and call ledger.Format(cents). It also
+handles negative balances, which money.Dollars never did."""
+
+[[exercises]]
+name = "modules5"
+path = "exercises/modules/modules5/go.mod"
+mode = "test"
+hint = """
+Add both directives to go.mod:
+
+	require example.com/mathx v0.0.0
+
+	replace example.com/mathx => ./mathx
+
+The version is a placeholder: a replace with a directory ignores it."""
+
+[[exercises]]
+name = "modules6"
+path = "exercises/modules/modules6/weather.go"
+mode = "test"
+hint = """
+Import "example.com/units/v2". The package name is still units, so the code
+that calls units.CToF does not change."""
+
+[[exercises]]
+name = "modules7"
+path = "exercises/modules/modules7/go.mod"
+mode = "test"
+hint = """
+Ranging over an int arrived in Go 1.22. Raise the go line to at least that —
+the rest of the repo uses go 1.26.0."""
+
+[[exercises]]
+name = "modules8"
+path = "exercises/modules/modules8/notify.go"
+mode = "test"
+hint = """
+A blank import links a package in for its side effects only:
+
+	import _ "example.com/notify/sender/email"
+
+Its init function then runs before Send is ever called."""
+
+[[exercises]]
+name = "modules9"
+path = "exercises/modules/modules9/go.work"
+mode = "test"
+hint = """
+List greet next to app in the use directive:
+
+	use (
+		./app
+		./greet
+	)
+
+`go work use ./greet`, run in this directory, makes the same edit."""
+
+[[exercises]]
+name = "modules10"
+path = "exercises/modules/modules10/go.mod"
+mode = "test"
+hint = """
+From the exercise directory:
+
+	cd exercises/modules/modules10
+	go mod tidy
+
+tidy drops the unused requirement and adds pad as // indirect. The test runs
+`go mod tidy -diff`, which fails while there is anything left to change."""
+
+[[exercises]]
+name = "modules11"
+path = "exercises/modules/modules11/blog.go"
+mode = "test"
+hint = """
+From the exercise directory:
+
+	cd exercises/modules/modules11
+	go mod vendor
+
+It rewrites vendor/modules.txt and copies slug into vendor/. Re-run it every
+time go.mod changes."""
+
+[[exercises]]
 name = "di1"
 path = "exercises/dependency_injection/di1/main_test.go"
 mode = "test"

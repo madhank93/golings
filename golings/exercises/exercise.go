@@ -28,6 +28,20 @@ type Exercise struct {
 	Race bool
 }
 
+// ModuleDir returns the exercise's directory when the exercise is its own Go
+// module or workspace (a go.mod or go.work beside the exercise file), else "".
+// Such an exercise cannot be built from the repo root: the root module does
+// not contain its packages, so the toolchain has to run inside it.
+func (e Exercise) ModuleDir() string {
+	dir := filepath.Dir(e.Path)
+	for _, f := range []string{"go.mod", "go.work"} {
+		if _, err := os.Stat(filepath.Join(dir, f)); err == nil {
+			return dir
+		}
+	}
+	return ""
+}
+
 // Notes returns the exercise's teaching walk-through: the contents of a
 // notes.md file sitting next to the exercise, or "" when absent. Shown once the
 // learner solves the exercise (or on demand via the Explain key) to explain the

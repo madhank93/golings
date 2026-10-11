@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // Status is the rich, gated state of an exercise used by the TUI. It is finer
@@ -76,8 +77,20 @@ func Lint(e Exercise) (bool, string) {
 
 // LintContext is Lint, abandoning the run when ctx is done.
 func LintContext(ctx context.Context, e Exercise) (bool, string) {
-	dir := filepath.Dir(e.Path)
-	cmd := exec.CommandContext(ctx, "golangci-lint", "run", "./"+dir)
+	targets := []string{"./" + filepath.Dir(e.Path)}
+	if e.ModuleDir() != "" {
+		// golangci-lint understands neither the `work` pattern nor ./... at a
+		// go.work root, so lint each main module's tree by its directory.
+		list := exec.CommandContext(ctx, "go", "list", "-m", "-f", "{{.Dir}}/...")
+		moduleEnv(list, e)
+		out, err := list.CombinedOutput()
+		if err != nil {
+			return false, string(out)
+		}
+		targets = strings.Fields(string(out))
+	}
+	cmd := exec.CommandContext(ctx, "golangci-lint", append([]string{"run"}, targets...)...)
+	moduleEnv(cmd, e)
 	out, err := cmd.CombinedOutput()
 	if err == nil {
 		return true, ""

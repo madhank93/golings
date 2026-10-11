@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -43,6 +44,7 @@ func (e Exercise) Run() (Result, error) {
 // exercise itself running and holding its stdout pipe.
 func (e Exercise) RunContext(ctx context.Context) (Result, error) {
 	cmd := exec.CommandContext(ctx, "go", BuildArgs(e)...)
+	moduleEnv(cmd, e)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	cmd.Cancel = func() error {
 		// Negative pid addresses the whole group. SIGKILL rather than SIGTERM:
@@ -67,6 +69,16 @@ func (e Exercise) RunContext(ctx context.Context) (Result, error) {
 		res.Err += "\n\ncancelled."
 	}
 	return res, err
+}
+
+// moduleEnv points cmd at a module exercise's own directory. GOPROXY=off keeps
+// the modules chapter offline: its dependencies are all local, and a learner's
+// missing require should fail at once rather than as a network lookup.
+func moduleEnv(cmd *exec.Cmd, e Exercise) {
+	if dir := e.ModuleDir(); dir != "" {
+		cmd.Dir = dir
+		cmd.Env = append(os.Environ(), "GOPROXY=off")
+	}
 }
 
 // cappedBuffer is an io.Writer that keeps at most maxOutput bytes and then
@@ -104,6 +116,8 @@ func (c *cappedBuffer) String() string {
 // A normal exercise is passed to the toolchain as a single-file list. A
 // package-mode exercise is passed as its directory, because a file list only
 // compiles the files named in it and the rest of the package would be missing.
+// A module exercise runs inside its module, where the `work` pattern names every
+// package of the module — or of every module in its go.work.
 func BuildArgs(e Exercise) []string {
 	args := []string{}
 	if e.Mode == "compile" {
@@ -112,15 +126,18 @@ func BuildArgs(e Exercise) []string {
 		args = append(args, "test", "-v", "-race")
 	}
 
+	if e.ModuleDir() != "" {
+		return append(args, "work")
+	}
 	return append(args, "./"+Target(e))
 }
 
 // Target is the path the toolchain is pointed at: the exercise's directory in
-// package mode, otherwise the exercise file itself. Always slash-separated, so
+// package and module mode, otherwise the exercise file itself. Always slash-separated, so
 // the argument is identical on Windows.
 func Target(e Exercise) string {
 	slash := filepath.ToSlash(e.Path)
-	if e.Pkg {
+	if e.Pkg || e.ModuleDir() != "" {
 		return path.Dir(slash)
 	}
 	return slash
