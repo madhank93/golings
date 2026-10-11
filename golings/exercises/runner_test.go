@@ -27,6 +27,14 @@ var pkgFixture = Exercise{
 	Pkg:  true,
 }
 
+// modFixture is its own module: run from the repo root, `go test` reports that
+// the main module does not contain the package.
+var modFixture = Exercise{
+	Name: "mod1",
+	Path: "../fixtures/mod1/mod1_test.go",
+	Mode: "test",
+}
+
 func TestRunContextHonoursDeadline(t *testing.T) {
 	if _, err := exec.LookPath("go"); err != nil {
 		t.Skip("go toolchain not on PATH")
@@ -131,6 +139,27 @@ func TestRunPackageModeCompilesWholeDirectory(t *testing.T) {
 	res, err := pkgFixture.Run()
 	if err != nil {
 		t.Fatalf("package-mode run failed: %v\nstdout: %s\nstderr: %s", err, res.Out, res.Err)
+	}
+	if !strings.Contains(res.Out, "PASS") {
+		t.Errorf("expected a passing test run, got stdout %q stderr %q", res.Out, res.Err)
+	}
+}
+
+func TestBuildArgsModuleModeRunsInsideModule(t *testing.T) {
+	got := BuildArgs(modFixture)
+	want := []string{"test", "-v", "-race", "work"}
+	if !slices.Equal(got, want) {
+		t.Errorf("BuildArgs = %v, want %v", got, want)
+	}
+}
+
+func TestRunModuleModePasses(t *testing.T) {
+	if _, err := exec.LookPath("go"); err != nil {
+		t.Skip("go toolchain not on PATH")
+	}
+	res, err := modFixture.Run()
+	if err != nil {
+		t.Fatalf("module-mode run failed: %v\nstdout: %s\nstderr: %s", err, res.Out, res.Err)
 	}
 	if !strings.Contains(res.Out, "PASS") {
 		t.Errorf("expected a passing test run, got stdout %q stderr %q", res.Out, res.Err)

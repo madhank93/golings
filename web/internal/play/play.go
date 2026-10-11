@@ -71,6 +71,11 @@ func WasmURL(id string) string { return "https://goplay.tools/snippet/" + id }
 // Build renders an exercise for the playground. ok is false when the source
 // cannot be read or its package clause is not one the playground accepts.
 func Build(e exercises.Exercise) (Snippet, bool) {
+	// A module exercise is about its go.mod and directory layout, which a
+	// generated single-module snippet would replace.
+	if e.ModuleDir() != "" {
+		return Snippet{}, false
+	}
 	files, err := filepath.Glob(filepath.Join(filepath.Dir(e.Path), "*.go"))
 	if err != nil || len(files) == 0 {
 		return Snippet{}, false

@@ -180,5 +180,5 @@ ended, and calling `next` after `stop` returns `false` forever.
 - [pkg.go.dev: slices.Collect](https://pkg.go.dev/slices#Collect) ·
   [maps.All](https://pkg.go.dev/maps#All)
 
-**Next: [dependency_injection](../dependency_injection/) →** — the other side of
-composability: passing behaviour in rather than reaching for it.
+**Next: [modules](../modules/) →** — how packages are named, found and
+versioned: the `go.mod` this repo has been running on all along.

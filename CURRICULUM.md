@@ -1,6 +1,6 @@
 # Golings Curriculum — Beginner → Advanced
 
-161 exercises across 50 topics, ordered as a progressive track. Run them in
+172 exercises across 51 topics, ordered as a progressive track. Run them in
 order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
@@ -59,7 +59,12 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | iterators | 4 | `iter.Seq`, `iter.Seq2`, `iter.Pull` |
 | maps_package | 2 | `maps.Keys`/`Values`, `maps.Collect` |
 
-### 6. Testable Design
+### 6. Packages & Modules
+| Topic | Exercises | Concepts |
+|---|---|---|
+| modules | 11 | `go.mod`, import paths, exported names, `internal/`, `require`/`replace`, `/v2` major versions, `go` directive, blank import + `init`, `go.work`, `go mod tidy`, `go mod vendor` |
+
+### 7. Testable Design
 | Topic | Exercises | Concepts |
 |---|---|---|
 | dependency_injection | 3 | inject `io.Writer`, interface DI, constructor injection |
@@ -69,7 +74,7 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 
 ## 🔴 Advanced
 
-### 7. Concurrency
+### 8. Concurrency
 | Topic | Exercises | Concepts |
 |---|---|---|
 | concurrent | 3 | goroutines, `WaitGroup`, closing channels |
@@ -81,7 +86,7 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | goroutine_safety | 3 | leak-free goroutines, `errgroup`, cancellation discipline |
 | synctest | 2 | `testing/synctest` fake clock (1.25) |
 
-### 8. Standard Library & I/O
+### 9. Standard Library & I/O
 | Topic | Exercises | Concepts |
 |---|---|---|
 | stdlib_essentials | 7 | JSON, `io`, `slices`, `time`, `strconv`, `regexp`, `omitzero` (1.24) |
@@ -91,7 +96,7 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | structured_logging | 3 | `log/slog`, handlers, attributes |
 | unsafe_pkg | 2 | `unsafe.Pointer`, `unsafe.Slice` — and when not to |
 
-### 9. Building Applications
+### 10. Building Applications
 | Topic | Exercises | Concepts |
 |---|---|---|
 | http_server | 4 | `HandlerFunc`, `ServeMux` routing (1.22), JSON, middleware |
@@ -99,13 +104,13 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | cli | 2 | `flag` parsing, `FlagSet`, positional args |
 | profiling | 3 | `runtime/pprof`, `ReadMemStats`, `net/http/pprof` on a custom mux |
 
-### 10. Testing & Applied
+### 11. Testing & Applied
 | Topic | Exercises | Concepts |
 |---|---|---|
 | testing_advanced | 4 | subtests, fuzzing, httptest, benchmarks (`b.Loop`) |
 | applied | 2 | `sort.Interface`, concurrency-safe store (integration) |
 
-### 11. Capstone
+### 12. Capstone
 One program built across eight stages — a concurrent HTTP log-ingest service.
 These are the only **package-mode** exercises: each spans several files in a
 directory, and each ships with the earlier stages already solved.
@@ -120,7 +125,7 @@ directory, and each ships with the earlier stages already solved.
 
 ## 🟤 On-ramp
 
-### 12. Systems & the byox on-ramp
+### 13. Systems & the byox on-ramp
 Three chapters past the language roadmap, and the reason they are here: the
 stdlib a systems project needs on day one. Skippable if you only want Go;
 required if the next thing you build is a server, a parser or a shell.
@@ -139,7 +144,7 @@ required if the next thing you build is a server, a parser or a shell.
 - **Go by Example** — all core language + common stdlib topics covered. Deliberately
   omitted as out-of-scope for a language roadmap: XML, base64, SHA256, text/templates,
   TCP, spawning/exec processes, signals, URL parsing.
-- **The on-ramp (§12)** — deliberately *not* language teaching. TCP, binary
+- **The on-ramp (§13)** — deliberately *not* language teaching. TCP, binary
   formats, `os/exec` and signals are out of scope for a Go roadmap and are the
   three gaps between finishing golings and starting a project like
   [byox](https://github.com/madhank93/build-your-own-x). Terminal raw mode

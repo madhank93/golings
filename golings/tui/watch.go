@@ -26,7 +26,7 @@ func watchRelevant(path string) bool {
 		return false
 	}
 	switch filepath.Ext(path) {
-	case ".go", ".mod", ".sum":
+	case ".go", ".mod", ".sum", ".work":
 		return true
 	}
 	return false
