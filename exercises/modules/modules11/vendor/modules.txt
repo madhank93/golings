@@ -1,0 +1,4 @@
+# example.com/slug v0.0.0 => ./slug
+## explicit; go 1.26.0
+example.com/slug
+# example.com/slug => ./slug
