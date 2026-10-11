@@ -234,7 +234,7 @@ func writeCatalog(byTopic map[string][]exercises.Exercise) error {
 		for _, topic := range ti.topics {
 			for _, e := range byTopic[topic] {
 				link, linked := play.LinkFor(links, e)
-				if !linked && e.ModuleDir() == "" {
+				if _, built := play.Build(e); !linked && built {
 					unlinked = append(unlinked, e.Name)
 				}
 				fmt.Fprintf(&b, "  { topic: %s, slug: %s, mode: %s, description: %s, path: %s%s%s },\n",

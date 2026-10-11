@@ -355,6 +355,46 @@
     "hash": "8f2f5773d8bc95aaf49e5946f977bfb449e92bd5c1e064c85eb1947e969a5a92",
     "id": "WZ0jm1ame70"
   },
+  "modules1": {
+    "hash": "da48d11fffcdd40085661386d14b2361f4b4897e60a6ce93d2e7d8bff8f17399",
+    "id": "uar7WI6QPUf",
+    "wasm": true
+  },
+  "modules2": {
+    "hash": "e56abdd4d53d4d71adc6f5b70a821a99c0bf5e90b51b2832374edf0d7890bfcb",
+    "id": "PJMEwOvyEZO",
+    "wasm": true
+  },
+  "modules3": {
+    "hash": "0be0be7b54ecfb626d4c5d4dc66932bbc0b790209da715d3908a22c1c660360c",
+    "id": "mDYW0-E3ETQ",
+    "wasm": true
+  },
+  "modules4": {
+    "hash": "3ac65d21d414280723de4ef8a6b0e78c5049fad08f37d0767392e1b4ecc0a7ae",
+    "id": "fhDOj0z5GaA",
+    "wasm": true
+  },
+  "modules5": {
+    "hash": "763f0edee6e2064c9268d21f42edbd138611bf448a3ef3d3c42c66c186990d57",
+    "id": "dNnXFcL94KY",
+    "wasm": true
+  },
+  "modules6": {
+    "hash": "23eab5e076801e775f02e28b673e2574de542d34a759945bf4aa714562bc371a",
+    "id": "grXb1Bb9LEI",
+    "wasm": true
+  },
+  "modules7": {
+    "hash": "a76b3646b9a1fd657fb0a59a2ff0e893f291b62f4dc6abbac65bcfc0fd72e267",
+    "id": "KF_l-7sKVZj",
+    "wasm": true
+  },
+  "modules8": {
+    "hash": "097476abd57c73fedd819d4448cf1e84f6b058d07cef4ae812d132fb112836ff",
+    "id": "iqmihC0hBsn",
+    "wasm": true
+  },
   "morefn1": {
     "hash": "b0cab9953343b4787a65bb5e12b02f845c444f772db9d327c511cabe9c40aac2",
     "id": "7anmo42PI3A"

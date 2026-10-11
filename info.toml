@@ -716,6 +716,7 @@ List greet next to app in the use directive:
 name = "modules10"
 path = "exercises/modules/modules10/go.mod"
 mode = "test"
+noplay = true
 hint = """
 From the exercise directory:
 

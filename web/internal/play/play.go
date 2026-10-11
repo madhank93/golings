@@ -9,6 +9,8 @@
 //     go.mod. go.dev refuses to test a multi-file snippet (golang/go#77234),
 //     so those are linked to goplay.tools, whose in-browser WebAssembly
 //     runtime does run them.
+//   - A module exercise becomes a txtar of its whole tree with its own go.mod,
+//     also opened at goplay.tools.
 //
 // Both are stored by the same playground snippet service, so one share id
 // opens at either site.
@@ -18,7 +20,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -71,10 +75,12 @@ func WasmURL(id string) string { return "https://goplay.tools/snippet/" + id }
 // Build renders an exercise for the playground. ok is false when the source
 // cannot be read or its package clause is not one the playground accepts.
 func Build(e exercises.Exercise) (Snippet, bool) {
-	// A module exercise is about its go.mod and directory layout, which a
-	// generated single-module snippet would replace.
-	if e.ModuleDir() != "" {
+	if e.NoPlay {
 		return Snippet{}, false
+	}
+	if dir := e.ModuleDir(); dir != "" {
+		src, ok := moduleTree(dir)
+		return Snippet{Source: src, Wasm: true}, ok
 	}
 	files, err := filepath.Glob(filepath.Join(filepath.Dir(e.Path), "*.go"))
 	if err != nil || len(files) == 0 {
@@ -129,6 +135,41 @@ func fileset(files []string) (string, bool) {
 	}
 	return b.String(), true
 }
+
+// moduleTree renders a module exercise as a txtar snippet of its whole tree,
+// keeping its own go.mod: the layout is the lesson. goplay.tools ignores
+// go.work and cannot run `go mod vendor`, so workspace and vendoring
+// exercises have no snippet.
+func moduleTree(dir string) (string, bool) {
+	if _, err := os.Stat(filepath.Join(dir, "go.work")); err == nil {
+		return "", false
+	}
+	var b strings.Builder
+	err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() && d.Name() == "vendor" {
+			return errVendored
+		}
+		if ext := filepath.Ext(p); ext != ".go" && ext != ".mod" {
+			return nil
+		}
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(dir, p)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(&b, "-- %s --\n%s\n", filepath.ToSlash(rel), strings.TrimRight(string(data), "\n"))
+		return nil
+	})
+	return b.String(), err == nil
+}
+
+var errVendored = errors.New("vendored module")
 
 func packageName(path string) (string, bool) {
 	data, err := os.ReadFile(path)

@@ -26,6 +26,10 @@ type Exercise struct {
 	// warn that the playground, which has no detector, will show it green.
 	// Set with `race = true` in info.toml.
 	Race bool
+	// NoPlay keeps an exercise out of the playgrounds when its lesson needs
+	// something they lack, such as running the go command from a test. Set
+	// with `noplay = true` in info.toml.
+	NoPlay bool
 }
 
 // ModuleDir returns the exercise's directory when the exercise is its own Go
