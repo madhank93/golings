@@ -63,6 +63,7 @@ In the watch TUI:
 
 ```sh
 mise run watch           # interactive watch loop (the main one)
+mise run watch -e modules1   # …opened on a named exercise
 mise run list            # list every exercise + your progress
 mise run update          # pull latest changes without losing your progress
 mise run test            # test the tool itself (-race)

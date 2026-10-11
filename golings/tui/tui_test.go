@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"errors"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -155,5 +156,18 @@ func TestVerifiedIgnoresSupersededRun(t *testing.T) {
 
 	if !m.hasResult || m.status != exercises.StatusDone {
 		t.Errorf("expected the live run's result to be shown, got status %v", m.status)
+	}
+}
+
+func TestMoveToNamedExercise(t *testing.T) {
+	m := testModel(t)
+	if err := m.MoveTo("f1"); err != nil {
+		t.Fatal(err)
+	}
+	if got := m.current().Name; got != "f1" {
+		t.Errorf("cursor on %q, want f1", got)
+	}
+	if err := m.MoveTo("nope"); !errors.Is(err, exercises.ErrExerciseNotFound) {
+		t.Errorf("MoveTo(unknown) = %v, want ErrExerciseNotFound", err)
 	}
 }

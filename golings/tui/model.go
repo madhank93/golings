@@ -2,6 +2,7 @@ package tui
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -229,6 +230,18 @@ func (m *Model) moveToFirstPending() {
 			return
 		}
 	}
+}
+
+// MoveTo puts the cursor on the named exercise, so the TUI opens on it instead
+// of the first pending one.
+func (m *Model) MoveTo(name string) error {
+	for i, it := range m.items {
+		if !it.isHeader && it.ex.Name == name {
+			m.cursor = i
+			return nil
+		}
+	}
+	return fmt.Errorf("%w: %s", exercises.ErrExerciseNotFound, name)
 }
 
 // moveCursor steps to the next/previous exercise row, skipping headers (and,
