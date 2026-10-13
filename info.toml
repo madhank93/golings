@@ -4,6 +4,10 @@ path = "exercises/variables/variables1/main.go"
 mode = "compile"
 hint = """
 Variables must have names."""
+nudge = '''
+`unexpected =, expected name`: the parser read `var` and wanted the variable's name next, but found `=` straight away.'''
+stronger = '''
+The `var` line is missing one word between `var` and `=`. Look at the `Printf` below it to see which name the rest of `main` already uses.'''
 
 [[exercises]]
 name = "variables2"
@@ -11,6 +15,10 @@ path = "exercises/variables/variables2/main.go"
 mode = "compile"
 hint = """
 It is missing a symbol used to declare and initialize variables."""
+nudge = '''
+`undefined: x`: `x = 5` is a plain assignment, and you can only assign to a variable that already exists. Nothing has declared `x` yet.'''
+stronger = '''
+Go has a short form that declares a variable and gives it a value in one step. Change the assignment on the `x = 5` line to that form; one extra character is enough.'''
 
 [[exercises]]
 name = "variables3"
@@ -18,6 +26,10 @@ path = "exercises/variables/variables3/main.go"
 mode = "compile"
 hint = """
 Could it be missing the variable type?"""
+nudge = '''
+`unexpected newline, expected type`: `var x` on its own gives Go nothing to infer a type from, so the line has to name one.'''
+stronger = '''
+Either add a type after `x`, or give `x` an initial value so Go infers the type. The `%d` verb in the `Printf` tells you which kind of value it should hold.'''
 
 [[exercises]]
 name = "variables4"
@@ -25,6 +37,10 @@ path = "exercises/variables/variables4/main.go"
 mode = "compile"
 hint = """
 Variables can be redeclared in new blocks, but it is missing something. What is it?"""
+nudge = '''
+`cannot use 1 ... as string value`: inside the `if` block, `x = 1` assigns to the outer `x`, which is a `string`. Plain `=` never creates a new variable.'''
+stronger = '''
+Leave the outer `x` alone (its line says not to change it). Inside the block, declare a new `x` that shadows the outer one, using the operator that both declares and assigns.'''
 
 [[exercises]]
 name = "variables5"
@@ -32,6 +48,10 @@ path = "exercises/variables/variables5/main.go"
 mode = "compile"
 hint = """
 Constants need initialization."""
+nudge = '''
+`missing init expr for Pi`: a constant is fixed when the program compiles, so it has to be given its value where it is declared.'''
+stronger = '''
+Finish the `const Pi` line with `=` and a value. Constants cannot be set later, so the value must go on that line.'''
 
 [[exercises]]
 name = "variables6"
@@ -39,24 +59,40 @@ path = "exercises/variables/variables6/main.go"
 mode = "compile"
 hint = """
 Constants can't be changed."""
+nudge = '''
+`cannot assign to x`: `x` is a constant, and a constant can never be the target of an assignment.'''
+stronger = '''
+If `x` needs to change, it has to be a variable rather than a constant. Change how `x` is declared, not the line that adds 1.'''
 
 [[exercises]]
 name = "primitive_types1"
 path = "exercises/primitive_types/primitive_types1/main_test.go"
 mode = "test"
 hint = "Assign storeIsOpen a new value (false) so the store ends up closed."
+nudge = '''
+`storeIsOpen ... is not used`: the line under the FIXME is just the bare name of the variable. An expression on its own line is not a statement Go accepts.'''
+stronger = '''
+That line should assign a new value to `storeIsOpen`. The store closes there, so think about which `bool` value makes the `if !storeIsOpen` check fire.'''
 
 [[exercises]]
 name = "primitive_types2"
 path = "exercises/primitive_types/primitive_types2/main.go"
 mode = "compile"
 hint = "Make sure 'who' is declared and assigned a value before using it."
+nudge = '''
+`undefined: who`: the `Printf` uses `who`, but nothing in `main` declares it.'''
+stronger = '''
+Declare `who` above the `Printf` and give it a value. The `%s` verb tells you its type should be `string`.'''
 
 [[exercises]]
 name = "primitive_types3"
 path = "exercises/primitive_types/primitive_types3/main.go"
 mode = "compile"
 hint = "fmt.Printf() can take multiple variables as parameters. Try declaring those variables."
+nudge = '''
+`undefined: who` and `undefined: country`: `Printf` is passed two variables that were never declared.'''
+stronger = '''
+Declare both above the `Printf`. Each one fills a `%s`, so both are strings, and they go in the same order as the verbs.'''
 
 [[exercises]]
 name = "primitive_types4"
@@ -64,6 +100,10 @@ path = "exercises/primitive_types/primitive_types4/main.go"
 mode = "compile"
 hint = """
 byte can hold values from 0 to 255. Could it store a character?"""
+nudge = '''
+`empty rune literal`: `''` is a character literal with nothing between the quotes. Go has no empty character.'''
+stronger = '''
+Put exactly one character between the single quotes. An ASCII character fits in a `byte`, and printing it shows its numeric code.'''
 
 [[exercises]]
 name = "primitive_types5"
@@ -73,18 +113,30 @@ hint = """
 These names seem misleading, no? But they are close to being correct.
 Check this documentation to understand the variety of
 numeric data types: https://go.dev/ref/spec#Numeric_types"""
+nudge = '''
+`undefined: integer` and `undefined: float`: those aren't Go type names. Go spells its numeric types differently.'''
+stronger = '''
+Go's whole-number type is a shorter word than `integer`, and its float types always include a bit size (32 or 64) in the name. Rename both types on their declaration lines.'''
 
 [[exercises]]
 name = "if1"
 path = "exercises/if/if1/main_test.go"
 mode = "test"
 hint = "Use an if statement to compare a and b, and return the larger number."
+nudge = '''
+The tests expect the larger number back, but `bigger` always returns `0`.'''
+stronger = '''
+Inside `bigger`, compare `a` and `b` with an `if` and return whichever is larger. One `if` with a return in it, plus a fallback return after it, is enough.'''
 
 [[exercises]]
 name = "if2"
 path = "exercises/if/if2/main_test.go"
 mode = "test"
 hint = "Implement fooIfFizz function by using if and else statements."
+nudge = '''
+"fuzz" and "random stuff" both come back as `complete me`: the `else` branch handles every input that isn't "fizz".'''
+stronger = '''
+Add an `else if` for the "fuzz" case between the two branches, and make the final `else` return the default value the third test expects.'''
 
 [[exercises]]
 name = "switch1"
@@ -92,6 +144,10 @@ path = "exercises/switch/switch1/main.go"
 mode = "compile"
 hint = """
 Switch flow is missing a variable to evaluate the statement."""
+nudge = '''
+`cannot convert "open" ... to type bool`: a `switch` with nothing after the keyword compares each case to `true`, so its cases have to be bools, not strings.'''
+stronger = '''
+Name the value being switched on right after `switch`. Then each `case` is compared to that value, and `status` is no longer unused.'''
 
 [[exercises]]
 name = "switch2"
@@ -99,12 +155,20 @@ path = "exercises/switch/switch2/main.go"
 mode = "compile"
 hint = """
 Switch without a condition is possible, but that case statement needs a boolean evaluation."""
+nudge = '''
+`unexpected :, expected expression`: the second `case` has no expression. In a switch without a condition, every `case` must be a boolean test.'''
+stronger = '''
+Either give that `case` a boolean condition that's true here, or swap it for the keyword that catches everything no other case matched.'''
 
 [[exercises]]
 name = "switch3"
 path = "exercises/switch/switch3/main_test.go"
 mode = "test"
 hint = "Ensure that each case statement in a switch block has a condition."
+nudge = '''
+Every day comes back as `Sunday`: `weekDay` ignores its argument and returns a fixed value.'''
+stronger = '''
+Replace the fixed return with a `switch` on `day`: one `case` per number from 0 to 6, each returning that day's name. The test table lists the pairs.'''
 
 [[exercises]]
 name = "functions1"
@@ -113,6 +177,10 @@ mode = "compile"
 hint = """
 The main function is calling another function that it expects to exist.
 It expects a function named `call_me` to exist and receive no arguments."""
+nudge = '''
+`undefined: call_me`: `main` calls a function that hasn't been written yet.'''
+stronger = '''
+Declare a function named `call_me` at package level, outside `main`. It takes no parameters, and its body can be as small as you like.'''
 
 [[exercises]]
 name = "functions2"
@@ -120,6 +188,10 @@ path = "exercises/functions/functions2/main.go"
 mode = "compile"
 hint = """
 Function parameters need to have their types explicitly declared."""
+nudge = '''
+`undefined: num`: in the signature `callMe(num)`, Go reads `num` as a type with no parameter name. Every parameter needs a name and a type.'''
+stronger = '''
+Add a type after `num` in the signature. The loop compares it with an `int` counter, which tells you which type it needs.'''
 
 [[exercises]]
 name = "functions3"
@@ -127,6 +199,10 @@ path = "exercises/functions/functions3/main.go"
 mode = "compile"
 hint = """
 When a function expects arguments, you must pass values to them."""
+nudge = '''
+`not enough arguments in call to call_me / have () / want (int)`: the function needs an `int`, but `main` calls it with nothing.'''
+stronger = '''
+Pass an integer in the call inside `main`. Its value sets how many lines the loop prints.'''
 
 [[exercises]]
 name = "functions4"
@@ -134,6 +210,10 @@ path = "exercises/functions/functions4/main.go"
 mode = "compile"
 hint = """
 Functions that return values must have return types declared in the function signature."""
+nudge = '''
+`(no value) used as value` and `too many return values`: `addNumbers` returns `a + b`, but its signature doesn't declare that it returns anything.'''
+stronger = '''
+Declare the result type after the parameter list in the signature. The caller's line must stay as it is, so this is the only thing to change.'''
 
 [[exercises]]
 name = "morefn1"
@@ -145,6 +225,10 @@ Recurse with a base case:
 if n <= 1 { return 1 }
 return n * factorial(n-1)
 """
+nudge = '''
+`factorial` returns 0 for every input. A recursive function needs two things: a case that stops, and a case that calls itself on a smaller input.'''
+stronger = '''
+First handle the smallest inputs (0 and 1 both give 1). Otherwise, multiply `n` by the factorial of the next smaller number.'''
 
 [[exercises]]
 name = "morefn2"
@@ -155,6 +239,10 @@ A variadic parameter is a slice inside the function:
 
 for _, n := range nums { total += n }
 """
+nudge = '''
+`sum` returns 0 for every call because nothing is ever added to `total`.'''
+stronger = '''
+Inside the function, `nums` is an ordinary `[]int`. Loop over it with `range` and add each value to `total` before the return.'''
 
 [[exercises]]
 name = "strings1"
@@ -165,6 +253,10 @@ Chain two strings helpers:
 
 return strings.ReplaceAll(strings.ToLower(s), " ", "-")
 """
+nudge = '''
+`slugify` returns its input unchanged, so the capitals and the spaces are both still there.'''
+stronger = '''
+Two `strings` helpers do this: one lowercases a string and one replaces every match of a substring. Apply both and return the result, and remember to import `strings`.'''
 
 [[exercises]]
 name = "strings2"
@@ -175,6 +267,10 @@ len counts bytes; count runes instead:
 
 return utf8.RuneCountInString(s)
 """
+nudge = '''
+`accented: want 5, got 6`: `len(s)` counts bytes, and `é` takes two bytes in UTF-8. The CJK case is worse because each character takes three.'''
+stronger = '''
+Count runes instead of bytes. The `unicode/utf8` package has a function that counts runes in a string, and a `for range` loop over a string also steps one rune at a time.'''
 
 [[exercises]]
 name = "arrays1"
@@ -182,6 +278,10 @@ path = "exercises/arrays/arrays1/main_test.go"
 mode = "test"
 hint = """
 Arrays use zero-based indexing."""
+nudge = '''
+`expected operand, found ']'`: `colors[]` has no index inside the brackets.'''
+stronger = '''
+Put an index in each pair of brackets. Indexes start at 0, so for a 3-element array the first index is 0 and the last is one less than the length.'''
 
 [[exercises]]
 name = "arrays2"
@@ -189,6 +289,10 @@ path = "exercises/arrays/arrays2/main.go"
 mode = "compile"
 hint = """
 Unlike languages like Python or Ruby, Go does not allow arrays with mixed data types."""
+nudge = '''
+`cannot use 10 ... as string value`: the array is declared `[4]string`, so every element must be a string, and `10` is an int.'''
+stronger = '''
+Arrays in Go hold one type only. Make the fourth element a string: quote it, or replace it with another name.'''
 
 [[exercises]]
 name = "slices1"
@@ -196,6 +300,10 @@ path = "exercises/slices/slices1/main.go"
 mode = "compile"
 hint = """
 Slices can be created with the `make` function and must have a specified type."""
+nudge = '''
+`unexpected comma, expected expression`: `make` was called with nothing before the first comma. Its first argument has to be the type to build.'''
+stronger = '''
+Pass a slice type such as `[]int` as the first argument to `make`. The two numbers after it are the length and the capacity.'''
 
 [[exercises]]
 name = "slices2"
@@ -203,6 +311,10 @@ path = "exercises/slices/slices2/main_test.go"
 mode = "test"
 hint = """
 Slices can be created from arrays using the [low:high] syntax."""
+nudge = '''
+`expected operand, found ']'`: `names[]` is a slice expression with no bounds in it.'''
+stronger = '''
+Use `[low:high]`. `low` is included and `high` isn't, so to get the last two elements of a 4-element array, start at index 2 and stop at the length.'''
 
 [[exercises]]
 name = "slices3"
@@ -213,6 +325,10 @@ Use the `append` function to add elements to an existing slice.
 Check the output after adding some elements.
 
 For more on the `append` function, refer to: https://go.dev/ref/spec#Appending_and_copying_slices"""
+nudge = '''
+`not enough arguments for append()`: `append` needs to know which slice to add to, and what to add.'''
+stronger = '''
+The first argument to `append` is the existing slice and the rest are the new elements. Return what `append` gives back.'''
 
 [[exercises]]
 name = "slices4"
@@ -222,6 +338,10 @@ hint = """
 Check the slice indices to ensure they fall within the bounds of the names slice.
 
 For more information: https://go.dev/ref/spec#Appending_and_copying_slices"""
+nudge = '''
+Two problems. `names[3]` is the last element, not the first. `names[5:10]` panics with `slice bounds out of range [:10] with capacity 4` because the slice only has 4 elements.'''
+stronger = '''
+Indexes run from 0 to 3. Fix the single index in the first test, then choose `[low:high]` bounds in the other two: `high` is excluded and can be at most 4.'''
 
 [[exercises]]
 name = "maps1"
@@ -235,6 +355,10 @@ Define these types to make the code compile.
 Indexing in maps is similar to setting values.
 
 Check the spec for more info: https://go.dev/ref/spec#Map_types"""
+nudge = '''
+`unexpected ), expected [`: `make(map)` doesn't say what the map holds. A map type always names its key type and its value type.'''
+stronger = '''
+Write the full map type inside `make`: names are strings and ages are ints. Then put the lookup keys inside the empty `m[]` brackets in the `Printf`.'''
 
 [[exercises]]
 name = "maps2"
@@ -242,6 +366,10 @@ path = "exercises/maps/maps2/main_test.go"
 mode = "test"
 hint = """
 Similar to `maps1`, but you can initialize a new map in the same line using a different syntax."""
+nudge = '''
+`expected '[', found '{'`: `map{}` is missing its key and value types. A map literal needs the full type before the braces.'''
+stronger = '''
+Write the map type from the function's return type before the `{`, and add the two `key: value` pairs from the FIXME inside the braces.'''
 
 [[exercises]]
 name = "maps3"
@@ -249,6 +377,10 @@ path = "exercises/maps/maps3/main_test.go"
 mode = "test"
 hint = """
 Verify that the keys used to access map values match the keys defined in the phoneBook map."""
+nudge = '''
+Three tests fail. Looking up a key that isn't in a map gives the zero value (`""`) rather than an error, so the first lookup misspells a name, Laura is never added, and nothing is ever removed.'''
+stronger = '''
+Fix the spelling of the first key. In the second test, add a "Laura" entry before the lookup line. In the third, use the built-in that removes a key from a map before `len` is called.'''
 
 [[exercises]]
 name = "range1"
@@ -256,6 +388,10 @@ path = "exercises/range/range1/main.go"
 mode = "compile"
 hint = """
 Use the `range` keyword to iterate over collections like arrays, slices, and maps."""
+nudge = '''
+`unexpected {, expected expression`: `for _, v := {` has nothing to loop over. `range` and the collection are missing.'''
+stronger = '''
+After `:=`, write the `range` keyword and then the slice to iterate. The blank `_` already throws away the index.'''
 
 [[exercises]]
 name = "range2"
@@ -263,6 +399,10 @@ path = "exercises/range/range2/main.go"
 mode = "compile"
 hint = """
 Use the `range` keyword to iterate over map values. Unlike arrays and slices, maps are iterated over by keys and values."""
+nudge = '''
+`unexpected :=, expected expression`: the loop has no variables on the left of `:=` and nothing to range over on the right.'''
+stronger = '''
+Ranging over a map gives a key and a value on each iteration. Name them to match what the `Printf` uses, and range over `phoneBook`.'''
 
 [[exercises]]
 name = "range3"
@@ -270,6 +410,10 @@ path = "exercises/range/range3/main_test.go"
 mode = "test"
 hint = """
 Use a `for` loop with `range` to check if each number is even and append it to the `evenNumbers` slice."""
+nudge = '''
+`got []`: the loop runs, but it neither looks at the numbers nor adds anything to `evenNumbers`.'''
+stronger = '''
+Have the `range` clause give you each value. Inside the loop, test whether it's even with `%`, and when it is, add it to the slice with `append`.'''
 
 [[exercises]]
 name = "structs1"
@@ -278,6 +422,10 @@ mode = "test"
 hint = """
 Structs are created using the `type structName struct {}` syntax.
 Fields inside the brackets must have their types declared along with their names."""
+nudge = '''
+`unknown field name in struct literal of type Person`: `Person` is an empty struct, so `name` and `age` don't exist on it.'''
+stronger = '''
+Declare the two fields inside the struct braces, each with a name and a type. Their names must match the ones the test uses.'''
 
 [[exercises]]
 name = "structs2"
@@ -287,6 +435,10 @@ hint = """
 Embedding a struct is done using just the struct name.
 
 After embedding, fields can be accessed directly through the base struct without specifying the full path, but you can if needed."""
+nudge = '''
+`undefined: ContactDetails`: the test builds a `ContactDetails` and reads `person.phone`, but that struct doesn't exist and `Person` has no `phone` field.'''
+stronger = '''
+Declare a `ContactDetails` struct with a `phone` field. Then embed it in `Person` by writing only the type name, with no field name, so its fields are promoted.'''
 
 [[exercises]]
 name = "structs3"
@@ -299,6 +451,10 @@ func (s *StructHere) doSomething() {
 
 }
 """
+nudge = '''
+`person.FullName undefined`: the test calls a method that hasn't been defined on `Person`.'''
+stronger = '''
+Write a method with a `Person` receiver, named `FullName`, that returns a string. Join the two name fields with exactly one space; `+` or `fmt.Sprintf` both work.'''
 
 [[exercises]]
 name = "pointers1"
@@ -309,6 +465,10 @@ Dereference with * to write through the pointer:
 
 *p = *p * 2
 """
+nudge = '''
+`want 42, got 21`: `double` receives the address of `n` but never writes through it, so the caller's value is unchanged.'''
+stronger = '''
+Inside `double`, `p` is the address and `*p` is the value stored there. Assign twice the current value back through `*p`.'''
 
 [[exercises]]
 name = "pointers2"
@@ -319,6 +479,10 @@ Go auto-dereferences a struct pointer for field access:
 
 a.Balance += amount
 """
+nudge = '''
+`want 150, got 100`: `deposit` is given a pointer to the account but never touches its balance.'''
+stronger = '''
+Go dereferences struct pointers automatically when you access a field. Add `amount` to the `Balance` field of `a` inside `deposit`.'''
 
 [[exercises]]
 name = "pointers3"
@@ -329,6 +493,10 @@ Increment the field through the pointer receiver:
 
 c.N++
 """
+nudge = '''
+`pointer should mutate caller; want 1, got 0`: `incPointer` has an empty body. The value version passing is expected, because it only changes a copy.'''
+stronger = '''
+In `incPointer`, increment the `N` field of `c`. Since `c` is a pointer, the change reaches the caller's struct. `incValue` shows the same operation.'''
 
 [[exercises]]
 name = "methods1"
@@ -340,6 +508,10 @@ Value receiver reads; pointer receiver mutates:
 func (r Rectangle) Area() float64 { return r.Width * r.Height }
 func (r *Rectangle) Scale(f float64) { r.Width *= f; r.Height *= f }
 """
+nudge = '''
+`Area` returns 0, and `Scale` leaves the rectangle at 3x4. Neither method uses its receiver yet.'''
+stronger = '''
+In `Area`, return the product of the receiver's two sides. In `Scale`, multiply each side by `factor` through the pointer receiver so the original rectangle changes.'''
 
 [[exercises]]
 name = "methods2"
@@ -350,6 +522,10 @@ Convert the named type to its underlying type for arithmetic:
 
 return float64(c)*9/5 + 32
 """
+nudge = '''
+`100C: want 212F, got 0`: the method body is just `return 0`.'''
+stronger = '''
+`c` has type `Celsius`, so convert it to `float64` before doing arithmetic. Then apply the formula from the doc comment and return the result.'''
 
 [[exercises]]
 name = "interfaces1"
@@ -361,6 +537,10 @@ Add an Area method to each type — no implements keyword needed:
 func (r Rectangle) Area() float64 { return r.W * r.H }
 func (c Circle) Area() float64    { return math.Pi * c.R * c.R }
 """
+nudge = '''
+`Rectangle does not implement Shape (missing method Area)`: to satisfy `Shape`, a type needs an `Area() float64` method, and neither type has one.'''
+stronger = '''
+Write one `Area` method for each type, with exactly the signature in the interface. A rectangle multiplies its sides; a circle uses `math.Pi` and its radius.'''
 
 [[exercises]]
 name = "interfaces2"
@@ -371,6 +551,10 @@ Implement String() string to satisfy fmt.Stringer:
 
 func (p Point) String() string { return fmt.Sprintf("(%d, %d)", p.X, p.Y) }
 """
+nudge = '''
+`Point does not implement fmt.Stringer (missing method String)`: the compile-time check needs a `String() string` method on `Point`.'''
+stronger = '''
+Add a `String` method with a value receiver that formats the coordinates as `(X, Y)`. `fmt.Sprintf` builds the string, and `%v` will use your method from then on.'''
 
 [[exercises]]
 name = "interfaces3"
@@ -385,6 +569,10 @@ case string: return fmt.Sprintf("string: %s", x)
 default:     return "unknown"
 }
 """
+nudge = '''
+All three cases come back as `""`: `describe` never inspects the dynamic type of `v`.'''
+stronger = '''
+Use a type switch, `switch x := v.(type)`, with an `int` case, a `string` case and a `default`. Format each with `fmt` (add the import) to match the test's expected strings.'''
 
 [[exercises]]
 name = "interfaces4"
@@ -396,6 +584,10 @@ Implement both methods on *Buffer to satisfy the embedded interface:
 func (b *Buffer) Read() string   { return b.data }
 func (b *Buffer) Write(s string) { b.data += s }
 """
+nudge = '''
+`*Buffer does not implement ReadWriter (missing method Read)`: `ReadWriter` embeds `Reader` and `Writer`, so `*Buffer` needs both of their methods.'''
+stronger = '''
+Add `Read` and `Write` with `*Buffer` as the receiver, so `Write` can change `data`. `Write` appends to the stored string, and `Read` returns it.'''
 
 [[exercises]]
 name = "enums1"
@@ -406,6 +598,10 @@ After the first iota line, list the rest and iota increments automatically:
 
 const ( Sunday Weekday = iota; Monday; Tuesday; Wednesday; Thursday; Friday; Saturday )
 """
+nudge = '''
+`undefined: Monday` and `undefined: Saturday`: the const block declares only `Sunday`.'''
+stronger = '''
+List the other six days on their own lines inside the same `const (...)` block. A line with only a name reuses the type and `iota` expression of the line above, so each one counts up.'''
 
 [[exercises]]
 name = "enums2"
@@ -416,6 +612,10 @@ Switch on the receiver:
 
 switch c { case Red: return "Red"; case Green: return "Green"; case Blue: return "Blue"; default: return "Unknown" }
 """
+nudge = '''
+`Color(0).String() = ""`: the method returns an empty string whatever the color.'''
+stronger = '''
+Use a `switch` on the receiver `c`, with one case per constant returning its name. Add a `default` for values outside the three constants.'''
 
 [[exercises]]
 name = "anonymous_functions1"
@@ -423,6 +623,10 @@ path = "exercises/anonymous_functions/anonymous_functions1/main.go"
 mode = "compile"
 hint = """
 The function needs a string to print."""
+nudge = '''
+`not enough arguments in call to func(name string)`: the function literal is called straight away with `()`, but it takes a `string`.'''
+stronger = '''
+The trailing `()` is the call. Put a string argument inside it.'''
 
 [[exercises]]
 name = "anonymous_functions2"
@@ -430,6 +634,10 @@ path = "exercises/anonymous_functions/anonymous_functions2/main.go"
 mode = "compile"
 hint = """
 You should call the function with a parameter."""
+nudge = '''
+`cannot use func() {…} ... as func(name string) value`: `sayBye` is declared as taking a name, but the function literal assigned to it takes nothing, and `n` is undefined.'''
+stronger = '''
+Give the function literal the same parameter as the declared type, and use that parameter in the `Printf`. Then call `sayBye` with a name so it's no longer unused.'''
 
 [[exercises]]
 name = "anonymous_functions3"
@@ -438,6 +646,10 @@ mode = "compile"
 hint = """
 1 - The `updateStatus()` function should return an order status index like `orderStatus[index]`.
 2 - You may need to call `anonymous_func` once more."""
+nudge = '''
+`declared and not used: orderStatus`: the closure counts with `index` but never looks up the map, so it always returns the placeholder string.'''
+stronger = '''
+Have the closure return `orderStatus` at the current `index`. Then count the calls in `main`: the status has to reach "DONE", which is key 3.'''
 
 [[exercises]]
 name = "defer1"
@@ -450,6 +662,10 @@ defer func() { seq = append(seq, 1) }()
 defer func() { seq = append(seq, 2) }()
 defer func() { seq = append(seq, 3) }()  // runs first -> [3,2,1]
 """
+nudge = '''
+`want [3 2 1], got []`: `order` returns without deferring anything, so `seq` stays empty.'''
+stronger = '''
+Defer three function literals that append 1, then 2, then 3 to `seq`. Because `seq` is a named result, appends that run after `return` still change the returned value, and deferred calls run in reverse order.'''
 
 [[exercises]]
 name = "defer2"
@@ -460,6 +676,10 @@ Defer the cleanup at the top so it runs on every return:
 
 defer r.Close()
 """
+nudge = '''
+`resource not closed` on both paths: nothing in `process` ever calls `Close`.'''
+stronger = '''
+Under the FIXME at the top of `process`, defer the call to `r`'s `Close` method. A deferred call runs on every return, so both the early and the normal path close the resource.'''
 
 [[exercises]]
 name = "errors1"
@@ -471,6 +691,10 @@ Errors are values. Return them, do not throw them.
 Import "errors" and return errors.New("...") when b == 0.
 Check the result at the call site with `if err != nil`.
 """
+nudge = '''
+`expected an error when dividing by zero`: the zero branch returns `nil` as its error, which tells the caller everything went fine.'''
+stronger = '''
+In the `b == 0` branch, return a non-nil error as the second value, created with the `errors` package (add the import).'''
 
 [[exercises]]
 name = "errors2"
@@ -481,6 +705,10 @@ The %w verb wraps an error so errors.Is can unwrap and match it.
 
 fmt.Errorf("lookup %q: %w", id, ErrNotFound)
 """
+nudge = '''
+`expected the error to wrap ErrNotFound, got lookup failed`: the error is new text with no link to the sentinel, so `errors.Is` can't find it.'''
+stronger = '''
+Pass `ErrNotFound` to the `fmt.Errorf` call and refer to it with the verb that wraps errors, not the one that only formats them.'''
 
 [[exercises]]
 name = "errors3"
@@ -492,6 +720,10 @@ Any type with an Error() string method satisfies the error interface.
 Build the message from e.Field, e.g. fmt.Sprintf("%s is required", e.Field).
 errors.As walks the wrap chain to find a *ValidationError.
 """
+nudge = '''
+`want message "name is required", got ""`: `errors.As` finds the `*ValidationError`, but its `Error` method returns an empty string.'''
+stronger = '''
+Build the message in `Error` from `e.Field` plus the fixed suffix the test expects. `fmt.Sprintf` with `%s` does it.'''
 
 [[exercises]]
 name = "errors4"
@@ -503,6 +735,10 @@ recover() only works inside a deferred function.
 defer func() { if r := recover(); r != nil { err = fmt.Errorf("recovered: %v", r) } }()
 A named return value (err) can be set from inside the deferred func.
 """
+nudge = '''
+`panic: boom`: the panic in `fn` goes straight through `safeRun`. Nothing recovers it, so the test crashes.'''
+stronger = '''
+`recover` only works when called from a deferred function. At the top of `safeRun`, defer a closure that calls `recover()` and, when it gets a non-nil value, sets the named result `err`.'''
 
 [[exercises]]
 name = "errors5"
@@ -513,6 +749,10 @@ errors.Join bundles many errors; errors.Is matches any of them:
 
 return errors.Join(errs...)
 """
+nudge = '''
+Both checks fail because `validatePassword` returns `nil` even after collecting errors in `errs`.'''
+stronger = '''
+Replace the final `return nil` with the `errors` function that combines a list of errors into one. It returns nil by itself when the list is empty.'''
 
 [[exercises]]
 name = "errors6"
@@ -522,6 +762,10 @@ hint = """
 errors.Is walks the whole wrap chain, but only through %w links. %v flattens the
 error to text and breaks the chain — change the middle Errorf to use %w.
 """
+nudge = '''
+`errors.Is should reach ErrNotFound through the wrap chain`: the message contains "not found", but one layer turned the error into plain text, so the chain to the sentinel is broken.'''
+stronger = '''
+Check the verb in each `fmt.Errorf`. The middle layer formats `level1` with a verb that copies only its text. Use the wrapping verb there, like the other two layers.'''
 
 [[exercises]]
 name = "generics1"
@@ -536,6 +780,10 @@ func FuncName[T any](value T) {
 
 }
 """
+nudge = '''
+`undefined: value`: in `print(value)`, Go reads `value` as a type with no parameter name. The function has to accept both a string and an int.'''
+stronger = '''
+Give `print` a type parameter in square brackets after its name, constrained by `any`, and use it as the type of `value`.'''
 
 [[exercises]]
 name = "generics2"
@@ -548,6 +796,10 @@ In Go, type constraints can be declared. For this exercise, the `Number` interfa
 
 Ensure you include the appropriate type signature.
 """
+nudge = '''
+`undefined: T` and `(no value) used as value`: `addNumbers` uses a type parameter it never declares, and it has no return type.'''
+stronger = '''
+Allow floats in the `Number` constraint as well, joined to `int` with `|`. Then declare `[T Number]` after the function name and return `T`.'''
 
 [[exercises]]
 name = "generics3"
@@ -558,6 +810,10 @@ Push appends; Pop guards the empty case:
 
 func (s *Stack[T]) Push(x T) { s.items = append(s.items, x) }
 // Pop: if len(s.items)==0 return zero,false; else take the last, shrink, return it,true"""
+nudge = '''
+`want len 3, got 0`: `Push` does nothing, so the stack stays empty and every `Pop` reports false.'''
+stronger = '''
+In `Push`, append `x` to `s.items`. In `Pop`, return the zero value and false when the stack is empty; otherwise take the last item, shrink the slice by one, and return the item with true.'''
 
 [[exercises]]
 name = "generics4"
@@ -569,6 +825,10 @@ Fold left over the slice:
 acc := init
 for _, item := range items { acc = f(acc, item) }
 return acc"""
+nudge = '''
+`want 10, got 0`: `Reduce` returns `init` without looking at any of the items.'''
+stronger = '''
+Keep an accumulator that starts at `init`, range over `items`, and on each step replace the accumulator with `f(accumulator, item)`. Return it at the end.'''
 
 [[exercises]]
 name = "modern1"
@@ -581,6 +841,10 @@ lo = min(a, b, c)
 hi = max(a, b, c)
 clear(m)
 """
+nudge = '''
+`want lo=1 hi=3, got lo=0 hi=0`, and the map is still full: neither function does any work yet.'''
+stronger = '''
+Since Go 1.21, `min`, `max` and `clear` are built in and need no import. Pass all three numbers to the first two, and pass the map to `clear`.'''
 
 [[exercises]]
 name = "modern2"
@@ -591,6 +855,10 @@ Go 1.22 lets you range over an int:
 
 for i := range n { total += i }
 """
+nudge = '''
+`want 10, got 0`: no loop runs, so `total` stays 0.'''
+stronger = '''
+Since Go 1.22, `for i := range n` counts `i` from 0 to n-1. Add each `i` to `total` inside that loop.'''
 
 [[exercises]]
 name = "modern3"
@@ -601,6 +869,10 @@ Call yield for each value; stop early if it returns false:
 
 for i := 1; i <= n; i++ { if !yield(i) { return } }
 """
+nudge = '''
+`want [1 2 3], got []`: the iterator function never calls `yield`, so the `for range` loop sees no values.'''
+stronger = '''
+Inside the returned function, loop from 1 to `n` and call `yield` with each value. If `yield` returns false the caller has stopped, so return right away.'''
 
 [[exercises]]
 name = "modern4"
@@ -611,6 +883,10 @@ hint = """
 Go 1.25: wg.Go(f) does Add(1) + go + defer Done() for you. Replace the bare
 `go func(){...}()` with wg.Go(func() { total.Add(int64(n)) }).
 """
+nudge = '''
+`want 15, got 0`: nothing calls `wg.Add`, so `wg.Wait()` returns before any goroutine has run.'''
+stronger = '''
+Replace the bare `go func(){...}()` with a call to the `WaitGroup` method added in Go 1.25 that starts the goroutine and does the counting for you. The function body stays the same.'''
 
 [[exercises]]
 name = "modern5"
@@ -622,6 +898,10 @@ hoisted `var item string` and let the range clause declare it:
 
 for _, item := range items {
 """
+nudge = '''
+`got [gamma gamma gamma]`: every closure captures the same `item` variable, and by the time they run it holds the last value.'''
+stronger = '''
+Go 1.22's per-iteration variables only apply when the loop itself declares the variable. Delete the hoisted `var item string` and have the range clause declare `item` with `:=`.'''
 
 [[exercises]]
 name = "modules1"
