@@ -53,7 +53,7 @@ In the watch TUI:
 | `↑` / `↓` (or `k` / `j`) | move between exercises |
 | `⏎` | run the selected exercise |
 | `e` | open the exercise in `$VISUAL` / `$EDITOR` (falls back to `vi`) |
-| `h` | toggle the hint |
+| `h` | reveal the next hint (nudge → stronger nudge → answer), then hide |
 | `r` | reset the exercise to its original state |
 | `n` | jump to the next unfinished exercise |
 | `/` | search exercises by name or topic (`⏎` runs the match, `Esc` cancels) |
@@ -78,8 +78,9 @@ streak survive every update.
 ## Getting unstuck
 
 Help escalates so you take only what you need: the `// FIXME` comment in each
-file nudges you toward *what* to do; the hint (`h`, or `./bin/golings hint
-<name>`) shows the actual code; and the [`solution`](https://github.com/madhank93/golings/tree/solution)
+file nudges you toward *what* to do; in watch mode `h` reveals graded hints one
+press at a time, from what the error means to where to change it, before the
+answer; `./bin/golings hint <name>` jumps straight to the answer; and the [`solution`](https://github.com/madhank93/golings/tree/solution)
 branch has the full worked answer for every exercise — e.g.
 `git show solution:exercises/variables/variables1/main.go`. Try the first two
 before peeking.

@@ -633,6 +633,10 @@ A go.mod starts with a module directive naming the module path:
 	module example.com/hello
 
 In a fresh directory, `go mod init example.com/hello` writes it for you."""
+nudge = '''
+`missing module declaration` means go.mod has a `go` line but never says what the module is called. The test imports the package as `example.com/hello`, so the module has to carry exactly that name.'''
+stronger = '''
+In a new project, `go mod init <path>` writes this line for you. Here you add it by hand above the `go` line; the line starts with the same word as the second word of that command.'''
 
 [[exercises]]
 name = "modules2"
@@ -641,6 +645,10 @@ mode = "test"
 hint = """
 Import path = module path + directory. The module is example.com/shop and the
 package lives in ./cart, so the import is "example.com/shop/cart"."""
+nudge = '''
+An import path with no dot in its first element, like `"cart"`, is looked up in the standard library, the same place `fmt` comes from. Go does not search relative to the current folder.'''
+stronger = '''
+An import path for your own code is the module path from the `module` line in go.mod, then a `/`, then the package's folder. The `cart.Total` call does not change: the package is still called `cart`.'''
 
 [[exercises]]
 name = "modules3"
@@ -649,6 +657,10 @@ mode = "test"
 hint = """
 Capitalise the names the tests use: the field celsius → Celsius and the
 function fahrenheit → Fahrenheit. Update every use inside the package too."""
+nudge = '''
+The tests live in a separate package, `temp_test`, so they use `temp` the way any other importer would. Only names starting with an upper-case letter are visible outside their package, and the field and function here both start lower-case.'''
+stronger = '''
+Export two names in `temp.go`, the struct field and the function, spelled the way the test uses them. The function body reads the field too, so rename that use as well.'''
 
 [[exercises]]
 name = "modules4"
@@ -657,6 +669,10 @@ mode = "test"
 hint = """
 Import "example.com/bank/ledger" instead and call ledger.Format(cents). It also
 handles negative balances, which money.Dollars never did."""
+nudge = '''
+A package inside an `internal/` folder can only be imported from under that folder's parent, here `ledger/`. `report.go` sits at the module root, outside it.'''
+stronger = '''
+Do not move `money` out of `internal/`. Use the function `ledger/ledger.go` exports for formatting a balance, changing both the import and the call. It also handles overdrafts, which the `-150` test case checks and `money.Dollars` does not.'''
 
 [[exercises]]
 name = "modules5"
@@ -670,6 +686,10 @@ Add both directives to go.mod:
 	replace example.com/mathx => ./mathx
 
 The version is a placeholder: a replace with a directory ignores it."""
+nudge = '''
+Every import has to come from a module listed in go.mod, and `example.com/mathx` is not listed. The suggested `go get` cannot help: mathx is not published anywhere, it only exists as the local folder `./mathx`.'''
+stronger = '''
+go.mod needs two directives: one declaring the dependency (any placeholder version, since a folder has no version) and one telling the go command to read that module from `./mathx` instead of downloading it. Neither fixes the build alone.'''
 
 [[exercises]]
 name = "modules6"
@@ -678,6 +698,10 @@ mode = "test"
 hint = """
 Import "example.com/units/v2". The package name is still units, so the code
 that calls units.CToF does not change."""
+nudge = '''
+go.mod requires a module, but not under the path `weather.go` imports. Do not run `go get`: the dependency is already there under another name.'''
+stronger = '''
+Compare the import in `weather.go`, the `require` line in go.mod and the `module` line in `units/go.mod`. From v2 on the major version is part of the path. Only the import changes; the package is still `units`, so `units.CToF` stays.'''
 
 [[exercises]]
 name = "modules7"
@@ -686,6 +710,10 @@ mode = "test"
 hint = """
 Ranging over an int arrived in Go 1.22. Raise the go line to at least that —
 the rest of the repo uses go 1.26.0."""
+nudge = '''
+Your installed Go supports `for i := range n`; the module says it is written in an older language version, and the compiler follows the module. Nothing is wrong with `countdown.go`.'''
+stronger = '''
+The fix goes in go.mod. The `go` line sets the language version, and ranging over an int needs 1.22 or later. A `toolchain` line would not change the language version.'''
 
 [[exercises]]
 name = "modules8"
@@ -697,6 +725,10 @@ A blank import links a package in for its side effects only:
 	import _ "example.com/notify/sender/email"
 
 Its init function then runs before Send is ever called."""
+nudge = '''
+It compiles; the test fails because nothing ever registered "email". The email package registers itself in its `init` function, which only runs if the package is part of the program, and nothing imports it.'''
+stronger = '''
+`notify.go` has to import `example.com/notify/sender/email` purely for its side effect; the package exports nothing to call, so a normal import fails with "imported and not used". Go has an import form that binds no name, the one `database/sql` drivers use.'''
 
 [[exercises]]
 name = "modules9"
@@ -711,6 +743,10 @@ List greet next to app in the use directive:
 	)
 
 `go work use ./greet`, run in this directory, makes the same edit."""
+nudge = '''
+app requires the published `greet v1.0.0`, so the go command tries to download it. The workspace only lists `./app`, so it has no idea the greet folder next to it is the code you mean.'''
+stronger = '''
+Edit `go.work`, not `app/go.mod`. Every module in a `use` directive joins the workspace and wins over any published version. A `go work` subcommand run from the modules9 folder can make the edit for you.'''
 
 [[exercises]]
 name = "modules10"
@@ -725,6 +761,10 @@ From the exercise directory:
 
 tidy drops the unused requirement and adds pad as // indirect. The test runs
 `go mod tidy -diff`, which fails while there is anything left to change."""
+nudge = '''
+go.mod no longer matches the imports: it still requires oldfmt, which nothing imports, and never recorded pad, which table uses.'''
+stronger = '''
+Do not edit the require block by hand; the error already names the tool that rewrites go.mod to match the imports. Run it from inside `exercises/modules/modules10`, not the repo root. `TestTidy` fails until that tool has nothing left to change. Local only: there is no go command in the playground.'''
 
 [[exercises]]
 name = "modules11"
@@ -738,6 +778,10 @@ From the exercise directory:
 
 It rewrites vendor/modules.txt and copies slug into vendor/. Re-run it every
 time go.mod changes."""
+nudge = '''
+Because a `vendor/` folder exists, Go builds only from it, after checking that `vendor/modules.txt` records everything go.mod requires. That file is empty.'''
+stronger = '''
+The code and go.mod are fine; `vendor/` is stale. Do not hand-edit modules.txt or reach for `-mod=mod`. Run the `go mod` subcommand that rebuilds vendor/ from go.mod, from inside the modules11 folder. Local only.'''
 
 [[exercises]]
 name = "di1"
@@ -747,6 +791,10 @@ hint = """
 fmt.Fprintf writes formatted output to any io.Writer:
 
 fmt.Fprintf(w, "Hello, %s!", name)"""
+nudge = '''
+`Greet` is handed an `io.Writer` named `w` and never writes to it. The test passes a `*bytes.Buffer`, so whatever Greet writes is what the test reads back.'''
+stronger = '''
+`fmt.Printf` always writes to the screen. The fmt package has a sibling that writes the same formatted text to any `io.Writer` you give it: it takes the writer first and its name starts with F.'''
 
 [[exercises]]
 name = "di2"
@@ -754,6 +802,10 @@ path = "exercises/dependency_injection/di2/main_test.go"
 mode = "test"
 hint = """
 Read the hour with c.Now().Hour() and branch on whether it is < 12."""
+nudge = '''
+`Greeting` never asks the clock for the time. It takes a `Clock` instead of calling `time.Now()` so the test can pass fake clocks stuck at 9:00 and 20:00.'''
+stronger = '''
+Ask the injected clock for the time and read just the hour from that `time.Time`; it has a method for that. Before 12 is morning, anything else is evening.'''
 
 [[exercises]]
 name = "di3"
@@ -764,6 +816,10 @@ Delegate to the injected store, then build the greeting:
 
 g.store.Save(name)
 return "Hi, " + name"""
+nudge = '''
+Two checks fail: the greeting is empty, and nothing was saved. The test handed Greeter an in-memory store when it built it, and counts what lands in it.'''
+stronger = '''
+Greet has two jobs, in order: record the name through the store in Greeter's `store` field, using one of the `Store` methods, then return the greeting. Use the injected store; a new one would hide the save from the test.'''
 
 [[exercises]]
 name = "mock1"
@@ -773,6 +829,10 @@ hint = """
 Only notify when temp is greater than threshold:
 
 if temp > threshold { n.Notify("too hot") }"""
+nudge = '''
+Only the too-hot test fails; the silent test already passes because an empty Alert never sends anything. The spy records every `Notify` call, and the failing test expects exactly one message with exact text.'''
+stronger = '''
+Alert decides whether to call `Notify` on the Notifier it was given. The doc comment says when; the failing test says what text to send. Send it once, only in the hot case.'''
 
 [[exercises]]
 name = "mock2"
@@ -784,6 +844,10 @@ Fetch returns (string, error). Check the error first:
 name, err := f.Fetch(id)
 if err != nil { return "Welcome, guest!" }
 return "Welcome, " + name + "!\""""
+nudge = '''
+Both paths return nothing. The fake answers `Fetch(1)` with "Go" and anything else with an error, so the two tests cover success and failure without a real database.'''
+stronger = '''
+`Fetch` returns a name and an error. Check the error first and fall back to the guest greeting; otherwise build the greeting from the name. Match the expected strings exactly, `!` included.'''
 
 [[exercises]]
 name = "concurrent1"
@@ -795,6 +859,10 @@ We have multiple printers (though these may also be non-functional).
 
 Our goal is to print something, but what exactly should be printed?
 """
+nudge = '''
+The goroutines start and finish, but the buffer is empty: nothing inside them actually writes anything.'''
+stronger = '''
+Look inside the goroutine in `print`, between `mu.Lock()` and `mu.Unlock()`: the write to `buf` is commented out. Restore it with `fmt.Fprintf`, keeping it inside the lock so the shared buffer is written by one goroutine at a time. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "concurrent2"
@@ -808,6 +876,10 @@ Consider a counter as an example: concurrent updates can lead to unexpected resu
 
 Learn more about mutexes to handle this issue: https://pkg.go.dev/sync#Mutex.
 """
+nudge = '''
+The race detector caught 100 goroutines reading and writing `counter` at the same time with nothing coordinating them, so increments can be lost.'''
+stronger = '''
+Protect the `counter++` inside the goroutine in `updateCounter` with a `sync.Mutex`: declare one next to the WaitGroup and hold it (`Lock`/`Unlock`) around the increment. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "concurrent3"
@@ -821,6 +893,10 @@ To prevent panics, avoid sending messages to channels that have been closed.
 
 Note: Channels can be iterated using `for-range` loops.
 """
+nudge = '''
+Only the first message reaches the buffer. The second receive pulls "World" off the channel but throws it away with `_`.'''
+stronger = '''
+In `sendAndReceive`, replace the single-receive-and-`ok` check with a `for ... range messages` loop that writes every value; it stops on its own once the sender calls `close`. Mind the separator: the test wants exactly "Hello World", so add the space between messages, not after the last one. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "channels1"
@@ -831,6 +907,10 @@ Give the channel a buffer so sends do not block:
 
 ch := make(chan int, len(vals))
 """
+nudge = '''
+The test hangs until the 30s timeout. `collect` sends on an unbuffered channel from the same goroutine that would later receive, so the very first send waits forever for a receiver that never comes.'''
+stronger = '''
+Change how `ch` is created in `collect`: `make` takes an optional capacity argument that lets a channel hold values with no receiver ready. Size it so every value in `vals` fits.'''
 
 [[exercises]]
 name = "channels2"
@@ -841,6 +921,10 @@ Drain the receive-only channel with range:
 
 for v := range in { got = append(got, v) }
 """
+nudge = '''
+`consume` returns its empty slice without ever reading from `in`, so the values `produce` sends are never collected.'''
+stronger = '''
+Fill in the FIXME in `consume`: use a `for ... range` over the receive-only channel `in`, appending each value to `got`. The range ends when `produce` closes the channel.'''
 
 [[exercises]]
 name = "select1"
@@ -854,6 +938,10 @@ case v := <-a: return v
 case v := <-b: return v
 }
 """
+nudge = '''
+`firstReady` returns 0 immediately without looking at either channel, so whichever channel holds a value is ignored.'''
+stronger = '''
+Replace the `return 0` in `firstReady` with a `select` statement that has one receive case for `a` and one for `b`, each returning the value it received.'''
 
 [[exercises]]
 name = "select2"
@@ -867,6 +955,10 @@ case v := <-ch: return v, true
 case <-time.After(d): return 0, false
 }
 """
+nudge = '''
+The timeout test hangs: `recvOrTimeout` does a plain `<-ch` receive, and nothing is ever sent on that channel, so it waits forever and `d` is never used.'''
+stronger = '''
+In `recvOrTimeout`, wrap the receive in a `select` and add a second case that receives from a channel which fires after `d` (see `time.After`). Each case returns its own `(value, ok)` pair.'''
 
 [[exercises]]
 name = "select3"
@@ -880,6 +972,10 @@ case v := <-ch: return v, true
 default: return 0, false
 }
 """
+nudge = '''
+The empty-channel test hangs: `tryReceive` does a plain blocking receive, so with nothing to read it waits forever instead of returning right away.'''
+stronger = '''
+In `tryReceive`, put the receive in a `select` and add a `default` case. `default` runs when no other case is ready, which makes the select non-blocking; return `(0, false)` from it.'''
 
 [[exercises]]
 name = "sync1"
@@ -893,6 +989,10 @@ c.mu.Lock()
 defer c.mu.Unlock()
 c.n++
 """
+nudge = '''
+`Inc` modifies `c.n` from 1000 goroutines without holding the mutex, so the race detector flags concurrent reads and writes of the same field.'''
+stronger = '''
+Only `Inc` is unprotected; `Value` already shows the pattern. Take `c.mu` at the top of `Inc` and release it with `defer` before touching `c.n`. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "sync2"
@@ -904,6 +1004,10 @@ sync.Once.Do runs its function only the first time it is called:
 
 c.once.Do(func() { c.loads++ })
 """
+nudge = '''
+Every one of the 50 goroutines runs `c.loads++`, concurrently and unsynchronized, so the load happens many times and races on the field.'''
+stronger = '''
+In `Load`, move the increment into a function passed to the `Config`'s `once` field (`sync.Once` has a single method, `Do`). It runs the body exactly once and makes the other callers wait for it. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "sync3"
@@ -915,6 +1019,10 @@ Increment without a lock using an atomic operation:
 
 atomic.AddInt64(&hits, 1)
 """
+nudge = '''
+`hits++` is a read-modify-write that is not atomic, so goroutines race on `hits`. Reading it with `atomic.LoadInt64` at the end does not make the writes safe.'''
+stronger = '''
+Replace `hits++` in the goroutine with an add from the `sync/atomic` package (already imported) that takes a pointer to `hits`. Every access to `hits` must be atomic, not just the final read. A plain `go test` can pass by luck; the race detector (`-race`) is the real judge.'''
 
 [[exercises]]
 name = "context1"
@@ -925,6 +1033,10 @@ A select can wait on multiple channels at once.
 
 Add `case <-ctx.Done(): return count` so the loop exits when cancelled.
 """
+nudge = '''
+The context is cancelled after 10ms, but the loop never checks it, so it keeps counting forever. Cancellation is cooperative: code has to watch for it.'''
+stronger = '''
+Add a second case to the `select` in `countUntilCancelled` that receives from the channel returned by `ctx.Done()` and returns `count`.'''
 
 [[exercises]]
 name = "context2"
@@ -938,6 +1050,10 @@ case <-time.After(d): return nil
 case <-ctx.Done(): return ctx.Err()
 }
 """
+nudge = '''
+`doWork` sleeps the full second and returns nil, ignoring that the context timed out after 10ms.'''
+stronger = '''
+Replace `time.Sleep(d)` with a `select` that races a timer channel (`time.After(d)`, returning nil) against `ctx.Done()`. When the context wins, return `ctx.Err()`, which is `context.DeadlineExceeded` here.'''
 
 [[exercises]]
 name = "context3"
@@ -949,6 +1065,10 @@ ctx.Value returns interface{}. Use the comma-ok type assertion:
 if u, ok := ctx.Value(userKey).(string); ok { return u }
 return "anonymous"
 """
+nudge = '''
+`userFromContext` always returns an empty string. It never reads the value stored in the context and never falls back to the default.'''
+stronger = '''
+Look the value up with `ctx.Value(userKey)`. It returns `any`, so use a comma-ok type assertion to `string`: return the user when `ok` is true, otherwise return "anonymous".'''
 
 [[exercises]]
 name = "concpat1"
@@ -961,6 +1081,10 @@ for n := range jobs {
     results <- n * n
 }
 """
+nudge = '''
+Every worker calls `wg.Done()` and exits without ever receiving a job, so `wg.Wait()` returns straight away and `results` is closed empty. The producer goroutine is left stuck on its first send.'''
+stronger = '''
+Inside `square`, receive from `jobs` until it is closed (a `for ... range` over the channel) and send each value's square on `results`. `defer wg.Done()` stays as it is.'''
 
 [[exercises]]
 name = "concpat2"
@@ -975,6 +1099,10 @@ for _, c := range chans {
 }
 go func() { wg.Wait(); close(out) }()
 """
+nudge = '''
+Go refuses to compile a local variable that is never used. `merge` declares the `WaitGroup` but never starts the goroutines that need it. Even once it compiles, `out` is never closed, so the test's `range` would block forever.'''
+stronger = '''
+In `merge`, loop over `chans` and start one goroutine per input, each guarded by `wg.Add`/`wg.Done`, that forwards every value into `out`. Then start one more goroutine that calls `wg.Wait()` and closes `out`. It has to be a separate goroutine because `merge` must return `out` before anything drains it.'''
 
 [[exercises]]
 name = "concpat3"
@@ -988,6 +1116,10 @@ for n := range in {
 }
 close(out)
 """
+nudge = '''
+The `double` stage closes its output without reading anything from `in`, so the consumer's loop ends at once with no values. `generate` is left blocked on its first send.'''
+stronger = '''
+In the goroutine inside `double`, `range` over `in` and send each value times two on `out` before the existing `close(out)`. Closing only after the loop is what passes the shutdown down the pipeline.'''
 
 [[exercises]]
 name = "stdlib1"
@@ -999,6 +1131,10 @@ Struct tags map JSON keys to fields:
 Name string `json:"full_name"`
 Age  int    `json:"user_age"`
 """
+nudge = '''
+`json.Unmarshal` succeeded but left both fields at their zero values. It matched no JSON keys, because `full_name` and `user_age` differ from `Name` and `Age` by more than letter case.'''
+stronger = '''
+Add a struct tag to each field of `User` (the backtick `json:"..."` form) naming the JSON key it should map to.'''
 
 [[exercises]]
 name = "stdlib2"
@@ -1009,6 +1145,10 @@ io.Copy streams a Reader into a Writer:
 
 if _, err := io.Copy(&buf, r); err != nil { return "", err }
 """
+nudge = '''
+Nothing reads from `r`, so the buffer is still empty when `readAll` returns its contents.'''
+stronger = '''
+Call `io.Copy` with the buffer's address as the destination and the reader as the source. Return `""` and the error if it fails. `io.EOF` is not reported as an error here.'''
 
 [[exercises]]
 name = "stdlib3"
@@ -1020,6 +1160,10 @@ Sort ascending then reverse:
 slices.Sort(out)
 slices.Reverse(out)
 """
+nudge = '''
+`sortDesc` returns the cloned slice in its original order. Nothing has sorted it yet.'''
+stronger = '''
+Sort `out` in place with the `slices` package. Either call `slices.Sort` and then `slices.Reverse`, or call `slices.SortFunc` with a comparison that puts larger values first (`cmp.Compare` with the arguments swapped).'''
 
 [[exercises]]
 name = "stdlib4"
@@ -1030,6 +1174,10 @@ The layout string IS the reference date Mon Jan 2 2006:
 
 return time.Parse("2006-01-02", s)
 """
+nudge = '''
+`0001-01-01` is the zero `time.Time`, which means `parseDate` never parsed the input. It returns the zero value with a nil error.'''
+stronger = '''
+Return the result of `time.Parse`. The layout argument describes Go's reference date (Jan 2 2006) written in the YYYY-MM-DD shape. Strftime codes and `YYYY` placeholders do not work.'''
 
 [[exercises]]
 name = "stdlib5"
@@ -1040,6 +1188,10 @@ strconv.Atoi parses a base-10 int:
 
 n, err := strconv.Atoi(s); if err != nil { return 0, err }; return n*2, nil
 """
+nudge = '''
+`parseAndDouble` always returns `0, nil`. Valid input is never converted, and invalid input never produces an error.'''
+stronger = '''
+Import `strconv` and use `strconv.Atoi` to turn the string into an int. If it returns an error, pass that error back. Otherwise return the doubled number.'''
 
 [[exercises]]
 name = "stdlib6"
@@ -1051,6 +1203,10 @@ Compile once, then match:
 re := regexp.MustCompile(`^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$`)
 return re.MatchString(s)
 """
+nudge = '''
+`isEmail` returns false for every input, so the valid address is rejected. Only that check fails because the other two expect false anyway.'''
+stronger = '''
+Import `regexp`, compile a pattern with `regexp.MustCompile` (ideally once, as a package-level var), and return its `MatchString` result. Anchor the pattern with `^`...`$` and require a literal `\.` after the `@` part so that `a@b` fails.'''
 
 [[exercises]]
 name = "stdlib7"
@@ -1062,6 +1218,10 @@ time.Time's IsZero method) instead:
 
 At time.Time `json:"at,omitzero"`
 """
+nudge = '''
+`omitempty` never treats a struct as empty, so an unset `time.Time` is still written out as year 1. The set-time test already passes. Only the unset case is wrong.'''
+stronger = '''
+Change only the option in the `At` field's json tag to the one added in Go 1.24 that asks the type whether it is the zero value (`time.Time` has an `IsZero` method). Leave the field type alone; a pointer is not needed.'''
 
 [[exercises]]
 name = "reflect1"
@@ -1071,6 +1231,10 @@ hint = """
 TypeOf gives a reflect.Type; Kind() names the underlying kind:
 
 return reflect.TypeOf(x).Kind().String()"""
+nudge = '''
+`describe` returns an empty string for every input. The test expects the name of the value's underlying kind, not its type name.'''
+stronger = '''
+Import `reflect`. Get the value's `reflect.Type` with `reflect.TypeOf`, ask it for its `Kind()`, and turn that into a string. The `Kind` type has a `String` method.'''
 
 [[exercises]]
 name = "reflect2"
@@ -1083,6 +1247,10 @@ v := reflect.ValueOf(x)
 for i := 0; i < v.NumField(); i++ {
     if v.Field(i).Kind() == reflect.String { fn(v.Field(i).String()) }
 }"""
+nudge = '''
+`walk` never looks inside `x`, so `fn` is never called. The test wants it called once for each string field, in declaration order.'''
+stronger = '''
+Import `reflect` and wrap `x` with `reflect.ValueOf`. Loop from 0 to `NumField()`, check each `Field(i)` with `Kind() == reflect.String`, and pass that field's `String()` value to `fn`.'''
 
 [[exercises]]
 name = "files1"
@@ -1094,6 +1262,10 @@ Whole-file I/O:
 os.WriteFile(path, []byte(content), 0o644)
 data, err := os.ReadFile(path); return string(data), err
 """
+nudge = '''
+Go will not compile a file that imports a package and never uses it. `saveAndLoad` is still a stub, so `os` is never used.'''
+stronger = '''
+In `saveAndLoad`, write the content with `os.WriteFile` (convert it to `[]byte` and give a permission mode such as `0o644`), then read it back with `os.ReadFile` and return it as a string. Check and return the error from each call.'''
 
 [[exercises]]
 name = "files2"
@@ -1104,6 +1276,10 @@ Scan advances one line per call:
 
 for scanner.Scan() { n++ }
 """
+nudge = '''
+The scanner is created but never used, and Go refuses to compile an unused local variable. Even if it compiled, `n` would stay 0 because no lines are read.'''
+stronger = '''
+Loop on `scanner.Scan()`, which moves to the next line and returns false when the input runs out, and increment `n` once per pass.'''
 
 [[exercises]]
 name = "http1"
@@ -1116,6 +1292,10 @@ resp, err := http.Get(url); if err != nil { return "", err }
 defer resp.Body.Close()
 body, err := io.ReadAll(resp.Body); return string(body), err
 """
+nudge = '''
+The local test server answers "pong", but `fetch` never contacts it: it returns an empty string and a nil error, so the test sees no body at all.'''
+stronger = '''
+In `fetch`, make a GET request with the `net/http` package, propagate any error, close the response body with `defer`, and read the whole body with an `io` helper before converting it to a string.'''
 
 [[exercises]]
 name = "httpsrv1"
@@ -1127,6 +1307,10 @@ Read the query parameter and default it, then write the greeting:
 name := r.URL.Query().Get("name")
 if name == "" { name = "world" }
 fmt.Fprintf(w, "Hello, %s!", name)"""
+nudge = '''
+The handler runs but writes nothing to the `ResponseWriter`, so the recorder captures an empty body for both requests.'''
+stronger = '''
+In `greetHandler`, read the `name` value from the request URL's query (`r.URL.Query()`), fall back to "world" when it is empty, and write the formatted greeting to `w` with an `fmt.Fprint*` function.'''
 
 [[exercises]]
 name = "httpsrv2"
@@ -1138,6 +1322,10 @@ Register the method+path pattern, and read the wildcard with PathValue:
 mux.HandleFunc("GET /users/{id}", userHandler)
 // inside userHandler:
 fmt.Fprintf(w, "user %s", r.PathValue("id"))"""
+nudge = '''
+A 404 for every request means the mux has no route matching `/users/42`; nothing is registered yet. The 405 test only passes once a route bound to a specific method exists.'''
+stronger = '''
+In `newMux`, register `userHandler` with `mux.HandleFunc` using a Go 1.22 pattern that combines the GET method with a path containing an `{id}` wildcard; inside `userHandler`, read that wildcard with `r.PathValue` and write "user <id>" to `w`.'''
 
 [[exercises]]
 name = "httpsrv3"
@@ -1150,6 +1338,10 @@ var req echoReq
 json.NewDecoder(r.Body).Decode(&req)
 w.Header().Set("Content-Type", "application/json")
 json.NewEncoder(w).Encode(echoResp{Greeting: "Hello, " + req.Name + "!"})"""
+nudge = '''
+The response has no Content-Type header and an empty body, so the test's JSON decoder hits EOF immediately: the handler never reads the request or writes a reply.'''
+stronger = '''
+In `echoHandler`, decode `r.Body` into an `echoReq` with `json.NewDecoder`, set the Content-Type header via `w.Header().Set` before writing, then encode an `echoResp` to `w` with `json.NewEncoder`.'''
 
 [[exercises]]
 name = "httpsrv4"
@@ -1160,6 +1352,10 @@ Set the header, then call the next handler so the chain continues:
 
 w.Header().Set("X-App", value)
 next.ServeHTTP(w, r)"""
+nudge = '''
+The middleware's inner handler is empty: it neither sets the header nor passes the request on, so the chain stops at the wrapper and the final handler never runs.'''
+stronger = '''
+Inside the `http.HandlerFunc` in `withHeader`, set `X-App` on `w.Header()` to `value` first (headers must be set before the next handler writes the status), then forward the request by calling `ServeHTTP` on `next`.'''
 
 [[exercises]]
 name = "cli1"
@@ -1172,6 +1368,10 @@ name := fs.String("name", "world", "")
 count := fs.Int("count", 1, "")
 fs.Parse(args)
 return *name, *count"""
+nudge = '''
+Both the explicit flags and the defaults come back as zero values, so no flags are defined on the FlagSet and the args are never parsed.'''
+stronger = '''
+On `fs`, define a string flag `name` (default "world") and an int flag `count` (default 1) with `fs.String`/`fs.Int`, call `fs.Parse(args)`, and return the values. Those functions return pointers, so dereference them.'''
 
 [[exercises]]
 name = "cli2"
@@ -1182,6 +1382,10 @@ Parse, then read the first leftover positional:
 
 fs.Parse(args)
 return fs.Arg(0)"""
+nudge = '''
+`firstArg` always returns "", which happens to satisfy the no-positional case but not `[-v build ./...]`. The args are never parsed, so the FlagSet has no leftovers to report.'''
+stronger = '''
+Call `fs.Parse(args)` first, then read the first positional argument left over after the flags with `fs.Arg` (it returns "" when there is none, which covers the second test).'''
 
 [[exercises]]
 name = "testadv1"
@@ -1197,6 +1401,10 @@ case n%5 == 0: return "Buzz"
 default: return strconv.Itoa(n)
 }
 """
+nudge = '''
+Each table row runs as its own `t.Run` subtest, so you see one failure per case. They all fail because `fizzbuzz` returns "" for every input.'''
+stronger = '''
+Implement the rules in `fizzbuzz` with the `%` operator, testing divisibility by 15 before 3 and 5 so "FizzBuzz" isn't shadowed, and fall back to `strconv.Itoa` (add the `strconv` import) for plain numbers.'''
 
 [[exercises]]
 name = "testadv2"
@@ -1209,6 +1417,10 @@ r := []rune(s)
 for i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 { r[i], r[j] = r[j], r[i] }
 return string(r)
 """
+nudge = '''
+Plain `go test` runs the fuzz seed corpus, and seed #3 contains multibyte characters. Reversing the string byte by byte splits each character's UTF-8 encoding, so the result is no longer valid UTF-8.'''
+stronger = '''
+In `reverse`, convert the string to a slice of `rune` instead of `[]byte`, keep the same two-index swap loop, and convert back to `string`.'''
 
 [[exercises]]
 name = "testadv3"
@@ -1221,6 +1433,10 @@ if _, err := w.Write([]byte("pong")); err != nil {
     http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 """
+nudge = '''
+The status is already 200 because a handler that writes nothing defaults to OK, but the body the recorder captured is empty.'''
+stronger = '''
+In `pingHandler`, write "pong" as bytes with `w.Write`, check the returned error, and report it with `http.Error` and a 500 status if it fails.'''
 
 [[exercises]]
 name = "testadv4"
@@ -1231,6 +1447,10 @@ Implement the sum; the benchmark uses b.Loop():
 
 total := 0; for _, n := range nums { total += n }; return total
 """
+nudge = '''
+Plain `go test` runs only `TestSumSlice`, not the benchmark, and it fails because `sumSlice` always returns 0.'''
+stronger = '''
+In `sumSlice`, keep a running total, add each element in a `for ... range` loop over `nums`, and return it. Leave the `b.Loop()` benchmark as it is and run it separately with `go test -bench=.`.'''
 
 [[exercises]]
 name = "applied1"
@@ -1242,6 +1462,10 @@ Implement the remaining sort.Interface methods:
 func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
 func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 """
+nudge = '''
+`sort.Sort` takes a `sort.Interface`, which needs three methods. `ByAge` has only `Len`, so it doesn't satisfy the interface and the test won't compile. `Swap` is missing too; the compiler just reports the first gap.'''
+stronger = '''
+Add two value-receiver methods on `ByAge` with the signatures `sort.Interface` expects: `Less(i, j int) bool` comparing the `Age` fields, and `Swap(i, j int)` exchanging the two elements with tuple assignment.'''
 
 [[exercises]]
 name = "applied2"
@@ -1257,6 +1481,10 @@ s.m[key] = v
 """
 
 # ── type_aliases ──────────────────────────────────────────────────────────────
+nudge = '''
+`Set` is empty, so after 100 goroutines "set" the key, `Get` still returns `ErrNotFound`. Whatever you write in `Set` will run from many goroutines at once.'''
+stronger = '''
+In `Set`, mirror `Get`: lock `s.mu`, `defer` the unlock, then assign into `s.m`. A map write without the lock can still pass a plain run by luck; the `-race` detector is the real judge here.'''
 [[exercises]]
 name = "typealias1"
 path = "exercises/type_aliases/typealias1/main.go"
@@ -1265,6 +1493,10 @@ hint = """
 type Celsius float64 is a distinct type. To pass it to a func taking float64,
 convert explicitly at the call site: toFahrenheit(float64(boiling)).
 """
+nudge = '''
+`Celsius` is a defined type whose underlying type is `float64`, but Go treats it as a distinct type, so it can't be passed where a plain `float64` is expected without a conversion.'''
+stronger = '''
+At the `toFahrenheit` call in `main`, apply an explicit type conversion to `boiling` (the `T(x)` form) so the argument is a `float64`. Leave the function signature alone.'''
 
 [[exercises]]
 name = "typealias2"
@@ -1274,6 +1506,10 @@ hint = """
 Add a method: func (c Celsius) String() string { return fmt.Sprintf("%g°C", float64(c)) }
 Use float64(c) inside — fmt.Sprint(c) would recurse.
 """
+nudge = '''
+`fmt.Sprint` prints `Celsius` like its underlying `float64` because the type has no `String` method, so fmt has no custom format to use.'''
+stronger = '''
+Give `Celsius` a `String() string` method so it satisfies `fmt.Stringer`, formatting the number with `%g` plus the °C suffix. Convert the receiver to `float64` inside; formatting `c` itself would call `String` again and recurse forever.'''
 
 [[exercises]]
 name = "typealias3"
@@ -1285,6 +1521,10 @@ same type as byte — so it passes to asByte with no conversion.
 """
 
 # ── iterators ─────────────────────────────────────────────────────────────────
+nudge = '''
+As declared, `MyByte` is a new defined type with `byte` as its underlying type, not the same type as `byte`, so it can't be passed to `asByte` without a conversion.'''
+stronger = '''
+Change the `MyByte` declaration from a type definition to a type alias (the declaration form with `=`) so it names the same type as `byte`. Don't add a conversion at the call site; the test is checking for the alias.'''
 [[exercises]]
 name = "iter1"
 path = "exercises/iterators/iter1/main_test.go"
@@ -1294,6 +1534,10 @@ Only forward values that pass the predicate:
 
 if keep(v) { if !yield(v) { return } }
 """
+nudge = '''
+Every element of the source came out unchanged, so `Filter` is not filtering anything. The `keep` predicate is passed in but never consulted.'''
+stronger = '''
+Inside the `for v := range seq` loop, make the existing `yield` call conditional on the predicate `keep(v)`. Keep the `if !yield(v) { return }` early-exit shape so a consumer that stops early is still honoured.'''
 
 [[exercises]]
 name = "iter2"
@@ -1303,6 +1547,10 @@ hint = """
 iter.Seq2[K, V] yields (K, V) pairs. For Enumerate the key is the index and the
 value is the element: yield(i, v), not yield(v, i).
 """
+nudge = '''
+The indexes and values are swapped: the loop's first variable received the elements and the second received the positions. With `iter.Seq2[K, V]`, the first argument to `yield` becomes the first range variable.'''
+stronger = '''
+Look at the argument order of the `yield` call inside `Enumerate`. For an (index, value) iterator, the index from `range s` must be passed first.'''
 
 [[exercises]]
 name = "iter3"
@@ -1313,6 +1561,10 @@ Range the pairs and yield only the value, producing an iter.Seq[V]:
 
 for _, v := range seq { if !yield(v) { return } }
 """
+nudge = '''
+`slices.Collect` got an iterator that never calls `yield`, so it collected nothing. `valuesOf` currently ignores its input entirely.'''
+stronger = '''
+In `valuesOf`, range over the `iter.Seq2` with two loop variables, discard the key, and pass only the value to `yield`. Stop early with `return` if `yield` returns false.'''
 
 [[exercises]]
 name = "iter4"
@@ -1329,6 +1581,10 @@ if !ok { break }
 """
 
 # ── maps_package ──────────────────────────────────────────────────────────────
+nudge = '''
+Every pair uses b's first element, and the result runs past b's end. Each `for y := range b` starts b over from the beginning, so a push iterator can't be walked in step with another.'''
+stronger = '''
+Turn b into a pull iterator once, before the outer loop, with `iter.Pull`, and `defer` its stop function. Inside the loop, call next once per element of a and stop when it reports `ok == false`.'''
 [[exercises]]
 name = "mapspkg1"
 path = "exercises/maps_package/mapspkg1/main_test.go"
@@ -1338,6 +1594,10 @@ Assigning a map shares it. Use maps.Clone for an independent copy (import "maps"
 
 cp := maps.Clone(settings)
 """
+nudge = '''
+The caller's map gained a "theme" key. Assigning one map variable to another copies only the reference, so `cp` and `settings` are the same map.'''
+stronger = '''
+Make `cp` an independent shallow copy of `settings` using the `maps` package (add the import). Then the write to `cp` no longer reaches the caller.'''
 
 [[exercises]]
 name = "mapspkg2"
@@ -1350,6 +1610,10 @@ maps.DeleteFunc(m, func(k string, v int) bool { return v <= 0 })
 """
 
 # ── structured_logging (slog) ─────────────────────────────────────────────────
+nudge = '''
+The expired entries (`b:0`, `d:-1`) are still in the map. The loop collects their keys into `expired`, but nothing ever deletes them.'''
+stronger = '''
+Replace the collect-keys loop in `dropExpired` with a single call to `maps.DeleteFunc` (import `maps`). Pass a predicate over `(k, v)` that reports true for a TTL that is zero or below.'''
 [[exercises]]
 name = "slog1"
 path = "exercises/structured_logging/slog1/main_test.go"
@@ -1359,6 +1623,10 @@ The handler's Level filters records. Set it to slog.LevelInfo so Info appears:
 
 &slog.HandlerOptions{Level: slog.LevelInfo}
 """
+nudge = '''
+Nothing was written to the buffer at all. The handler's minimum level is above Info, so it silently drops the record.'''
+stronger = '''
+Look at the `slog.HandlerOptions` passed to `slog.NewTextHandler` in `logInfo`. Lower its `Level` so Info-level records pass the filter.'''
 
 [[exercises]]
 name = "slog2"
@@ -1369,6 +1637,10 @@ With() returns a NEW logger — assign it back:
 
 logger = logger.With("service", "api")
 """
+nudge = '''
+The log line was written, but without `service=api`. `With` doesn't change the logger you call it on. It returns a new logger, and that result is being thrown away.'''
+stronger = '''
+In `logWithService`, keep the logger returned by `logger.With(...)`, for example by assigning it back to `logger`, and log through that one.'''
 
 [[exercises]]
 name = "slog3"
@@ -1382,6 +1654,10 @@ return nil
 """
 
 # ── goroutine_safety ──────────────────────────────────────────────────────────
+nudge = '''
+The logger calls your handler for each record, but `Handle` returns without storing anything, so the slice stays empty.'''
+stronger = '''
+In `MemHandler.Handle`, append the record's `Message` field to the slice that `h.msgs` points to. Dereference the pointer so the caller's slice changes, then return nil.'''
 [[exercises]]
 name = "safety1"
 path = "exercises/goroutine_safety/safety1/main_test.go"
@@ -1391,6 +1667,10 @@ hint = """
 Add a sync.RWMutex field. Lock/Unlock around the write in Inc; RLock/RUnlock
 around the read in Value.
 """
+nudge = '''
+The race detector caught two goroutines touching `c.n` at the same time with no synchronization: `c.n++` is a read and a write, not one atomic step. The count can come out wrong, and the race itself fails the exercise.'''
+stronger = '''
+Add a `sync.RWMutex` field to `Counter`. Take the exclusive lock (`Lock`/`Unlock`) around the write in `Inc` and the shared read lock (`RLock`/`RUnlock`) around the read in `Value`. A plain run can pass by luck, so `go test -race` is the real judge.'''
 
 [[exercises]]
 name = "safety2"
@@ -1401,6 +1681,10 @@ hint = """
 Replace the map field with a sync.Map. Set uses m.Store(name, id); Get uses
 v, ok := m.Load(name) then a v.(int) type assertion.
 """
+nudge = '''
+Fifty goroutines write to one plain Go map at once. Built-in maps aren't safe for concurrent writes: the race detector flags it, and without the detector it can crash with `concurrent map writes`.'''
+stronger = '''
+Change `Registry.m` to a `sync.Map` and update `NewRegistry`, `Set` and `Get` to match, using its `Store` and `Load` methods. `Load` returns `any`, so `Get` needs a type assertion to `int`. A plain run can pass by luck, so the race detector is the real judge.'''
 
 [[exercises]]
 name = "safety3"
@@ -1412,6 +1696,10 @@ once — delete the close(ch) inside the worker goroutine.
 """
 
 # ── synctest ──────────────────────────────────────────────────────────────────
+nudge = '''
+A channel can be closed only once. `drain` already closes `ch` after the last send, and then every worker closes it again when it finishes, so the second close panics.'''
+stronger = '''
+Look inside the `wg.Go` worker closure. The workers only receive from `ch` and don't own it, so closing is the sending owner's job alone, and that close already happens above.'''
 [[exercises]]
 name = "synctest1"
 path = "exercises/synctest/synctest1/main_test.go"
@@ -1421,6 +1709,10 @@ synctest.Wait() only works inside a bubble. Wrap the whole body in:
 
 synctest.Test(t, func(t *testing.T) { ... })
 """
+nudge = '''
+`synctest.Wait()` panicked because the test goroutine isn't inside a synctest bubble. Wait has meaning only for goroutines started inside a bubble.'''
+stronger = '''
+Move the whole test body into the function you pass to `synctest.Test`, which takes `t` and a `func(*testing.T)`. Then the goroutines and the `Wait` call all run inside the bubble.'''
 
 [[exercises]]
 name = "synctest2"
@@ -1432,6 +1724,10 @@ add `<-done` — so the sleeper's virtual hour elapses.
 """
 
 # ── http_server_advanced ──────────────────────────────────────────────────────
+nudge = '''
+No virtual time passed because the test goroutine never blocked. It read the clock straight away and returned while the sleeper was still asleep, so the bubble reports that goroutine as left blocked.'''
+stronger = '''
+Before the `time.Since(start)` check, make the test goroutine wait for the sleeper by receiving from the `done` channel. Once every goroutine in the bubble is blocked, the fake clock jumps ahead.'''
 [[exercises]]
 name = "httpadv1"
 path = "exercises/http_server_advanced/httpadv1/main_test.go"
@@ -1441,6 +1737,10 @@ Wrap the handler with cross-origin protection:
 
 return http.NewCrossOriginProtection().Handler(h)
 """
+nudge = '''
+A POST marked `Sec-Fetch-Site: cross-site` went straight through to the handler. `protect` returns the handler unwrapped, so nothing checks where the request came from.'''
+stronger = '''
+In `protect`, wrap `h` in Go 1.25's `http.CrossOriginProtection` middleware. Build one with its constructor and use its `Handler` method.'''
 
 [[exercises]]
 name = "httpadv2"
@@ -1450,6 +1750,10 @@ hint = """
 PathValue's argument must match a {wildcard} in the pattern exactly. Use
 r.PathValue("postID"), not "post_id".
 """
+nudge = '''
+The route matched, but `PathValue` returned an empty string. It returns "" for any name that isn't a `{wildcard}` in the registered pattern.'''
+stronger = '''
+Compare the name passed to `r.PathValue` with the wildcard names in the `"GET /users/{id}/posts/{postID}"` pattern. They must match exactly, including case and spelling.'''
 
 [[exercises]]
 name = "httpadv3"
@@ -1462,6 +1766,10 @@ pr.SetURL(target)
 """
 
 # ── unsafe_pkg ────────────────────────────────────────────────────────────────
+nudge = '''
+The proxy tried to send the request with an empty URL scheme and host. `Rewrite` never points the outbound request at the backend, so it has nowhere to go.'''
+stronger = '''
+Inside the `Rewrite` func, set the outbound request's destination to `target` with the `httputil.ProxyRequest` helper method made for this, which also keeps the incoming path.'''
 [[exercises]]
 name = "unsafe1"
 path = "exercises/unsafe_pkg/unsafe1/main_test.go"
@@ -1471,6 +1779,10 @@ unsafe.Offsetof reports a field's byte offset:
 
 return unsafe.Offsetof(Record{}.C)
 """
+nudge = '''
+The function returns a hard-coded 0, but C sits after a byte and an int64, so padding and alignment push it to byte 16. You need to ask the compiler for the real layout rather than guess it.'''
+stronger = '''
+Change the return in `offsetOfC`. `unsafe.Offsetof` takes a field selector expression (a struct value followed by `.FieldName`) and yields a compile-time `uintptr` constant.'''
 
 [[exercises]]
 name = "unsafe2"
@@ -1483,6 +1795,10 @@ return unsafe.String(unsafe.SliceData(b), len(b))
 """
 
 # ── profiling ─────────────────────────────────────────────────────────────────
+nudge = '''
+The string has the right contents, but `string(b)` allocates a fresh copy, so its data pointer differs from the slice's. The test compares those two pointers.'''
+stronger = '''
+Replace the `string(b)` conversion in `bytesToString`. Build the string from the slice's data pointer and length using `unsafe.String` together with `unsafe.SliceData`.'''
 [[exercises]]
 name = "pprof1"
 path = "exercises/profiling/pprof1/main_test.go"
@@ -1492,6 +1808,10 @@ The profile is only flushed on stop. Add it right after StartCPUProfile:
 
 defer pprof.StopCPUProfile()
 """
+nudge = '''
+Sampling starts, but the CPU profile is only written to the writer when profiling stops. Nothing stops it, so the buffer stays empty.'''
+stronger = '''
+In `captureCPUProfile`, right after `StartCPUProfile` succeeds, make sure the matching `pprof.StopCPUProfile` call runs when the function returns, before `work()` is called. A `defer` does this.'''
 
 [[exercises]]
 name = "pprof2"
@@ -1504,6 +1824,10 @@ when the heap shrinks:
 
 return int64(after.HeapAlloc) - int64(before.HeapAlloc)
 """
+nudge = '''
+Both MemStats snapshots are taken correctly, but the function ignores them and reports 0, so the 1 MiB allocation looks free.'''
+stronger = '''
+Return the difference in `HeapAlloc` between `after` and `before`. Those fields are `uint64`, so convert each one to `int64` before you subtract, or a heap that shrank wraps around to a huge positive number.'''
 
 [[exercises]]
 name = "pprof3"
@@ -1514,6 +1838,10 @@ The pprof handlers live on http.DefaultServeMux. Forward the prefix:
 
 mux.Handle("/debug/pprof/", http.DefaultServeMux)
 """
+nudge = '''
+The blank import of `net/http/pprof` registered its handlers, but only on `http.DefaultServeMux`. This server uses its own mux, which only knows `/healthz`.'''
+stronger = '''
+In `newDebugServer`, register the `/debug/pprof/` subtree pattern (trailing slash) on `mux` with `mux.Handle`, and point it at the default mux. `http.DefaultServeMux` is itself an `http.Handler`.'''
 
 [[exercises]]
 name = "logingest1"
@@ -1530,6 +1858,10 @@ Use slices.Contains(Levels, e.Level) for the level check, and e.At.IsZero() for
 the timestamp — comparing time.Time with == also compares the monotonic clock
 reading and the location pointer.
 """
+nudge = '''
+`Validate` returns nil for every event, so all the malformed cases (empty source, unknown or empty level, empty message, zero time) get through.'''
+stronger = '''
+In `Event.Validate` in event.go, check each field in turn and return `fmt.Errorf` with the `%w` verb wrapping `ErrInvalidEvent`, naming the field in the text. Use `slices.Contains` against `Levels` and `time.Time.IsZero` rather than `==` for the timestamp.'''
 
 [[exercises]]
 name = "logingest2"
@@ -1550,6 +1882,10 @@ return slices.Clone(...) — handing back s.events[source] hands back the store'
 own backing array — and []Event{} rather than nil for an unknown source, so the
 stage-three JSON encoder emits [] instead of null.
 """
+nudge = '''
+`Add` neither validates nor stores anything, and `Len` always says 0. `BySource` returns nil for an unknown source and, for a known one, hands back the store's own slice without any locking.'''
+stronger = '''
+In store.go, `Add` should call `e.Validate()` before taking `s.mu.Lock` (released with defer) and then append. `BySource` and `Len` take `s.mu.RLock`. `BySource` should return a `slices.Clone` of the stored slice, or an empty non-nil slice for an unknown source.'''
 
 [[exercises]]
 name = "logingest3"
@@ -1568,6 +1904,10 @@ decode failure as 400, and use errors.Is(err, ErrInvalidEvent) to turn a
 rejected event into 400 rather than 500; success is w.WriteHeader(201).
 In handleBySource, read the wildcard with r.PathValue("source").
 """
+nudge = '''
+Every request gets 404 because `NewServer` never registers a route on its mux. The handler bodies are empty as well, so once routing works they still write no status codes and no JSON.'''
+stronger = '''
+In server.go, register both handlers in `NewServer` with Go 1.22 `"METHOD /path/{wildcard}"` patterns; the method in the pattern is what gives you the 405. In `handleIngest`, use `json.NewDecoder`, `errors.Is(err, ErrInvalidEvent)` and `w.WriteHeader`. In `handleBySource`, use `r.PathValue`, set the Content-Type header, and use `json.NewEncoder`.'''
 
 [[exercises]]
 name = "logingest4"
@@ -1592,6 +1932,10 @@ Submit is p.events <- e. Close must do both halves, in this order:
 close(p.events) so the workers' range loops end, then p.wg.Wait() so Close does
 not return while events are still in flight. Rejected is p.rejected.Load().
 """
+nudge = '''
+No worker goroutines are started, `Submit` throws the event away, `Close` does nothing, and `Rejected` always returns 0. Nothing ever reaches the store.'''
+stronger = '''
+In pool.go, `NewPool` starts `workers` goroutines with `p.wg.Go`. Each one ranges over `p.events`, calls `p.store.Add`, and counts failures on the atomic counter. `Submit` sends on the channel. `Close` closes the channel first and then waits on the WaitGroup, in that order. `Rejected` reads the counter with `Load`.'''
 
 [[exercises]]
 name = "logingest5"
@@ -1621,6 +1965,10 @@ The shutdown context must derive from context.Background(), not from ctx — ctx
 is already cancelled there, so a context derived from it is born expired and
 Shutdown would cut off the in-flight requests you are trying to protect.
 """
+nudge = '''
+`Serve` returns nil straight away without ever calling `srv.Serve`, so nothing accepts connections on the listener. Each test waits about 3 seconds for readiness and then gives up.'''
+stronger = '''
+In shutdown.go, run `srv.Serve(ln)` in a goroutine that reports its result on a channel buffered by one, then `select` on that channel and `ctx.Done()`. Treat `http.ErrServerClosed` as success using `errors.Is`. On cancellation, call `srv.Shutdown` with a `context.WithTimeout` built from `context.Background()`, not from the already-cancelled ctx.'''
 
 [[exercises]]
 name = "logingest6"
@@ -1642,6 +1990,10 @@ Start the recorder at 200, not 0: a handler that writes a body without calling
 WriteHeader still sends 200. Log once, after next.ServeHTTP returns, with
 log.Info("request", "method", ..., "path", ..., "status", ..., "duration", ...).
 """
+nudge = '''
+The `INFO hello` text on stderr comes from `slog.Default()`: `NewLogger` ignores both the writer and the level. `WithLogging` returns `next` unwrapped, so no request is ever logged.'''
+stronger = '''
+In logging.go, `NewLogger` builds a logger with `slog.New` around a `slog.NewJSONHandler` that takes a `slog.HandlerOptions` level. `statusRecorder.WriteHeader` must store the code and also forward it. `WithLogging` returns an `http.HandlerFunc` that times the request, wraps w in a recorder that starts at `http.StatusOK`, and logs one `"request"` record at Info after `next.ServeHTTP` returns.'''
 
 [[exercises]]
 name = "logingest7"
@@ -1661,6 +2013,10 @@ and the length check is what stops parts[2] from panicking on short input.
 Trim each field with strings.TrimSpace, stamp At from the `at` argument, then
 let e.Validate() decide — returning its error keeps errors.Is working.
 """
+nudge = '''
+`ParseLine` returns the zero Event with a nil error for every input. Good lines come back empty, and bad lines are accepted. The fuzz seeds catch the invariant break: it reports success but returns an event that `Validate` rejects.'''
+stronger = '''
+In parse.go, split with `strings.SplitN` (capped at three parts) rather than `strings.Split`, and check the part count before indexing so short input cannot panic. Trim each field with `strings.TrimSpace`, set `At` from the argument, and return whatever `e.Validate()` returns so that `errors.Is` still matches `ErrInvalidEvent`.'''
 
 [[exercises]]
 name = "logingest8"
@@ -1683,6 +2039,10 @@ those five cover everything. For NewService, mount the stage-three Server at
 matching pattern, so /debug/pprof/ beats the catch-all — then wrap the whole
 mux in WithLogging so profile requests get logged too.
 """
+nudge = '''
+`WithPprof` returns the mux untouched, so every profile path gives 404. `NewService` returns only the bare stage-three Server, with no profiles and no logging.'''
+stronger = '''
+In profiling.go, import `net/http/pprof` under its normal name (not a blank import) and register `pprof.Index`, `Cmdline`, `Profile`, `Symbol` and `Trace` under `PprofPrefix` with `mux.HandleFunc`. In `NewService`, mount `NewServer(store)` at `/` on a new mux, pass that mux to `WithPprof`, and put `WithLogging` outermost.'''
 
 [[exercises]]
 name = "tcp1"
@@ -1696,6 +2056,10 @@ net.Conn is an io.ReadWriteCloser, so the usual readers work on it:
 Compare line against "PING\\n" — ReadString keeps the delimiter — then
 conn.Write([]byte("PONG\\n")). The deferred Close is what the client sees as
 EOF; without it the test waits for its deadline instead."""
+nudge = '''
+The client sent `PING` and got EOF instead of a reply: `ServeOnce` accepts the connection, never reads from it, and closes it straight away. The connection reset in the second test is the same thing seen from the client side.'''
+stronger = '''
+Replace the FIXME in `ServeOnce`: use the `bufio.Reader` you already build to call `ReadString('\n')`, return any error, and write `PONG\n` to `conn` when the line is `PING\n`. `ReadString` keeps the delimiter, so compare against it. Keep the deferred `Close`, since that close is how the client sees the end.'''
 
 [[exercises]]
 name = "tcp2"
@@ -1719,6 +2083,10 @@ is what reassembles a command split over two writes:
 	}
 
 A new bufio.Reader per iteration would throw away the buffered leftovers."""
+nudge = '''
+`Handle` answers the first command and then returns, which closes the connection, so the client's second read hits EOF. It also echoes `QUIT` back instead of treating it as the end of the conversation.'''
+stronger = '''
+Put the read and reply in `Handle` inside a `for` loop, and create the `bufio.Reader` once, before the loop, so a command split across two writes gets put back together. A read error (the client closed) returns nil, and a trimmed command equal to `QUIT` returns before anything is echoed.'''
 
 [[exercises]]
 name = "tcp3"
@@ -1735,6 +2103,10 @@ for { conn, err := ln.Accept(); ... } — and the interesting part is the error:
 	}
 
 Anything else is a real failure. Do not compare err.Error() against a string."""
+nudge = '''
+The first connection gets its reply, then `Serve` returns. Nobody calls `Accept` again, so the second client's connection sits in the listener's queue unanswered until its 5-second deadline runs out.'''
+stronger = '''
+Wrap the accept, answer, close sequence in `Serve` in a `for` loop. When `Accept` fails, check `errors.Is(err, net.ErrClosed)`: that is a normal shutdown and returns nil, and any other error is returned as is. Remove the final `errors.New` return.'''
 
 [[exercises]]
 name = "tcp4"
@@ -1754,6 +2126,10 @@ Move the handler into a goroutine and keep the WaitGroup honest:
 Add before starting, Done inside. The deferred wg.Wait() at the top of Serve
 then keeps it from returning while a handler is still writing. Counter.Next is
 already locked — leave it that way, the race detector is watching."""
+nudge = '''
+Six slow clients at 300ms each took 1.8s in total, so they were served one after another. The handler runs inline in the accept loop, which means each client waits for every client ahead of it.'''
+stronger = '''
+Each connection should get its own goroutine, so the accept loop never waits on a handler. The `WaitGroup` already has a `Wait`; it only means something if every goroutine is counted before it starts and marks itself finished on every exit path. This exercise is race-checked: a plain run can pass by luck, and `go test -race` is the real judge.'''
 
 [[exercises]]
 name = "binary1"
@@ -1769,6 +2145,10 @@ truncated stream into io.ErrUnexpectedEOF. Then each field is two bytes:
 	...
 
 Encoding is the mirror image with PutUint16 at the same offsets."""
+nudge = '''
+Every field decodes as zero because nothing is ever read from `r` into `buf`, so it is decoded while still empty. A truncated input also returns no error. `EncodeHeader` writes only the ID, so the round trip loses the other fields too.'''
+stronger = '''
+In `DecodeHeader`, fill `buf` with `io.ReadFull` and return its error, which is what produces `io.ErrUnexpectedEOF` on short input. Then decode all six fields with `binary.BigEndian.Uint16`, two bytes each at consecutive offsets. In `EncodeHeader`, mirror that with `PutUint16` for the remaining five fields.'''
 
 [[exercises]]
 name = "binary2"
@@ -1785,6 +2165,10 @@ Writing is the reverse, and the mask goes on before the shift:
 	w |= uint16(f.Opcode&0xf) << 11
 
 Skipping that mask is what lets an over-wide Opcode corrupt QR."""
+nudge = '''
+Only the QR bit is handled. Every other field parses as zero and is never packed, so the round trip keeps nothing but bit 15.'''
+stronger = '''
+Copy the `Response` pattern for each field, using the bit diagram above the `Flags` struct: in `ParseFlags`, shift right by the field's position and AND with a mask of its width (`1` for single bits, `0xf` for 4-bit fields). In `PackFlags`, mask the 4-bit values first, then shift left and OR them in, so a value that is too wide cannot spill into the neighbouring field.'''
 
 [[exercises]]
 name = "binary3"
@@ -1805,6 +2189,10 @@ Read the prefix, check it, then read exactly that much:
 	_, err := io.ReadFull(r, payload)
 
 The order matters: allocating before the check is the denial of service."""
+nudge = '''
+`ReadFrame` is still a stub that always returns an error. The tests also expect two specific failures: `io.ErrUnexpectedEOF` for a cut-off payload, and `ErrFrameTooLarge` for a length prefix that is too big to trust.'''
+stronger = '''
+In `ReadFrame`, use `io.ReadFull` to read 4 bytes into a length buffer and decode them with `binary.BigEndian.Uint32`. Compare that length against `MaxFrame` before you `make` the payload slice, wrapping `ErrFrameTooLarge` with `%w`. Then `io.ReadFull` the payload. Return the header read's error unchanged, so an empty stream gives a clean `io.EOF`.'''
 
 [[exercises]]
 name = "binary4"
@@ -1822,6 +2210,10 @@ content starts at fileHeaderSize and is that much shorter:
 Read it with io.ReadFull over io.NewSectionReader(ra, offset, int64(size)), and
 turn io.EOF / io.ErrUnexpectedEOF into ErrNoSuchPage — that is the page being
 past the end of the file."""
+nudge = '''
+`ReadPage` returns `ErrNoSuchPage` for every page, including pages that exist, because it never computes an offset and never reads anything.'''
+stronger = '''
+Pages are numbered from 1, so page n starts at `(n-1)*pageSize`. Page 1 is the exception: it starts at `fileHeaderSize` and is that many bytes shorter. Read exactly that many bytes at that offset with `io.ReadFull` over an `io.NewSectionReader`, and turn a read that runs past the end (`errors.Is` with `io.EOF` or `io.ErrUnexpectedEOF`) into `ErrNoSuchPage`.'''
 
 [[exercises]]
 name = "process1"
@@ -1833,6 +2225,10 @@ hint = """
 Output runs the command, collects stdout only, and waits for it — no pipes, no
 Wait of your own. CombinedOutput is the one that folds stderr in, which this
 function promises not to do. Trim with strings.TrimRight(string(out), "\\n")."""
+nudge = '''
+`exec.Command` only describes a process; nothing has started it. That is why there is no output and why a missing binary is never reported as an error.'''
+stronger = '''
+In `RunAndCapture`, call the `*exec.Cmd` method that starts the command, collects stdout only and waits for it (`Output`, not `CombinedOutput`), and return its error. Convert the bytes to a string and strip the trailing newline with `strings.TrimRight`.'''
 
 [[exercises]]
 name = "process2"
@@ -1845,6 +2241,10 @@ That is the whole fix. os/exec copies the reader into the pipe and closes the
 pipe when it is exhausted, which is the EOF the child's scanner is waiting for.
 StdinPipe would work too, and only if you close it yourself. Trim the trailing
 newline off the output as process1 does."""
+nudge = '''
+The child gets an empty stdin and reaches EOF straight away, so it has nothing to uppercase and prints nothing. `input` is never connected to the child.'''
+stronger = '''
+Before calling `cmd.Output()` in `Filter`, set `cmd.Stdin` to a reader over `input` (from the `strings` package). os/exec copies the reader into the child and closes the pipe when it runs out, and that close is the EOF the child is waiting for. Also trim the trailing newline from the result, since the expected values have none.'''
 
 [[exercises]]
 name = "process3"
@@ -1860,6 +2260,10 @@ hint = """
 *exec.ExitError means the child ran and exited non-zero — a result, not an
 error. Everything else means it never started. errors.As rather than a type
 assertion, because the error may be wrapped."""
+nudge = '''
+A child that ran and exited 3 is being reported as -1 plus an error, the same way as a command that never started. `exit status 3` here is a result to return, not an error.'''
+stronger = '''
+In `ExitStatus`, use `errors.As` with a `*exec.ExitError` target to check whether the child actually ran. If it did, return its `ExitCode()` with a nil error. Keep `-1, err` for everything else.'''
 
 [[exercises]]
 name = "process4"
@@ -1875,3 +2279,7 @@ parent, and its stop function unregisters the handler. Building it by hand is
 worth doing once: buffered channel, signal.Notify, a goroutine that selects on
 the channel and parent.Done() and cancels, and a stop that calls signal.Stop as
 well as cancel."""
+nudge = '''
+Only SIGINT is registered, so SIGTERM still has its default action of killing the process on the spot. Even for SIGINT, nothing receives from `ch`, so the context is never cancelled, and the returned function never releases the handler.'''
+stronger = '''
+Rewrite `ShutdownContext` with `signal.NotifyContext`, passing both `syscall.SIGINT` and `syscall.SIGTERM`; it covers registering, cancelling and releasing in one call. To build it by hand instead: `signal.Notify` for both signals, a goroutine that cancels on the first signal or when `parent` is done, and `signal.Stop` before cancelling.'''

@@ -299,8 +299,14 @@ func (m Model) detail() string {
 		parts = append(parts, section(secDescStyle.Render("Description:"), d))
 	}
 
-	if m.showHint {
-		parts = append(parts, section(secHintStyle.Render("Hint:"), m.current().Hint))
+	if m.hintLevel > 0 {
+		levels := m.current().HintLevels()
+		for _, l := range levels[:m.hintLevel] {
+			parts = append(parts, section(secHintStyle.Render(l.Label+":"), l.Text))
+		}
+		if m.hintLevel < len(levels) {
+			parts = append(parts, dimStyle.Render("Press h again for more."))
+		}
 		return strings.Join(parts, "\n\n")
 	}
 

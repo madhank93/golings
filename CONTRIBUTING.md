@@ -20,6 +20,8 @@ mode = "compile"
 hint = "hints are cool"
 ```
 
+Optional `nudge` (what the error means) and `stronger` (where to change it and why) fields add graded hints that watch mode shows before `hint`, which may give the answer away.
+
 The exercise mode is very important. It tells `golings` how to run the exercise. If you are adding an exercise that expects the user to only make it compilable, use `compile` mode. If it has a test suite and you need the user to actually have the tests passing, use `test`.
 
 ### Describe the task in the file

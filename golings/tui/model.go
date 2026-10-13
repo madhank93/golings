@@ -56,7 +56,7 @@ type Model struct {
 	result      exercises.Result
 	verifying   bool
 	hasResult   bool
-	showHint    bool
+	hintLevel   int  // graded hints revealed; each Hint key press shows one more, then hides them
 	showNotes   bool // teaching walk-through: auto on pass, toggled with the Explain key
 	showChapter bool // topic-wide chapter: one document shared by every exercise in the topic
 	notesTop    int  // viewport line the Learn section starts on, so it can be scrolled to
