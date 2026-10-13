@@ -14,7 +14,12 @@ type Exercise struct {
 	Path string
 	Mode string
 	Hint string
-	Desc string
+	// Nudge and Stronger are optional graded hints shown before Hint, which
+	// gives the answer away: Nudge explains the error, Stronger says where to
+	// change and why.
+	Nudge    string
+	Stronger string
+	Desc     string
 	// Pkg marks an exercise that spans several files in one directory. Path
 	// still names the primary editable file; the runner compiles the whole
 	// directory instead of that single file. Set with `pkg = true` in
@@ -30,6 +35,29 @@ type Exercise struct {
 	// something they lack, such as running the go command from a test. Set
 	// with `noplay = true` in info.toml.
 	NoPlay bool
+}
+
+// HintLevel is one step of an exercise's graded hints.
+type HintLevel struct {
+	Label string
+	Text  string
+}
+
+// HintLevels lists the hints from gentlest to the full answer, skipping
+// levels the exercise does not define.
+func (e Exercise) HintLevels() []HintLevel {
+	var levels []HintLevel
+	if e.Nudge != "" {
+		levels = append(levels, HintLevel{"Nudge", e.Nudge})
+	}
+	if e.Stronger != "" {
+		levels = append(levels, HintLevel{"Stronger nudge", e.Stronger})
+	}
+	label := "Hint"
+	if levels != nil {
+		label = "Answer"
+	}
+	return append(levels, HintLevel{label, e.Hint})
 }
 
 // ModuleDir returns the exercise's directory when the exercise is its own Go

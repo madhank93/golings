@@ -174,7 +174,7 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		})
 
 	case key.Matches(msg, m.keys.Hint):
-		m.showHint = !m.showHint
+		m.hintLevel = (m.hintLevel + 1) % (len(m.current().HintLevels()) + 1)
 		m.refreshOutput()
 		return m, nil
 
@@ -310,7 +310,7 @@ func (m Model) handleVerified(msg verifiedMsg) (tea.Model, tea.Cmd) {
 
 // onSelectionChange resets per-exercise detail state when the cursor moves.
 func (m *Model) onSelectionChange() {
-	m.showHint = false
+	m.hintLevel = 0
 	m.showNotes = false
 	m.showChapter = false
 	m.hasResult = false

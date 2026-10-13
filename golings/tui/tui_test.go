@@ -54,7 +54,7 @@ func testModel(t *testing.T) Model {
 	tr, _ := exercises.LoadState(filepath.Join(t.TempDir(), "s.json"))
 	exs := []exercises.Exercise{
 		{Name: "v1", Path: "exercises/variables/v1/main.go", Mode: "compile", Hint: "do it"},
-		{Name: "f1", Path: "exercises/functions/f1/main.go", Mode: "test", Hint: "fix it"},
+		{Name: "f1", Path: "exercises/functions/f1/main.go", Mode: "test", Hint: "fix it", Nudge: "look closer", Stronger: "line 3"},
 	}
 	m := Model{
 		tracker:  tr,
@@ -124,8 +124,20 @@ func TestViewAndNavigationNoPanic(t *testing.T) {
 	m = nm.(Model)
 	nm, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'h'}})
 	m = nm.(Model)
-	if !m.showHint {
+	if m.hintLevel != 1 {
 		t.Error("expected hint toggled on")
+	}
+	for _, want := range []string{"Stronger nudge:", "Answer:"} {
+		nm, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'h'}})
+		m = nm.(Model)
+		if !strings.Contains(m.detail(), want) {
+			t.Errorf("expected %q after another h", want)
+		}
+	}
+	nm, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'h'}})
+	m = nm.(Model)
+	if m.hintLevel != 0 {
+		t.Error("expected hints hidden after the last level")
 	}
 	if !strings.Contains(m.View(), "golings") {
 		t.Error("header missing from view")
