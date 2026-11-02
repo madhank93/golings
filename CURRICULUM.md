@@ -1,7 +1,7 @@
 # Golings Curriculum — Beginner → Advanced
 
-172 exercises across 51 topics, ordered as a progressive track. Run them in
-order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
+Exercises ordered as a progressive track; `mise run list` shows the live set.
+Run them in order with `mise run watch` (or `./bin/golings watch`). Each topic folder has a
 `README.md` with links; each exercise gives a hint via `./bin/golings hint <name>`.
 
 Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
