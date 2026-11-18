@@ -303,8 +303,19 @@ func writeDetail(e exercises.Exercise) error {
 	}
 	b.WriteString(section("What you start with", src.String(), true))
 
-	if h := strings.TrimSpace(e.Hint); h != "" {
-		b.WriteString(section("Hint", "```text\n"+h+"\n```\n", false))
+	// Graded hints, gentlest first. Nudges are prose with `code` spans; the
+	// last level gives the answer away, often as a snippet, so it stays fenced
+	// and keeps the "Hint" title to read apart from the Solution card.
+	levels := e.HintLevels()
+	for i, l := range levels {
+		h := strings.TrimSpace(l.Text)
+		switch {
+		case h == "":
+		case i < len(levels)-1:
+			b.WriteString(section(l.Label, h+"\n", false))
+		default:
+			b.WriteString(section("Hint", "```text\n"+h+"\n```\n", false))
+		}
 	}
 
 	var sol strings.Builder
