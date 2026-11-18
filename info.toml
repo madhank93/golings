@@ -1605,7 +1605,7 @@ fmt.Fprintf(w, "user %s", r.PathValue("id"))"""
 nudge = '''
 A 404 for every request means the mux has no route matching `/users/42`; nothing is registered yet. The 405 test only passes once a route bound to a specific method exists.'''
 stronger = '''
-In `newMux`, register `userHandler` with `mux.HandleFunc` using a Go 1.22 pattern that combines the GET method with a path containing an `{id}` wildcard; inside `userHandler`, read that wildcard with `r.PathValue` and write "user <id>" to `w`.'''
+In `newMux`, register `userHandler` with `mux.HandleFunc` using a Go 1.22 pattern that combines the GET method with a path containing an `{id}` wildcard; inside `userHandler`, read that wildcard with `r.PathValue` and write `user <id>` to `w`.'''
 
 [[exercises]]
 name = "httpsrv3"
