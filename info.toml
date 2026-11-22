@@ -344,6 +344,39 @@ stronger = '''
 Indexes run from 0 to 3. Fix the single index in the first test, then choose `[low:high]` bounds in the other two: `high` is excluded and can be at most 4.'''
 
 [[exercises]]
+name = "loops1"
+path = "exercises/loops/loops1/main_test.go"
+mode = "test"
+hint = """
+The loop condition decides the last value of i. Should n itself be included?"""
+nudge = '''
+`sumTo(4) = 6, want 10`: 6 is 1+2+3, so the loop ran for every number except the last one.'''
+stronger = '''
+Look at the condition in the `for` line. `i < n` stops before `i` reaches `n`. Change the comparison so the loop also runs when `i` equals `n`.'''
+
+[[exercises]]
+name = "loops2"
+path = "exercises/loops/loops2/main_test.go"
+mode = "test"
+hint = """
+Go's while loop is a for with only a condition: for n > 1 { ... }"""
+nudge = '''
+`halvings(2) = 0, want 1`: nothing changes `steps`, so every call returns 0. The function needs a loop.'''
+stronger = '''
+Replace the FIXME with `for n > 1 { ... }`. Inside it, halve `n` with `n /= 2` and add one to `steps`. The loop stops by itself once the condition is false.'''
+
+[[exercises]]
+name = "loops3"
+path = "exercises/loops/loops3/main_test.go"
+mode = "test"
+hint = """
+continue jumps to the next iteration; break leaves the loop."""
+nudge = '''
+`sumUntilNegative([3 0 4 -1 100]) = 106, want 7`: the loop added every number, including the -1 and the 100 after it.'''
+stronger = '''
+Before the `total +=` line, add two `if` checks: one that skips the rest of this iteration when the number is 0 (`continue`), and one that leaves the loop when it is negative (`break`).'''
+
+[[exercises]]
 name = "maps1"
 path = "exercises/maps/maps1/main.go"
 mode = "compile"
