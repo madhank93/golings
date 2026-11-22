@@ -134,5 +134,5 @@ read in Go.
 - [pkg.go.dev: slices](https://pkg.go.dev/slices) — `Clone`, `Equal`, `Sort`,
   `Contains` and friends
 
-**Next: [maps](../maps/) →** — the other built-in collection, and the comma-ok
-form that tells "absent" from "zero".
+**Next: [loops](../loops/) →**, walking a slice one index at a time, and the
+other shapes of Go's only loop.

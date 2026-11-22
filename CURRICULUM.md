@@ -27,6 +27,7 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 |---|---|---|
 | arrays | 2 | fixed arrays, indexing |
 | slices | 4 | `make`, slicing, `append` |
+| loops | 3 | three-clause `for`, condition-only `for` (Go's while), `break` / `continue` |
 | maps | 3 | keys/values, comma-ok |
 | range | 3 | iterating slices & maps |
 
