@@ -197,6 +197,5 @@ its own if it needs any.
 - [Effective Go: Errors](https://go.dev/doc/effective_go#errors) ·
   [Go Code Review Comments: error strings](https://go.dev/wiki/CodeReviewComments#error-strings)
 
-**End of the Functions & Errors tier.** Next: [generics](../generics/) — writing
-one function that works across types without giving up the checking these
-chapters relied on.
+**Next: [testing](../testing/) →**, writing the checks for the code these
+chapters built, including its error paths.

@@ -49,6 +49,7 @@ Toolchain: **Go 1.26** (mise-pinned). Covers language features through Go 1.26
 | anonymous_functions | 3 | closures |
 | defer | 2 | LIFO, guaranteed cleanup |
 | errors | 6 | values, `%w`, `Is`/`As`, custom types, `panic`/`recover`, `Join` |
+| testing | 3 | `TestXxx(*testing.T)`, `Errorf` vs `Fatalf`, got/want messages, testing error paths |
 
 ### 5. Generics & Modern Go
 | Topic | Exercises | Concepts |

@@ -768,6 +768,39 @@ stronger = '''
 Check the verb in each `fmt.Errorf`. The middle layer formats `level1` with a verb that copies only its text. Use the wrapping verb there, like the other two layers.'''
 
 [[exercises]]
+name = "testing1"
+path = "exercises/testing/testing1/main_test.go"
+mode = "test"
+hint = """
+A test function takes a pointer to testing.T, not the struct itself."""
+nudge = '''
+`wrong signature for TestDouble, must be: func TestDouble(t *testing.T)`: `go test` found a function named like a test, but refused to run it because its parameter is the wrong type.'''
+stronger = '''
+The error message spells out the signature `go test` wants. Compare it with the `func TestDouble` line: one character is missing from the parameter's type.'''
+
+[[exercises]]
+name = "testing2"
+path = "exercises/testing/testing2/main_test.go"
+mode = "test"
+hint = """
+t.Errorf marks the test as failed every time it runs. Only call it when the result is wrong."""
+nudge = '''
+`abs(-3) = 3, want 3`: the result is right, yet the test failed. The message comes from a `t.Errorf` that runs whatever `got` is.'''
+stronger = '''
+Wrap the `t.Errorf` line in an `if` that is true only when `got` differs from the expected value. The message already names the input, the result, and the expected value, so keep it as it is.'''
+
+[[exercises]]
+name = "testing3"
+path = "exercises/testing/testing3/main_test.go"
+mode = "test"
+hint = """
+For the empty name, an error is the correct result. Fail when the error is not ErrEmptyName, using errors.Is."""
+nudge = '''
+`greet("") error: empty name`: greet did the right thing and returned its sentinel error, but the test treats any error as a failure.'''
+stronger = '''
+Change the condition in TestGreetEmpty so it fails when `err` is not `ErrEmptyName`. Use `errors.Is` from the errors chapter. Also update the message so it says which error was expected.'''
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"

@@ -1,7 +1,7 @@
 # Advanced testing
 
-Every exercise in this repo has been run by `go test`, so the basics are already
-familiar: a `TestXxx(*testing.T)` in a `_test.go` file, `t.Errorf` to fail and
+The [testing](../testing/) chapter covered the basics: a `TestXxx(*testing.T)`
+in a `_test.go` file, `t.Errorf` to fail and
 continue, `t.Fatalf` to fail and stop. This chapter is the rest of the toolkit —
 the four things that separate a test suite from a pile of tests.
 
